@@ -24,22 +24,46 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  display: block;
   min-width: 320px;
   min-height: 100vh;
+  background-color:  #f0f6fb;
+}
+
+#app {
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+}
+
+header {
+  display: flex;
+  justify-content: left;
+  padding: 1rem 0.5rem;
+  background-color: #2a6592;
+}
+
+header div.app-name {
+  font-weight: bolder;
+  color: #f0f6fb;
+}
+
+header nav {
+  margin-left: auto;
+}
+
+header nav a {
+  margin-left: 1.5rem;
+  color: #f0f6fb;
+}
+
+header nav a:hover {
+  color: #cde1f1;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
-}
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
 }
 
 .logo {
