@@ -2,7 +2,7 @@
   "name": "b2b_v2",
   "homepage": "https://hdr1001.github.io/b2b_v2/",
   "private": false,
-  "version": "0.0.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
