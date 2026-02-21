@@ -28,9 +28,6 @@ function setupEventListeners() {
     //Navigation menu event listeners
     navAbout.addEventListener('click', () => dialogAbout.showModal());
     navContact.addEventListener('click', () => console.log('Contact clicked'));
-
-    //Dialog event listeners
-    dialogAbout.querySelector('#dialog-btn-close').addEventListener('click', () => dialogAbout.close());
 }
 
 export default setupEventListeners;

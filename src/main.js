@@ -39,9 +39,13 @@ document.querySelector('#app').innerHTML = `
 //The about dialog
 document.querySelector('#app-main').innerHTML = `
   <dialog id="dialog-about">
-    <h2>Welcome to B2B v2</h2>
-    <p>This is the main application for business-to-business interactions.</p>
-    <button id="dialog-btn-close">Close</button>
+    <header>About B2B v2</header>
+    <table>
+      <tr><th>Application:</th><td>Business-to-business</td></tr>
+      <tr><th>Version:</th><td>2.0.0</td></tr>
+      <tr><th>Copyright:</th><td>&copy;2026 Hans de Rooij</td></tr>
+      <tr><th>License:</th><td>Apache 2.0</td></tr>
+    </table>
   </dialog>
 `;
 

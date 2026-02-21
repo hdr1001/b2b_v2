@@ -18,33 +18,43 @@ a {
   color: #646cff;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #535bf2;
 }
 
 body {
-  margin: 0;
   display: block;
+
   min-width: 320px;
   min-height: 100vh;
-  background-color:  #f0f6fb;
+
+  margin: 0;
+
+  background-color: #f0f6fb;
 }
 
 #app {
   margin: 0 auto;
+
   padding: 0;
+
   text-align: center;
 }
 
 header {
   display: flex;
+
   justify-content: left;
+
   padding: 1rem 0.5rem;
+
   background-color: #2a6592;
 }
 
 header div.app-name {
   font-weight: bolder;
+
   color: #f0f6fb;
 }
 
@@ -54,11 +64,58 @@ header nav {
 
 header nav a {
   margin-left: 1.5rem;
+
   color: #f0f6fb;
 }
 
 header nav a:hover {
   color: #cde1f1;
+}
+
+*:focus { 
+  outline: none
+}
+
+dialog {
+  padding: 0;
+
+  border: 2px solid #f0f6fb;
+  border-radius: 8px;
+
+  color: #f0f6fb;
+  background-color: #2a6592;
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+dialog header {
+  justify-content: center;
+
+  font-size: 1.5em;
+  text-align: center;
+
+  padding: 0.25em;
+
+  color: #2a6592;
+  background-color: #f0f6fb;
+}
+
+table {
+  border-collapse: collapse;
+
+  margin: 1em auto;
+}
+
+table tr th {
+  padding-left: 1.5em;
+  text-align: right;
+}
+
+table tr td {
+  padding: 0.5em 1.5em 0.5em 0.5em;
+  text-align: left;
 }
 
 h1 {
