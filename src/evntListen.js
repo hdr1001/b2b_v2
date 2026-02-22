@@ -23,11 +23,16 @@ function setupEventListeners() {
     //HTML element references
     const navAbout     = document.querySelector('#nav-about');
     const navContact   = document.querySelector('#nav-contact');
+
     const dialogAbout  = document.querySelector('#dialog-about');
+    const iconClose    = dialogAbout.querySelector('.icon-close');
 
     //Navigation menu event listeners
     navAbout.addEventListener('click', () => dialogAbout.showModal());
     navContact.addEventListener('click', () => console.log('Contact clicked'));
+
+    dialogAbout.addEventListener('click', event => { if(event.target === dialogAbout) dialogAbout.close() });
+    iconClose.addEventListener('click', () => dialogAbout.close());
 }
 
 export default setupEventListeners;

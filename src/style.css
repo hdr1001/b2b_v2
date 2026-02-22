@@ -102,6 +102,14 @@ dialog header {
   background-color: #f0f6fb;
 }
 
+.icon {
+  position: absolute;
+  right: 0.4em;
+  top: 0.2em;
+
+  cursor: pointer;
+}
+
 table {
   border-collapse: collapse;
 
