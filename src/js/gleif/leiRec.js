@@ -1,7 +1,7 @@
 /* ********************************************************************
 //
 // Business-to-business (B2B) application v2
-// Application event listeners
+// LEI record prototype & constructor function
 //
 // Copyright 2026 Hans de Rooij 
 //
@@ -19,20 +19,18 @@
 //
 // ***************************************************************** */
 
-function setupEventListeners() {
-    //HTML element references
-    const navAbout     = document.querySelector('#nav-about');
-    const navContact   = document.querySelector('#nav-contact');
+import { LEIs } from '../../assets/data/LEIs.js';
 
-    const dialogAbout  = document.querySelector('#dialog-about');
+//Constructor function for level 1 LEI data
+function LeiRec(objLEI) {
+    //Data shortcuts
+    ({ meta: this.meta, data: this.data } = objLEI);
 
-    //Navigation menu event listeners
-    navAbout.addEventListener('click', () => dialogAbout.showModal());
-    navContact.addEventListener('click', () => console.log('Contact clicked'));
+    if(this.data) ({ attributes: this.attribs, relationships: this.relationships } = this.data);
 
-    //About dialog event listeners
-    dialogAbout.addEventListener('click', event => { if(event.target === dialogAbout) dialogAbout.close() });
-    dialogAbout.querySelector('.icon-close').addEventListener('click', () => dialogAbout.close());
+    if(this.attribs) ({ entity: this.entity } = this.attribs);
 }
 
-export default setupEventListeners;
+console.log(new LeiRec(LEIs[0]).entity.legalName.name);
+
+export default LeiRec;

@@ -90,9 +90,7 @@ dialog::backdrop {
   background-color: rgba(0, 0, 0, 0.3);
 }
 
-dialog header {
-  justify-content: center;
-
+dialog div#about-title {
   font-size: 1.5em;
   text-align: center;
 
