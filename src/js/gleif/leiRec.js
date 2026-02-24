@@ -20,6 +20,41 @@
 // ***************************************************************** */
 
 import { LEIs } from '../../assets/data/LEIs.js';
+import globals from '../globals.js'
+
+//Convert an address object to an array, filtering out null values
+function addrToArr() {
+    let arrLeiAddr;
+
+    if(Array.isArray(this.addressLines) && this.addressLines.length) {
+        arrLeiAddr = Array.from(this.addressLines)
+    }
+    else {
+        arrLeiAddr = [];
+    }
+
+    arrLeiAddr.push(this.postalCode);
+
+    arrLeiAddr.push(this.city);
+
+    arrLeiAddr.push(this.region);
+
+    arrLeiAddr.push(this.country);
+
+    return arrLeiAddr.filter(elem => elem != null);
+}
+
+//Convert an address object to a concatenated string
+function addrToStr() {
+    return this.toArr().join(globals.joinSep);
+}
+
+
+function addrSameValueAs(otherAddr) {
+    return Array.isArray(this.addressLines) && Array.isArray(otherAddr.addressLines) &&
+        this.addressLines.length && otherAddr.addressLines.length &&
+        this.addressLines[0] === otherAddr.addressLines[0]
+}
 
 //Constructor function for level 1 LEI data
 function LeiRec(objLEI) {
@@ -29,8 +64,34 @@ function LeiRec(objLEI) {
     if(this.data) ({ attributes: this.attribs, relationships: this.relationships } = this.data);
 
     if(this.attribs) ({ entity: this.entity } = this.attribs);
+
+    //(Sub-)object functionality
+    if(this.entity?.otherNames) {
+        //otherNames array exists, add toString method to return concatenated other names
+        this.entity.otherNames.toString = () => otherNames.map(elem => elem.name).join(globals.joinSep);
+    }
+
+    if(this.entity?.legalAddress) {
+        //Object legalAddress exists
+        const legalAddr = this.entity.legalAddress;
+
+         //Add methods to return ...
+        legalAddr.toString = addrToStr; //... a concatenated address string
+        legalAddr.sameValueAs = addrSameValueAs; //... a method to compare other address objects
+        legalAddr.toArr = addrToArr; //... an array of address components
+    }
+
+    if(this.entity?.headquartersAddress) {
+        //Object headquartersAddress exists
+        const hqAddr = this.entity.headquartersAddress;
+
+        //Add methods to return ...
+        hqAddr.toString = addrToStr; //... a concatenated address string
+        hqAddr.sameValueAs = addrSameValueAs; //... a method to compare other address objects
+        hqAddr.toArr = addrToArr; //... an array of address components
+    }
 }
 
-console.log(new LeiRec(LEIs[0]).entity.legalName.name);
+console.log((new LeiRec(LEIs[1])).entity.headquartersAddress.sameValueAs((new LeiRec(LEIs[2])).entity.legalAddress));
 
 export default LeiRec;
