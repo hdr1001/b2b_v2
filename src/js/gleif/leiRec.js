@@ -19,8 +19,12 @@
 //
 // ***************************************************************** */
 
+import globals from '../globals.js';
+import { sDateIsoToYYYYMMDD } from '../utils.js';
 import { LEIs } from '../../assets/data/LEIs.js';
-import globals from '../globals.js'
+import { entLegalForms } from '../../assets/codes/entityLegalForms.js';
+import { entRegAuthorities as entRegAuths } from '../../assets/codes/entityRegAuths.js';
+import LabelValue from '../ui/labelValue.js';
 
 //Convert an address object to an array, filtering out null values
 function addrToArr() {
@@ -48,7 +52,6 @@ function addrToArr() {
 function addrToStr() {
     return this.toArr().join(globals.joinSep);
 }
-
 
 function addrSameValueAs(otherAddr) {
     return Array.isArray(this.addressLines) && Array.isArray(otherAddr.addressLines) &&
@@ -92,6 +95,26 @@ function LeiRec(objLEI) {
     }
 }
 
-console.log((new LeiRec(LEIs[1])).entity.headquartersAddress.sameValueAs((new LeiRec(LEIs[2])).entity.legalAddress));
+//A template for producing a record consisting of label/value pairs
+Object.defineProperty(LeiRec.prototype, 'toLabelValueRec', {
+    get: function() {
+        return [
+            new LabelValue( 'LEI', this.attribs?.lei ),
+            new LabelValue( 'Name', this.entity?.legalName?.name ),
+            //new LabelValue( 'Other names', this.entity?.otherNames ),
+            new LabelValue( 'Legal address', this.entity?.legalAddress),
+            this.entity?.legalAddress && this.entity.legalAddress.sameValueAs(this.entity?.headquartersAddress)
+                ? null
+                : new LabelValue( 'HQ address', this.entity?.headquartersAddress),
+            new LabelValue( 'Legal form', entLegalForms.get(this.entity?.legalForm?.id)?.desc || this.entity?.legalForm?.id ),
+            new LabelValue( 'Registration number', this.entity?.registeredAs ),
+            new LabelValue( 'Registered at', entRegAuths.get(this.entity?.registeredAt?.id)?.desc || this.entity?.registeredAt?.id ),
+            new LabelValue( 'Status', this.entity?.status ),
+            new LabelValue( 'Published on', sDateIsoToYYYYMMDD(this.meta?.goldenCopy?.publishDate))
+        ].filter(elem => elem !== null);
+    }
+});
+
+console.log((new LeiRec(LEIs[14])).toLabelValueRec + '');
 
 export default LeiRec;
