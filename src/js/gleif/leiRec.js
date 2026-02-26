@@ -70,8 +70,11 @@ function LeiRec(objLEI) {
 
     //(Sub-)object functionality
     if(this.entity?.otherNames) {
+        //Array otherNames exists (can be empty though 🙂)
+        const otherNames = this.entity.otherNames;
+
         //otherNames array exists, add toString method to return concatenated other names
-        this.entity.otherNames.toString = () => otherNames.map(elem => elem.name).join(globals.joinSep);
+        otherNames.toString = () => otherNames.map(elem => elem.name).join(globals.joinSep);
     }
 
     if(this.entity?.legalAddress) {
@@ -101,7 +104,7 @@ Object.defineProperty(LeiRec.prototype, 'toLabelValueRec', {
         return [
             new LabelValue( 'LEI', this.attribs?.lei ),
             new LabelValue( 'Name', this.entity?.legalName?.name ),
-            //new LabelValue( 'Other names', this.entity?.otherNames ),
+            new LabelValue( 'Other names', this.entity?.otherNames ),
             new LabelValue( 'Legal address', this.entity?.legalAddress),
             this.entity?.legalAddress && this.entity.legalAddress.sameValueAs(this.entity?.headquartersAddress)
                 ? null
@@ -115,6 +118,13 @@ Object.defineProperty(LeiRec.prototype, 'toLabelValueRec', {
     }
 });
 
-console.log((new LeiRec(LEIs[14])).toLabelValueRec + '');
+LeiRec.prototype.toString = function() {
+    return this.toLabelValueRec
+        .map( elem => String(elem) )
+        .filter( elem => elem !== '' )
+        .join('\n');
+}
+
+console.log(new LeiRec(LEIs[1]) + '');
 
 export default LeiRec;
