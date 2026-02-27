@@ -20,7 +20,9 @@
 // ***************************************************************** */
 import './style.css';
 import setupEventListeners from './evntListen.js';
-import LeiRec from './js/gleif/leiRec.js';
+import { CustCompLeiRec } from './js/components/ccLeiRec.js';
+
+customElements.define('cc-lei-rec', CustCompLeiRec);
 
 console.log('Top of main.js');
 
@@ -53,6 +55,11 @@ document.querySelector('#app-main').innerHTML = `
       <tr><th>License:</th><td>Apache 2.0</td></tr>
     </table>
   </dialog>
+`;
+
+//Add the custom component for the LEI record
+document.querySelector('#app-main').innerHTML += `
+  <cc-lei-rec></cc-lei-rec>
 `;
 
 document.addEventListener('DOMContentLoaded', () => {
