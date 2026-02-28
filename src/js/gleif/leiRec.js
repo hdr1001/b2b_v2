@@ -21,7 +21,6 @@
 
 import globals from '../globals.js';
 import { sDateIsoToYYYYMMDD } from '../utils.js';
-import { LEIs } from '../../assets/data/LEIs.js';
 import { entLegalForms } from '../../assets/codes/entityLegalForms.js';
 import { entRegAuthorities as entRegAuths } from '../../assets/codes/entityRegAuths.js';
 import LabelValue from '../ui/labelValue.js';
@@ -124,7 +123,5 @@ LeiRec.prototype.toString = function() {
         .filter( elem => elem !== '' )
         .join('\n');
 }
-
-console.log(new LeiRec(LEIs[1]) + '');
 
 export default LeiRec;

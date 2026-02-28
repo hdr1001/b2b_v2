@@ -18,6 +18,7 @@
 // limitations under the License.
 //
 // ***************************************************************** */
+
 import './style.css';
 import setupEventListeners from './evntListen.js';
 import { CustCompLeiRec } from './js/components/ccLeiRec.js';
@@ -57,10 +58,15 @@ document.querySelector('#app-main').innerHTML = `
   </dialog>
 `;
 
-//Add the custom component for the LEI record
-document.querySelector('#app-main').innerHTML += `
-  <cc-lei-rec></cc-lei-rec>
-`;
+const leiRecSection01 = document.createElement('cc-lei-rec');
+leiRecSection01.setAttribute('idx', '13');
+
+const leiRecSection02 = document.createElement('cc-lei-rec');
+leiRecSection02.setAttribute('idx', '3');
+
+//Add the custom components for the LEI records
+document.querySelector('#app-main').appendChild(leiRecSection01);
+document.querySelector('#app-main').appendChild(leiRecSection02);
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM content loaded');

@@ -1,27 +1,89 @@
+/* ********************************************************************
+//
+// Business-to-business (B2B) application v2
+// HTML custom component for displaying LEI records
+//
+// Copyright 2026 Hans de Rooij 
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ***************************************************************** */
+
 import { LEIs } from '../../assets/data/LEIs.js';
 import LeiRec from '../gleif/leiRec.js';
 
-export class CustCompLeiRec extends HTMLElement {
-    static get observedAttributes() {
-        return ['idx'];
-    }
+//The LEI record content wrapped in a pre tag
+function appendPreChild(leiRec, componentSection) {
+    const pre = document.createElement('pre');
+    pre.textContent = leiRec.toString();
 
+    componentSection.appendChild(pre);
+}
+
+//A HTML5 LEI record custom component class
+export class CustCompLeiRec extends HTMLElement {
     constructor() {
         super();
+
+        //Create the component's shadow DOM tree 
         this.attachShadow({ mode: 'open' });
 
-        this.idx = this.getAttribute('idx') || 1;
-        this.leiRec = new LeiRec(LEIs[this.idx]);
+        //The idx property contains the index for the LEIs array
+        this.idx = this.getAttribute('idx') || 0;
+
+        //Contains a reference to the section element
+        //when added to the DOM (otherwise null)
+        this.section = null;
     }
 
-    connectedCallback() {
-        this.shadowRoot.innerHTML = `
-            <section class="lei-rec">
-                <pre>
-                    ${this.leiRec.toString()}
-                </pre>
-            </section>
-        `;
+    //Observe the 'idx' attribute for changes
+    static observedAttributes = ['idx'];
 
+    //In case the 'idx' attribute changes, update the component's content
+    attributeChangedCallback(name, oldValue, newValue) {
+        if(name === 'idx' && oldValue !== newValue) {
+            this.idx = newValue;
+
+            this.renderComponentUpdate();
+        }
+    }
+
+    //When the component is added to the DOM, render its content
+    connectedCallback() {
+        //Create the section element wrapping the content
+        this.section = document.createElement('section');
+        this.section.classList.add('lei-rec');
+        this.section.style.textAlign = 'left';
+
+        //Append the actual content wrapped in a pre tag
+        appendPreChild(new LeiRec(LEIs[this.idx]), this.section);
+
+        //Append the section to the component's shadow DOM tree
+        this.shadowRoot.appendChild(this.section);
+    }
+
+    //When the component is removed from the DOM, clean up references
+    disconnectedCallback() { this.section = null }
+
+    //Render the component's content based on the current 'idx' attribute
+    renderComponentUpdate() {
+        //When not yet connected to the DOM, this.section will be falsy 
+        if(!this.section) return false;
+
+        //Reset the section content
+        this.section.innerHTML = '';
+
+        //Append a new pre value
+        appendPreChild(new LeiRec(LEIs[this.idx]), this.section);
     }
 }

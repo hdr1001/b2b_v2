@@ -42,6 +42,10 @@ body {
   text-align: center;
 }
 
+#app-main {
+  display: flex;
+}
+
 header {
   display: flex;
 
