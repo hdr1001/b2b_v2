@@ -21,6 +21,7 @@
 
 import { LEIs } from '../../assets/data/LEIs.js';
 import LeiRec from '../gleif/leiRec.js';
+const cssLeiRec = new URL('./css/leiRec.css', import.meta.url).href;
 
 //The LEI record content wrapped in a pre tag
 function appendPreChild(leiRec, componentSection) {
@@ -31,7 +32,7 @@ function appendPreChild(leiRec, componentSection) {
 }
 
 //A HTML5 LEI record custom component class
-export class CustCompLeiRec extends HTMLElement {
+export class CcLeiRecTxt extends HTMLElement {
     constructor() {
         super();
 
@@ -60,15 +61,20 @@ export class CustCompLeiRec extends HTMLElement {
 
     //When the component is added to the DOM, render its content
     connectedCallback() {
+        //Create a link to the component's CSS file
+        const css = document.createElement('link');
+        css.setAttribute('rel', 'stylesheet');
+        css.setAttribute('href', cssLeiRec);
+
         //Create the section element wrapping the content
         this.section = document.createElement('section');
-        this.section.classList.add('lei-rec');
-        this.section.style.textAlign = 'left';
+        this.section.classList.add('lei-rec-txt');
 
         //Append the actual content wrapped in a pre tag
         appendPreChild(new LeiRec(LEIs[this.idx]), this.section);
 
-        //Append the section to the component's shadow DOM tree
+        //Append the CSS link and section to the component's shadow DOM tree
+        this.shadowRoot.appendChild(css);
         this.shadowRoot.appendChild(this.section);
     }
 

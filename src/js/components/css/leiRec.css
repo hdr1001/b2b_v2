@@ -1,0 +1,39 @@
+/* ********************************************************************
+//
+// Business-to-business (B2B) application v2
+// LEI record component CSS
+//
+// Copyright 2026 Hans de Rooij 
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ***************************************************************** */
+
+section.lei-rec-txt {
+    max-width: 320px;
+    min-width: 180px;
+
+    margin: 1em 0.5em;
+    padding: 0 0.5em;
+
+    text-align: left;
+
+    border: 2px solid #bccfde;
+    border-radius: 8px;
+}
+
+section.lei-rec-txt pre {
+    color: #4d718c;
+
+    white-space: pre-wrap;
+}

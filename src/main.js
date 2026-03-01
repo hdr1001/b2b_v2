@@ -19,11 +19,10 @@
 //
 // ***************************************************************** */
 
-import './style.css';
 import setupEventListeners from './evntListen.js';
-import { CustCompLeiRec } from './js/components/ccLeiRec.js';
+import { CcLeiRecTxt } from './js/components/ccLeiRec.js';
 
-customElements.define('cc-lei-rec', CustCompLeiRec);
+customElements.define('lei-rec-txt', CcLeiRecTxt);
 
 console.log('Top of main.js');
 
@@ -58,15 +57,19 @@ document.querySelector('#app-main').innerHTML = `
   </dialog>
 `;
 
-const leiRecSection01 = document.createElement('cc-lei-rec');
+const leiRecSection01 = document.createElement('lei-rec-txt');
 leiRecSection01.setAttribute('idx', '13');
 
-const leiRecSection02 = document.createElement('cc-lei-rec');
+const leiRecSection02 = document.createElement('lei-rec-txt');
 leiRecSection02.setAttribute('idx', '3');
+
+const leiRecSection03 = document.createElement('lei-rec-txt');
+leiRecSection03.setAttribute('idx', '5');
 
 //Add the custom components for the LEI records
 document.querySelector('#app-main').appendChild(leiRecSection01);
 document.querySelector('#app-main').appendChild(leiRecSection02);
+document.querySelector('#app-main').appendChild(leiRecSection03);
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM content loaded');
