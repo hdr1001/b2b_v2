@@ -1,7 +1,7 @@
 /* ********************************************************************
 //
 // Business-to-business (B2B) application v2
-// HTML custom component for displaying LEI records as HTML
+// HTML custom component for displaying LEI records as text
 //
 // Copyright 2026 Hans de Rooij 
 //
@@ -23,8 +23,16 @@ import { LEIs } from '../../assets/data/LEIs.js';
 import LeiRec from '../gleif/leiRec.js';
 const cssLeiRec = new URL('./css/leiRec.css', import.meta.url).href;
 
+//The LEI record content wrapped in a pre tag
+function appendPreChild(leiRec, componentSection) {
+    const pre = document.createElement('pre');
+    pre.textContent = leiRec.toString();
+
+    componentSection.appendChild(pre);
+}
+
 //A HTML5 LEI record custom component class
-export class CcLeiRec extends HTMLElement {
+export class CcLeiRecTxt extends HTMLElement {
     constructor() {
         super();
 
@@ -60,16 +68,10 @@ export class CcLeiRec extends HTMLElement {
 
         //Create the section element wrapping the content
         this.section = document.createElement('section');
-        this.section.classList.add('lei-rec');
+        this.section.classList.add('lei-rec-txt');
 
-        //Append the content of a LEI record
-        const table = document.createElement('table');
-
-        const caption = document.createElement('caption');
-        caption.textContent = `LEI record ${this.idx}`;
-
-        table.appendChild(caption)
-        this.section.appendChild(table);
+        //Append the actual content wrapped in a pre tag
+        appendPreChild(new LeiRec(LEIs[this.idx]), this.section);
 
         //Append the CSS link and section to the component's shadow DOM tree
         this.shadowRoot.appendChild(css);
@@ -87,7 +89,7 @@ export class CcLeiRec extends HTMLElement {
         //Reset the section content
         this.section.innerHTML = '';
 
-        //Append a table with label/value pairs for the current LEI record
-
+        //Append a new pre value
+        appendPreChild(new LeiRec(LEIs[this.idx]), this.section);
     }
 }

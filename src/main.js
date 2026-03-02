@@ -20,8 +20,10 @@
 // ***************************************************************** */
 
 import setupEventListeners from './evntListen.js';
-import { CcLeiRecTxt } from './js/components/ccLeiRec.js';
+import { CcLeiRec } from './js/components/ccLeiRec.js';
+import { CcLeiRecTxt } from './js/components/ccLeiRecTxt.js';
 
+customElements.define('lei-rec', CcLeiRec);
 customElements.define('lei-rec-txt', CcLeiRecTxt);
 
 console.log('Top of main.js');
@@ -57,6 +59,9 @@ document.querySelector('#app-main').innerHTML = `
   </dialog>
 `;
 
+const leiRecSection01 = document.createElement('lei-rec');
+document.querySelector('#app-main').appendChild(leiRecSection01);
+/*
 const leiRecSection01 = document.createElement('lei-rec-txt');
 leiRecSection01.setAttribute('idx', '13');
 
@@ -70,7 +75,7 @@ leiRecSection03.setAttribute('idx', '5');
 document.querySelector('#app-main').appendChild(leiRecSection01);
 document.querySelector('#app-main').appendChild(leiRecSection02);
 document.querySelector('#app-main').appendChild(leiRecSection03);
-
+*/
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM content loaded');
 

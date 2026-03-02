@@ -19,6 +19,7 @@
 //
 // ***************************************************************** */
 
+section.lei-rec,
 section.lei-rec-txt {
     max-width: 320px;
     min-width: 180px;
@@ -30,6 +31,16 @@ section.lei-rec-txt {
 
     border: 2px solid #bccfde;
     border-radius: 8px;
+}
+
+section.lei-rec table {
+    width: 100%;
+}
+
+section.lei-rec table caption {
+    align-items: center;
+
+    color: #4d718c;
 }
 
 section.lei-rec-txt pre {
