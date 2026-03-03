@@ -32,7 +32,7 @@ function appendPreChild(leiRec, componentSection) {
 }
 
 //A HTML5 LEI record custom component class
-export class CcLeiRecTxt extends HTMLElement {
+export default class CcLeiRecTxt extends HTMLElement {
     constructor() {
         super();
 

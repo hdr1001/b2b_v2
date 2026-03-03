@@ -21,10 +21,11 @@
 
 import { LEIs } from '../../assets/data/LEIs.js';
 import LeiRec from '../gleif/leiRec.js';
+import { SectionTable } from '../ui/section.js';
 const cssLeiRec = new URL('./css/leiRec.css', import.meta.url).href;
 
 //A HTML5 LEI record custom component class
-export class CcLeiRec extends HTMLElement {
+export default class CcLeiRec extends HTMLElement {
     constructor() {
         super();
 
@@ -63,13 +64,7 @@ export class CcLeiRec extends HTMLElement {
         this.section.classList.add('lei-rec');
 
         //Append the content of a LEI record
-        const table = document.createElement('table');
-
-        const caption = document.createElement('caption');
-        caption.textContent = `LEI record ${this.idx}`;
-
-        table.appendChild(caption)
-        this.section.appendChild(table);
+        this.table = this.section.appendChild(new SectionTable(`LEI record ${this.idx}`).domElem);
 
         //Append the CSS link and section to the component's shadow DOM tree
         this.shadowRoot.appendChild(css);

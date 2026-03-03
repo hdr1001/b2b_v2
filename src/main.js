@@ -20,8 +20,12 @@
 // ***************************************************************** */
 
 import setupEventListeners from './evntListen.js';
-import { CcLeiRec } from './js/components/ccLeiRec.js';
-import { CcLeiRecTxt } from './js/components/ccLeiRecTxt.js';
+import CcLeiRec from './js/components/ccLeiRec.js';
+import CcLeiRecTxt from './js/components/ccLeiRecTxt.js';
+import { LEIs } from './assets/data/LEIs.js';
+import LeiRec from './js/gleif/leiRec.js';
+import LabelValue from './js/ui/labelValue.js';
+import LabelValues from './js/ui/labelValues.js';
 
 customElements.define('lei-rec', CcLeiRec);
 customElements.define('lei-rec-txt', CcLeiRecTxt);
@@ -59,9 +63,21 @@ document.querySelector('#app-main').innerHTML = `
   </dialog>
 `;
 
+const leiRec = new LeiRec(LEIs[0]);
+
+const arrLVs = new LabelValues([
+  new LabelValue('LEI', leiRec.attribs?.lei),
+  leiRec.entity?.legalName?.name && new LabelValue('Name', leiRec.entity.legalName.name)
+]);
+
+const pre = document.createElement('pre');
+pre.textContent = arrLVs.toString();
+document.querySelector('#app-main').appendChild(pre);
+
+/*
 const leiRecSection01 = document.createElement('lei-rec');
 document.querySelector('#app-main').appendChild(leiRecSection01);
-/*
+*/ /*
 const leiRecSection01 = document.createElement('lei-rec-txt');
 leiRecSection01.setAttribute('idx', '13');
 

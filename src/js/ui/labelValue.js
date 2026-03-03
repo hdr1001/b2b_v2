@@ -1,7 +1,7 @@
 /* ********************************************************************
 //
 // Business-to-business (B2B) application v2
-// Logic for ordering data in label/value pairs
+// Logic for structuring data in label/value pairs
 //
 // Copyright 2026 Hans de Rooij 
 //
@@ -91,7 +91,7 @@ Object.defineProperties(Value.prototype, {
 });
 
 //Constructor function to instantiate a LabelValue object
-function LabelValue(label, value) {
+export default function LabelValue(label, value) {
     this.lbl = new Label(label);
     this.val = new Value(value);
 }
@@ -136,5 +136,3 @@ Object.defineProperties(LabelValue.prototype, {
         }
     }
 });
-
-export default LabelValue;
