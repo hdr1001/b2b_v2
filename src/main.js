@@ -63,16 +63,16 @@ document.querySelector('#app-main').innerHTML = `
   </dialog>
 `;
 
-const leiRec = new LeiRec(LEIs[0]);
+const leiRec = new LeiRec(LEIs[14]);
+//const aLV = new LabelValue('LEI', leiRec.attribs?.lei);
+const aLV = new LabelValue('Name', leiRec.entity.legalName.name);
+//const aLV = new LabelValue('Other name(s)', leiRec.entity.otherNames.map(elem => elem.name));
 
-const arrLVs = new LabelValues([
-  new LabelValue('LEI', leiRec.attribs?.lei),
-  leiRec.entity?.legalName?.name && new LabelValue('Name', leiRec.entity.legalName.name)
-]);
+const table = document.createElement('table');
+const tbody = table.appendChild(document.createElement('tbody'));
+tbody.appendChild(aLV.domElems);
 
-const pre = document.createElement('pre');
-pre.textContent = arrLVs.toString();
-document.querySelector('#app-main').appendChild(pre);
+document.querySelector('#app-main').appendChild(table);
 
 /*
 const leiRecSection01 = document.createElement('lei-rec');

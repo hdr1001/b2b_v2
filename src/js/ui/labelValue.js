@@ -65,27 +65,47 @@ Object.defineProperties(Value.prototype, {
     domElem: {
         value: function(tag = 'td') {
             const elem = document.createElement(tag);
-            elem.classList.add('value');
             elem.textContent = this.toString();
+            elem.classList.add('value');
+            if(this.textContent === '') elem.classList.add('is-empty');
 
             return elem;
         }
     },
     domElems: {
         value: function(tag = 'td') {
-            if(!this.isArray) return [ this.domElem(tag) ];
+            let docFrag = new DocumentFragment, arrValues;
 
-            let arrElems = [], elem;
+            if(this.isArray) {
+                if(this.value.length > 0) {
+                    arrValues = this.value
+                }
+                else { //this.value is an empty array
+                    arrValues = [ '' ]
+                }
+            }
+            else { //this.value is not an array
+                arrValues = [ this.value ]
+            }
 
-            this.value.forEach( v => {
-                elem = document.createElement(tag);
+            arrValues.forEach((v, idx) => {
+                const tr = docFrag.appendChild(document.createElement('tr'));
+                if(idx === 0) tr.classList.add('first-row');
+                if(idx === arrValues.length - 1) tr.classList.add('last-row');
+
+                const elem = document.createElement(tag);
+                elem.textContent = String(nullUndefToEmptyStr(v));
                 elem.classList.add('value');
-                elem.textContent = String(v);
+                if(elem.textContent === '') {
+                    elem.classList.add('is-empty');
+                    tr.classList.add('is-empty');
+                }
 
-                arrElems.push(elem);
+                tr.appendChild(elem);
+                docFrag.appendChild(tr);
             });
             
-            return arrElems;
+            return docFrag;
         }
     }
 });
@@ -103,36 +123,22 @@ Object.defineProperties(LabelValue.prototype, {
     },
     domElems: {
         get: function() {
-            const construct_trs = () => {
-                let tr = document.createElement('tr');
+            //A DocumentFragment containing one or more tr elements containing the data
+            const docFrag = this.val.domElems('td');;
 
-                //Add the label as a table header cell
-                const th = tr.appendChild(this.lbl.domElem('th'));
+            //Either a td element or a DocumentFragment containing multiple tr elements
+            const th = this.lbl.domElem('th')
 
-                //An array of table row elements to be returned
-                const arr_trs = [];
+            //Make the header the first child of the first tr element
+            const firstRow = docFrag.firstChild;
+            firstRow.insertBefore(th, firstRow.firstChild);
 
-                //Add the value(s) as table data cell(s)
-                this.val.domElems('td').forEach((de, idx) => {
-                    if(idx === 0) {
-                        //If the value consists of multiple rows, make the label cell span those rows
-                        if(this.val.numRows > 1) th.setAttribute('rowspan', String(this.val.numRows))
-                    }
-                    else {
-                        tr = document.createElement('tr');
-                    }
-
-                    //Add a value as a table data cell
-                    tr.appendChild(de);
-
-                    //Return an array of table rows
-                    arr_trs[idx] = tr;
-                });
-
-                return arr_trs;
+            //Add, if necessary, a rowspan attribute to the header cell
+            if(docFrag.children.length > 1) {
+                th.setAttribute('rowspan', docFrag.children.length);
             }
 
-            return this.val ? construct_trs() : null;
+            return docFrag;
         }
     }
 });
