@@ -126,10 +126,10 @@ Object.defineProperties(LabelValue.prototype, {
             //A DocumentFragment containing one or more tr elements containing the data
             const docFrag = this.val.domElems('td');;
 
-            //Either a td element or a DocumentFragment containing multiple tr elements
+            //Get the data label as a th element
             const th = this.lbl.domElem('th')
 
-            //Make the header the first child of the first tr element
+            //Make the header the first child of the first row element
             const firstRow = docFrag.firstChild;
             firstRow.insertBefore(th, firstRow.firstChild);
 

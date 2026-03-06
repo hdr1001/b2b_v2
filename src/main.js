@@ -64,13 +64,20 @@ document.querySelector('#app-main').innerHTML = `
 `;
 
 const leiRec = new LeiRec(LEIs[14]);
+
+const arrLVs = new LabelValues([
+    new LabelValue('LEI', leiRec.attribs?.lei),
+    new LabelValue('Name', leiRec.entity.legalName.name),
+    new LabelValue('Other name(s)', leiRec.entity.otherNames.map(elem => elem.name))
+]);
+
 //const aLV = new LabelValue('LEI', leiRec.attribs?.lei);
-const aLV = new LabelValue('Name', leiRec.entity.legalName.name);
+//const aLV = new LabelValue('Name', leiRec.entity.legalName.name);
 //const aLV = new LabelValue('Other name(s)', leiRec.entity.otherNames.map(elem => elem.name));
 
 const table = document.createElement('table');
 const tbody = table.appendChild(document.createElement('tbody'));
-tbody.appendChild(aLV.domElems);
+tbody.appendChild(arrLVs.domElems);
 
 document.querySelector('#app-main').appendChild(table);
 

@@ -20,21 +20,26 @@
 // ***************************************************************** */
 
 //Constructor function to instantiate a Label object
-export default function LabelValues(arrLabelValues) {
-    if(!Array.isArray(arrLabelValues)) {
+export default function LabelValues(arrLblVals) {
+    if(!Array.isArray(arrLblVals)) {
         throw new Error('The argument should be an array of LabelValue objects');
     }
 
-    this.labelValues = arrLabelValues;
+    this.arrLblVals = arrLblVals;
 }
 
 //Shared LabelValues object functionality
 Object.defineProperties(LabelValues.prototype, {
     toString: {
-        value: function() { return this.labelValues.map(lv => lv.toString()).join('\n') }
+        value: function() { return this.arrLblVals.map(lv => lv.toString()).join('\n') }
     },
     domElems: {
-        value: function(tag = 'td') { return this.labelValues.map(lv => lv.domElems(tag)) }
+        get: function() {
+            const docFrag = new DocumentFragment;
+
+            this.arrLblVals.forEach(lv => docFrag.appendChild(lv.domElems));
+
+            return docFrag; 
+        }
     }
 });
-
