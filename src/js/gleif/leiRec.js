@@ -121,7 +121,7 @@ LeiRec.prototype.toString = function() {
     return this.toLabelValueRec
         .map( elem => String(elem) )
         .filter( elem => elem !== '' )
-        .join('\n');
+        .join( globals.newLineSep );
 }
 
 export default LeiRec;

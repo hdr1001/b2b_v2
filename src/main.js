@@ -26,6 +26,7 @@ import { LEIs } from './assets/data/LEIs.js';
 import LeiRec from './js/gleif/leiRec.js';
 import LabelValue from './js/ui/labelValue.js';
 import LabelValues from './js/ui/labelValues.js';
+import RptSection from './js/ui/rptSection.js';
 
 customElements.define('lei-rec', CcLeiRec);
 customElements.define('lei-rec-txt', CcLeiRecTxt);
@@ -63,23 +64,24 @@ document.querySelector('#app-main').innerHTML = `
   </dialog>
 `;
 
-const leiRec = new LeiRec(LEIs[14]);
+const leiRec = new LeiRec(LEIs[1]);
 
-const arrLVs = new LabelValues([
+const lvs = new LabelValues([
     new LabelValue('LEI', leiRec.attribs?.lei),
     new LabelValue('Name', leiRec.entity.legalName.name),
-    new LabelValue('Other name(s)', leiRec.entity.otherNames.map(elem => elem.name))
+    new LabelValue('Other name(s)', leiRec.entity.otherNames.map(elem => elem.name)),
+    new LabelValue('Legal address', leiRec.entity.legalAddress.toArr())
 ]);
 
 //const aLV = new LabelValue('LEI', leiRec.attribs?.lei);
 //const aLV = new LabelValue('Name', leiRec.entity.legalName.name);
 //const aLV = new LabelValue('Other name(s)', leiRec.entity.otherNames.map(elem => elem.name));
 
-const table = document.createElement('table');
-const tbody = table.appendChild(document.createElement('tbody'));
-tbody.appendChild(arrLVs.domElems);
+const rptSection = new RptSection('LEI record', lvs);
 
-document.querySelector('#app-main').appendChild(table);
+console.log(rptSection.toString());
+
+document.querySelector('#app-main').appendChild(rptSection.domElems);
 
 /*
 const leiRecSection01 = document.createElement('lei-rec');

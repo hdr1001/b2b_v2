@@ -21,7 +21,7 @@
 
 import { LEIs } from '../../assets/data/LEIs.js';
 import LeiRec from '../gleif/leiRec.js';
-import { SectionTable } from '../ui/section.js';
+//import { SectionTable } from '../ui/section.js';
 const cssLeiRec = new URL('./css/leiRec.css', import.meta.url).href;
 
 //A HTML5 LEI record custom component class

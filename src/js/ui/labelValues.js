@@ -19,7 +19,9 @@
 //
 // ***************************************************************** */
 
-//Constructor function to instantiate a Label object
+import globals from '../globals.js';
+
+//Constructor function to instantiate a label values object
 export default function LabelValues(arrLblVals) {
     if(!Array.isArray(arrLblVals)) {
         throw new Error('The argument should be an array of LabelValue objects');
@@ -31,7 +33,7 @@ export default function LabelValues(arrLblVals) {
 //Shared LabelValues object functionality
 Object.defineProperties(LabelValues.prototype, {
     toString: {
-        value: function() { return this.arrLblVals.map(lv => lv.toString()).join('\n') }
+        value: function() { return this.arrLblVals.map(lv => lv.toString()).join(globals.newLineSep) }
     },
     domElems: {
         get: function() {

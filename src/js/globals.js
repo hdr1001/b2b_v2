@@ -19,10 +19,12 @@
 //
 // ***************************************************************** */
 
+const newLineSep = '\n';
 const joinSep = ', ';
 const delimSep = '|';
 
 export default {
+    newLineSep,
     joinSep,
     delimSep
 };
