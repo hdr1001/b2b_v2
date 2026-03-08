@@ -27,9 +27,11 @@ import LeiRec from './js/gleif/leiRec.js';
 import LabelValue from './js/ui/labelValue.js';
 import LabelValues from './js/ui/labelValues.js';
 import RptSection from './js/ui/rptSection.js';
+import B2bReport from './js/components/b2bReport.js';
 
 customElements.define('lei-rec', CcLeiRec);
 customElements.define('lei-rec-txt', CcLeiRecTxt);
+customElements.define('b2b-report', B2bReport);
 
 console.log('Top of main.js');
 
@@ -64,6 +66,15 @@ document.querySelector('#app-main').innerHTML = `
   </dialog>
 `;
 
+const b2bReport = document.createElement('b2b-report');
+document.querySelector('#app-main').appendChild(b2bReport);
+
+setInterval(() => {
+  let idx = +b2bReport.getAttribute('b2b-key') + 1;
+  if(idx > 14) idx = 0;
+  b2bReport.setAttribute('b2b-key', idx)
+}, 2500);
+/*
 const leiRec = new LeiRec(LEIs[1]);
 
 const lvs = new LabelValues([
@@ -82,7 +93,7 @@ const rptSection = new RptSection('LEI record', lvs);
 console.log(rptSection.toString());
 
 document.querySelector('#app-main').appendChild(rptSection.domElems);
-
+*/
 /*
 const leiRecSection01 = document.createElement('lei-rec');
 document.querySelector('#app-main').appendChild(leiRecSection01);

@@ -60,6 +60,8 @@ function addrSameValueAs(otherAddr) {
 
 //Constructor function for level 1 LEI data
 function LeiRec(objLEI) {
+    this.root = objLEI; //Safe a reference to the root of the object
+
     //Data shortcuts
     ({ meta: this.meta, data: this.data } = objLEI);
 
@@ -84,6 +86,8 @@ function LeiRec(objLEI) {
         legalAddr.toString = addrToStr; //... a concatenated address string
         legalAddr.sameValueAs = addrSameValueAs; //... a method to compare other address objects
         legalAddr.toArr = addrToArr; //... an array of address components
+
+        this.entity.legalAddr = legalAddr;
     }
 
     if(this.entity?.headquartersAddress) {
@@ -94,6 +98,8 @@ function LeiRec(objLEI) {
         hqAddr.toString = addrToStr; //... a concatenated address string
         hqAddr.sameValueAs = addrSameValueAs; //... a method to compare other address objects
         hqAddr.toArr = addrToArr; //... an array of address components
+
+        this.entity.hqAddr = hqAddr;
     }
 }
 
