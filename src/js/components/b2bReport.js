@@ -79,8 +79,13 @@ export default class B2bReport extends HTMLElement {
 
         this.shadowRoot.appendChild(css);
 
+        const b2bRptDiv = document.createElement('div');
+        b2bRptDiv.classList.add('b2b-report');
+
+        this.shadowRoot.appendChild(b2bRptDiv);
+
         for(const [key, section] of this.sections.entries()) {
-            this.shadowRoot.appendChild(section.domElems)
+            b2bRptDiv.appendChild(section.domElems)
         }
     }
 
@@ -94,7 +99,6 @@ export default class B2bReport extends HTMLElement {
 
     //Render the component's content based on the current 'id' attribute
     renderComponentUpdate() {
-console.log(this.b2bKey)
         this.b2bRec = new LeiRec(LEIs[this.b2bKey]);
 
         this.sections = getSections(this.b2bRec)
@@ -102,9 +106,11 @@ console.log(this.b2bKey)
         //Reset the report content
         this.shadowRoot.querySelectorAll('.rpt-section').forEach(rptSection => rptSection.remove());
 
+        const b2bRptDiv = this.shadowRoot.querySelector('div.b2b-report');
+    
         //Append a table with label/value pairs for the current LEI record
         for(const [key, section] of this.sections.entries()) {
-            this.shadowRoot.appendChild(section.domElems)
+            b2bRptDiv.appendChild(section.domElems)
         }
     }
 }
