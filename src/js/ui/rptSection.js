@@ -41,10 +41,19 @@ Object.defineProperties(RptSection.prototype, {
         get: function() {
             const docFrag = new DocumentFragment;
 
+            //Wrapper div to help with styling and layout
+            const div = document.createElement('div');
+            div.classList.add('rpt-section-wrapper');
+
+            docFrag.appendChild(div);
+
             //Create the main table element for the section
             const table = document.createElement('table');
             table.classList.add('rpt-section');
 
+            div.appendChild(table);
+
+            //Add the catoion as a caption element if it exists
             if(this.caption) {
                 const tblCaption = document.createElement('caption');
                 tblCaption.textContent = `${this.caption}`;
@@ -56,7 +65,6 @@ Object.defineProperties(RptSection.prototype, {
             tbody.appendChild(this.lblVals.domElems);
 
             table.appendChild(tbody);
-            docFrag.appendChild(table);
 
             return docFrag;
         }

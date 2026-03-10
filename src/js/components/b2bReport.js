@@ -104,7 +104,7 @@ export default class B2bReport extends HTMLElement {
         this.sections = getSections(this.b2bRec)
 
         //Reset the report content
-        this.shadowRoot.querySelectorAll('.rpt-section').forEach(rptSection => rptSection.remove());
+        this.shadowRoot.querySelectorAll('.rpt-section-wrapper').forEach(rptSection => rptSection.remove());
 
         const b2bRptDiv = this.shadowRoot.querySelector('div.b2b-report');
     
