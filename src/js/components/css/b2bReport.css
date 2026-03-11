@@ -58,6 +58,18 @@ table.rpt-section caption {
     font-weight: bolder;
 }
 
+table.rpt-section tbody tr.last-row {
+    border-bottom: 2px solid #bccfde;
+}
+
+table.rpt-section tbody tr:last-child {
+    border-bottom: none;    
+}
+
+table.rpt-section tbody tr td.value{
+    padding: 0.25em 0;
+}
+
 th.label {
     padding-left: 0.5em;
     padding-right: 0.25em;
