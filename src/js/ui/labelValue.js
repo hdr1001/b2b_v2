@@ -118,6 +118,9 @@ export default function LabelValue(label, value) {
 
 //Shared label/value pair functionality
 Object.defineProperties(LabelValue.prototype, {
+    valueEmpty: {
+        get: function() { return this.val.toString() === '' }
+    },
     toString: {
         value: function() { return String(this.val) ? `${this.lbl}: ${this.val}` : '' }
     },

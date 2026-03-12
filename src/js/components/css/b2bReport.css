@@ -36,7 +36,6 @@
     width: stretch;
 
     margin: 0.25em 0;
-    /* padding: 0.25em; */
 
     border: 2px solid #bccfde;
     border-radius: 8px;
@@ -66,10 +65,6 @@ table.rpt-section tbody tr:last-child {
     border-bottom: none;    
 }
 
-table.rpt-section tbody tr td.value{
-    padding: 0.25em 0;
-}
-
 th.label {
     padding-left: 0.5em;
     padding-right: 0.25em;
@@ -91,6 +86,10 @@ td.value {
     text-align: left;
 }
 
-.is-empty {
-    display: none;
+tr.first-row td.value {
+    padding-top: 0.25em;
+}
+
+tr.last-row td.value {
+    padding-bottom: 0.25em;
 }
