@@ -20,10 +20,15 @@
 // ***************************************************************** */
 
 import globals from '../globals.js';
+import LabelValue from './labelValue.js';
 
 //Constructor function to instantiate a label values object
 export default function LabelValues(arrLblVals) {
     if(!Array.isArray(arrLblVals)) {
+        throw new Error('The argument should be an array of LabelValue objects');
+    }
+
+    if(arrLblVals.filter(lv => !(lv instanceof LabelValue)).length > 0) {
         throw new Error('The argument should be an array of LabelValue objects');
     }
 

@@ -19,6 +19,7 @@
 //
 // ***************************************************************** */
 
+import globals from '../globals.js';
 import { nullUndefToEmptyStr } from '../utils.js';
 
 //Constructor function to instantiate a Label object
@@ -32,8 +33,9 @@ Object.defineProperties(Label.prototype, {
         value: function() { return String(this.desc) }
     },
     domElem: {
-        value: function(tag = 'td') {
-            const elem = document.createElement(tag);
+        value: function() {
+            const elem = document.createElement('td');
+
             elem.classList.add('label');
             elem.textContent = this.toString();
 
@@ -42,66 +44,86 @@ Object.defineProperties(Label.prototype, {
     }
 });
 
-//Constructor function to instantiate a Value object
-function Value(value) {
-    this.value = value;
+//Constructor function for individual values
+function IndivValue(val, oOpts) {
+    this.value = val;
+    if(oOpts) this.opts = oOpts;
 }
 
-//Shared value object functionality
-Object.defineProperties(Value.prototype, {
+//Shared individual value object functionality
+Object.defineProperties(IndivValue.prototype, {
     toString: {
         value: function() { return String(nullUndefToEmptyStr(this.value)) }
     },
-    isArray: {
-        get: function() { return Array.isArray(this.value) }
-    },
-    numRows: {
-        get: function() {
-            return this.value == null ||  this.value === ''
-                    ? 0
-                    : (this.isArray ? this.value.length : 1)
-        }
-    },
     domElem: {
-        value: function(tag = 'td') {
-            const elem = document.createElement(tag);
-            elem.textContent = this.toString();
+        get: function() {
+            const elem = document.createElement('td');
+
+            elem.textContent = String(this.value);
             elem.classList.add('value');
+
             if(this.textContent === '') elem.classList.add('is-empty');
+
+            if(this.opts && this.opts.addtlInfo) {
+                elem.setAttribute('data-addtl-info', this.opts.addtlInfo);
+            }
 
             return elem;
         }
     },
+});
+
+//Constructor function to instantiate an array of individual value object
+function ArrValues(values) {
+    if(Array.isArray(values)) {
+        //Parameter values is an array
+        if(values.length > 0) {
+            if(values.includes(elem => !(elem instanceof IndivValue))) {
+                this.arrIndvValues = values.map(elem => elem instanceof IndivValue ? elem : new IndivValue(elem))
+            }
+            else {
+                this.arrIndvValues = values
+            }
+        }
+        else this.arrIndvValues = values //Empty array
+    }
+    else { //Parameter values is not an array
+        if(values instanceof IndivValue) {
+            this.arrIndvValues = [ values ]
+        }
+        else {
+            this.arrIndvValues = [ new IndivValue(values) ]
+        }
+    }
+
+    //Remove any individual value objects with null, undefined or empty string values
+    this.arrIndvValues = this.arrIndvValues.filter(indvValue => !(indvValue.toString() === ''));
+}
+
+//Shared value object functionality
+Object.defineProperties(ArrValues.prototype, {
+    toString: {
+        value: function() { return this.arrIndvValues.map(indvValue => indvValue.toString()).join(globals.joinSep) }
+    },
+    numRows: {
+        get: function() { return this.arrIndvValues.length }
+    },
     domElems: {
-        value: function(tag = 'td') {
+        get: function() {
             let docFrag = new DocumentFragment, arrValues;
 
-            if(this.isArray) {
-                if(this.value.length > 0) {
-                    arrValues = this.value
-                }
-                else { //this.value is an empty array
-                    arrValues = [ '' ]
-                }
-            }
-            else { //this.value is not an array
-                arrValues = [ this.value ]
-            }
-
-            arrValues.forEach((v, idx) => {
+            this.arrIndvValues.forEach((indvValue, idx) => {
                 const tr = docFrag.appendChild(document.createElement('tr'));
-                if(idx === 0) tr.classList.add('first-row');
-                if(idx === arrValues.length - 1) tr.classList.add('last-row');
 
-                const elem = document.createElement(tag);
-                elem.textContent = String(nullUndefToEmptyStr(v));
-                elem.classList.add('value');
-                if(elem.textContent === '') {
-                    elem.classList.add('is-empty');
-                    tr.classList.add('is-empty');
-                }
+                if(idx === 0) tr.classList.add('first-row');
+                if(idx === this.arrIndvValues.length - 1) tr.classList.add('last-row');
+
+                const elem = indvValue.domElem;
+
+                //if(elem.querySelector('.is-empty')) tr.classList.add('value-is-empty');
 
                 tr.appendChild(elem);
+
                 docFrag.appendChild(tr);
             });
             
@@ -110,27 +132,27 @@ Object.defineProperties(Value.prototype, {
     }
 });
 
-//Constructor function to instantiate a LabelValue object
-export default function LabelValue(label, value) {
+//Constructor function to instantiate a label and array of individual value objects
+export default function LabelArrValues(label, values) {
     this.lbl = new Label(label);
-    this.val = new Value(value);
+    this.arrVals = new ArrValues(values);
 }
 
 //Shared label/value pair functionality
-Object.defineProperties(LabelValue.prototype, {
+Object.defineProperties(LabelArrValues.prototype, {
     valueEmpty: {
-        get: function() { return this.val.toString() === '' }
+        get: function() { return this.arrVals.length === 0 }
     },
     toString: {
-        value: function() { return String(this.val) ? `${this.lbl}: ${this.val}` : '' }
+        value: function() { return String(this.arrVals) ? `${this.lbl}: ${this.arrVals}` : '' }
     },
     domElems: {
         get: function() {
             //A DocumentFragment containing one or more tr elements containing the data
-            const docFrag = this.val.domElems('td');;
+            const docFrag = this.arrVals.domElems;
 
             //Get the data label as a th element
-            const th = this.lbl.domElem('th')
+            const th = this.lbl.domElem('th');
 
             //Make the header the first child of the first row element
             const firstRow = docFrag.firstChild;

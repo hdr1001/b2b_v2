@@ -24,7 +24,7 @@ import CcLeiRec from './js/components/ccLeiRec.js';
 import CcLeiRecTxt from './js/components/ccLeiRecTxt.js';
 import { LEIs } from './assets/data/LEIs.js';
 import LeiRec from './js/gleif/leiRec.js';
-import LabelValue from './js/ui/labelValue.js';
+import LabelArrValues from './js/ui/labelValue.js';
 import LabelValues from './js/ui/labelValues.js';
 import RptSection from './js/ui/rptSection.js';
 import B2bReport from './js/components/b2bReport.js';
@@ -66,22 +66,27 @@ document.querySelector('#app-main').innerHTML = `
   </dialog>
 `;
 
+const leiRec = new LeiRec(LEIs[1]);
+
+//document.querySelector('#app-main').appendChild(new LabelArrValues('LEI', leiRec.attribs?.lei).domElems);
+document.querySelector('#app-main').appendChild(new LabelArrValues('Name', leiRec.entity.legalName.name).domElems);
+/*
 const b2bReport = document.createElement('b2b-report');
 document.querySelector('#app-main').appendChild(b2bReport);
-
+/*
 setInterval(() => {
   let idx = +b2bReport.getAttribute('b2b-key') + 1;
   if(idx > 14) idx = 0;
   b2bReport.setAttribute('b2b-key', idx)
 }, 2500);
-/*
+
 const leiRec = new LeiRec(LEIs[1]);
 
-const lvs = new LabelValues([
-    new LabelValue('LEI', leiRec.attribs?.lei),
-    new LabelValue('Name', leiRec.entity.legalName.name),
-    new LabelValue('Other name(s)', leiRec.entity.otherNames.map(elem => elem.name)),
-    new LabelValue('Legal address', leiRec.entity.legalAddress.toArr())
+const lvs = new LabelArrValues([
+    new LabelArrValue('LEI', leiRec.attribs?.lei),
+    new LabelArrValue('Name', leiRec.entity.legalName.name),
+    new LabelArrValue('Other name(s)', leiRec.entity.otherNames.map(elem => elem.name)),
+    new LabelArrValue('Legal address', leiRec.entity.legalAddress.toArr())
 ]);
 
 //const aLV = new LabelValue('LEI', leiRec.attribs?.lei);
@@ -93,7 +98,7 @@ const rptSection = new RptSection('LEI record', lvs);
 console.log(rptSection.toString());
 
 document.querySelector('#app-main').appendChild(rptSection.domElems);
-*/
+
 /*
 const leiRecSection01 = document.createElement('lei-rec');
 document.querySelector('#app-main').appendChild(leiRecSection01);

@@ -21,8 +21,7 @@
 
 import { LEIs } from '../../assets/data/LEIs.js';
 import LeiRec from '../gleif/leiRec.js';
-import LabelValue from '../ui/labelValue.js';
-import LabelValues from '../ui/labelValues.js';
+import LabelArrValue from '../ui/labelValue.js';
 import RptSection from '../ui/rptSection.js';
 const cssB2bReport = new URL('./css/b2bReport.css', import.meta.url).href;
 
@@ -33,10 +32,10 @@ function getSections(b2bRec) {
         const legalAddr = b2bRec.entity.legalAddr;
         const hqAddr = b2bRec.entity.hqAddr;
 
-        retArr.push(new LabelValue('Legal address', legalAddr.toArr()));
+        retArr.push( 'Legal address', legalAddr.toArr() );
         
         if(!legalAddr.sameValueAs(hqAddr)) {
-            retArr.push(new LabelValue('HQ address', hqAddr.toArr()));
+            retArr.push(new LabelValue('HQ address', { value: hqAddr.toArr() }));
         }
 
         return retArr;
@@ -45,12 +44,23 @@ function getSections(b2bRec) {
     return new Map([
         ['lei_name', new RptSection( 'LEI record', new LabelValues(
             [
-                new LabelValue('LEI', b2bRec.attribs?.lei),
-                new LabelValue('Name', b2bRec.entity?.legalName?.name),
-                new LabelValue('Other name(s)', b2bRec.entity?.otherNames.map(elem => elem.name))
+                new LabelValue(
+                    'LEI',
+                    b2bRec.attribs?.lei
+                ),
+                new LabelValue(
+                    'Name',
+                    b2bRec.entity?.legalName?.name
+                ),
+/*                new LabelValue(
+                    'Other name(s)',
+                    b2bRec.entity?.otherNames.map(elem => ({ value: elem.name, opts: { addtlInfo: elem.type } })),
+                ) */
             ].filter(labelValue => labelValue !== null && !labelValue.valueEmpty)
         ))],
-        ['address(es)', new RptSection( 'Addresses', new LabelValues( getAddrArr(b2bRec) ))]
+        ['address(es)', new RptSection( 'Addresses', new LabelValues(
+            getAddrArr(b2bRec)
+        ))]
     ])
 }
 
@@ -63,7 +73,7 @@ export default class B2bReport extends HTMLElement {
         this.attachShadow({ mode: 'open' });
 
         //The b2bKey property contains B2B key value
-        this.b2bKey = this.getAttribute('b2b-key') || '0';
+        this.b2bKey = this.getAttribute('b2b-key') || '14';
 
         //Create an B2B object wrapper
         this.b2bRec = new LeiRec(LEIs[this.b2bKey]);

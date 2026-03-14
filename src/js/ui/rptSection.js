@@ -20,22 +20,22 @@
 // ***************************************************************** */
 
 import globals from '../globals.js';
-import LabelValues from './labelValues.js';
+import LabelArrValues from './labelValues.js';
 
 //Constructor function to instantiate a report section
-export default function RptSection(caption, lblVals) {
-    if(!lblVals instanceof LabelValues) {
-        throw new Error('The lblvals argument must be a LabelValues object');
+export default function RptSection(caption, lblArrVals) {
+    if(!lblArrVals instanceof LabelArrValues) {
+        throw new Error('The lblArrVals argument must be a LabelArrValues object');
     }
 
     this.caption = caption;
-    this.lblVals = lblVals;
+    this.lblArrVals = lblArrVals;
 }
 
 //Shared RptSection object functionality
 Object.defineProperties(RptSection.prototype, {
     toString: {
-        value: function() { return this.caption + globals.newLineSep + this.lblVals.toString() }
+        value: function() { return this.caption + globals.newLineSep + this.lblArrVals.toString() }
     },
     domElems: {
         get: function() {
@@ -62,7 +62,7 @@ Object.defineProperties(RptSection.prototype, {
             }
 
             const tbody = document.createElement('tbody');
-            tbody.appendChild(this.lblVals.domElems);
+            tbody.appendChild(this.lblArrVals.domElems);
 
             table.appendChild(tbody);
 
