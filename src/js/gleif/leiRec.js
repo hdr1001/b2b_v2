@@ -23,7 +23,7 @@ import globals from '../globals.js';
 import { sDateIsoToYYYYMMDD } from '../utils.js';
 import { entLegalForms } from '../../assets/codes/entityLegalForms.js';
 import { entRegAuthorities as entRegAuths } from '../../assets/codes/entityRegAuths.js';
-import LabelValue from '../ui/labelValue.js';
+//import LabelValue from '../ui/labelValue.js';
 
 //Convert an address object to an array, filtering out null values
 function addrToArr() {
@@ -102,7 +102,7 @@ function LeiRec(objLEI) {
         this.entity.hqAddr = hqAddr;
     }
 }
-
+/*
 //A template for producing a record consisting of label/value pairs
 Object.defineProperty(LeiRec.prototype, 'toLabelValueRec', {
     get: function() {
@@ -122,7 +122,7 @@ Object.defineProperty(LeiRec.prototype, 'toLabelValueRec', {
         ].filter(elem => elem !== null);
     }
 });
-
+*/
 LeiRec.prototype.toString = function() {
     return this.toLabelValueRec
         .map( elem => String(elem) )

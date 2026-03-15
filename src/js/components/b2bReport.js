@@ -21,7 +21,7 @@
 
 import { LEIs } from '../../assets/data/LEIs.js';
 import LeiRec from '../gleif/leiRec.js';
-import LabelArrValue from '../ui/labelValue.js';
+import LabelArrValues from '../ui/lvsLabelArrValues.js';
 import RptSection from '../ui/rptSection.js';
 const cssB2bReport = new URL('./css/b2bReport.css', import.meta.url).href;
 

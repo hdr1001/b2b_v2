@@ -1,7 +1,7 @@
 /* ********************************************************************
 //
 // Business-to-business (B2B) application v2
-// LEI record component CSS
+// Label class code for managing label/values   
 //
 // Copyright 2026 Hans de Rooij 
 //
@@ -19,32 +19,25 @@
 //
 // ***************************************************************** */
 
-section.lei-rec,
-section.lei-rec-txt {
-    max-width: 320px;
-    min-width: 180px;
-
-    margin: 1em 0.5em;
-    padding: 0 0.5em;
-
-    text-align: left;
-
-    border: 2px solid #bccfde;
-    border-radius: 8px;
+//Constructor function to instantiate a Label object
+export function Label(desc) {
+    this.desc = desc;
 }
 
-section.lei-rec table {
-    width: 100%;
-}
+//Shared label object functionality
+Object.defineProperties(Label.prototype, {
+    toString: {
+        value: function() { return String(this.desc) }
+    },
+    domElem: {
+        get: function() {
+            const elem = document.createElement('th');
 
-section.lei-rec table caption {
-    align-items: center;
+            elem.textContent = this.toString();
 
-    color: #4d718c;
-}
+            elem.classList.add('label');
 
-section.lei-rec-txt pre {
-    color: #4d718c;
-
-    white-space: pre-wrap;
-}
+            return elem;
+        }
+    }
+});

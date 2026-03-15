@@ -20,17 +20,12 @@
 // ***************************************************************** */
 
 import setupEventListeners from './evntListen.js';
-import CcLeiRec from './js/components/ccLeiRec.js';
-import CcLeiRecTxt from './js/components/ccLeiRecTxt.js';
 import { LEIs } from './assets/data/LEIs.js';
 import LeiRec from './js/gleif/leiRec.js';
-import LabelArrValues from './js/ui/labelValue.js';
-import LabelValues from './js/ui/labelValues.js';
+import LabelArrValues from './js/ui/lvsLabelArrValues.js';
 import RptSection from './js/ui/rptSection.js';
 import B2bReport from './js/components/b2bReport.js';
 
-customElements.define('lei-rec', CcLeiRec);
-customElements.define('lei-rec-txt', CcLeiRecTxt);
 customElements.define('b2b-report', B2bReport);
 
 console.log('Top of main.js');
@@ -68,8 +63,17 @@ document.querySelector('#app-main').innerHTML = `
 
 const leiRec = new LeiRec(LEIs[1]);
 
-//document.querySelector('#app-main').appendChild(new LabelArrValues('LEI', leiRec.attribs?.lei).domElems);
-document.querySelector('#app-main').appendChild(new LabelArrValues('Name', leiRec.entity.legalName.name).domElems);
+const arrLavs = [
+    new LabelArrValues('LEI', leiRec.attribs?.lei),
+    new LabelArrValues('Name', leiRec.entity.legalName.name),
+    new LabelArrValues('Other name(s)', leiRec.entity.otherNames.map(elem => elem.name))
+];
+
+const rptSection = new RptSection('LEI record', arrLavs);
+
+document.querySelector('#app-main').appendChild(rptSection.domElems);
+
+console.log(rptSection.toString());
 /*
 const b2bReport = document.createElement('b2b-report');
 document.querySelector('#app-main').appendChild(b2bReport);

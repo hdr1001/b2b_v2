@@ -1,7 +1,7 @@
 /* ********************************************************************
 //
 // Business-to-business (B2B) application v2
-// Label/value pairs are grouped in sections
+// Report section made up of (multiple) label/values pairs 
 //
 // Copyright 2026 Hans de Rooij 
 //
@@ -20,22 +20,34 @@
 // ***************************************************************** */
 
 import globals from '../globals.js';
-import LabelArrValues from './labelValues.js';
+import LabelArrValues from './lvsLabelArrValues.js';
 
 //Constructor function to instantiate a report section
-export default function RptSection(caption, lblArrVals) {
-    if(!lblArrVals instanceof LabelArrValues) {
-        throw new Error('The lblArrVals argument must be a LabelArrValues object');
+export default function RptSection(caption, arrLblArrVals) {
+    if(!Array.isArray(arrLblArrVals)) {
+        if((arrLblArrVals instanceof LabelArrValues)) {
+            this.arrLblArrVals = [ arrLblArrVals ]
+        }
+        else {
+            throw new Error('The arrLblArrVals argument must be an array of LabelArrValues objects');
+        }
+    }
+    else {
+        if(arrLblArrVals.filter(lav => !(lav instanceof LabelArrValues)).length > 0) {
+            throw new Error('The arrLblArrVals argument must be an array of LabelArrValues objects');
+        }
+        else {
+            this.arrLblArrVals = arrLblArrVals;
+        }
     }
 
     this.caption = caption;
-    this.lblArrVals = lblArrVals;
 }
 
 //Shared RptSection object functionality
 Object.defineProperties(RptSection.prototype, {
     toString: {
-        value: function() { return this.caption + globals.newLineSep + this.lblArrVals.toString() }
+        value: function() { return this.caption + globals.newLineSep + this.arrLblArrVals.join(globals.newLineSep) }
     },
     domElems: {
         get: function() {
@@ -62,7 +74,7 @@ Object.defineProperties(RptSection.prototype, {
             }
 
             const tbody = document.createElement('tbody');
-            tbody.appendChild(this.lblArrVals.domElems);
+            this.arrLblArrVals.forEach(lblArrVal => tbody.appendChild(lblArrVal.domElems));
 
             table.appendChild(tbody);
 
