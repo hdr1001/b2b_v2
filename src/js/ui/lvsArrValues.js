@@ -69,10 +69,6 @@ Object.defineProperties(ArrValues.prototype, {
 
                 const elem = indvValue.domElem;
 
-                if(elem.querySelector('.is-empty')) {
-                    tr.classList.add('value-is-empty');
-                }
-
                 tr.appendChild(elem);
 
                 docFrag.appendChild(tr);

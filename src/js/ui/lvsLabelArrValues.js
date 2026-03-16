@@ -46,11 +46,14 @@ Object.defineProperties(LabelArrValues.prototype, {
 
             //Make the header the first child of the first row element
             const firstRow = docFrag.firstChild;
-            firstRow.insertBefore(th, firstRow.firstChild);
 
-            //Add, if necessary, a rowspan attribute to the header cell
-            if(docFrag.children.length > 1) {
-                th.setAttribute('rowspan', docFrag.children.length);
+            if(firstRow) {
+                firstRow.insertBefore(th, firstRow.firstChild);
+
+                //Add, if necessary, a rowspan attribute to the header cell
+                if(docFrag.children.length > 1) {
+                    th.setAttribute('rowspan', docFrag.children.length);
+                }
             }
 
             return docFrag;

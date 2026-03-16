@@ -21,47 +21,36 @@
 
 import { LEIs } from '../../assets/data/LEIs.js';
 import LeiRec from '../gleif/leiRec.js';
-import LabelArrValues from '../ui/lvsLabelArrValues.js';
 import RptSection from '../ui/rptSection.js';
+import LabelArrValues from '../ui/lvsLabelArrValues.js';
 const cssB2bReport = new URL('./css/b2bReport.css', import.meta.url).href;
 
 function getSections(b2bRec) {
-    function getAddrArr(b2bRec) {
+    function getArrAddrLavs(b2bRec) {
         const retArr = [];
 
         const legalAddr = b2bRec.entity.legalAddr;
         const hqAddr = b2bRec.entity.hqAddr;
 
-        retArr.push( 'Legal address', legalAddr.toArr() );
-        
+        retArr.push( new LabelArrValues( 'Legal address', legalAddr.toArr() ));
+
         if(!legalAddr.sameValueAs(hqAddr)) {
-            retArr.push(new LabelValue('HQ address', { value: hqAddr.toArr() }));
+            retArr.push( new LabelArrValues( 'HQ address', hqAddr.toArr() ));
         }
 
         return retArr;
     }
 
-    return new Map([
-        ['lei_name', new RptSection( 'LEI record', new LabelValues(
+    return [
+        new RptSection( 'LEI record', 
             [
-                new LabelValue(
-                    'LEI',
-                    b2bRec.attribs?.lei
-                ),
-                new LabelValue(
-                    'Name',
-                    b2bRec.entity?.legalName?.name
-                ),
-/*                new LabelValue(
-                    'Other name(s)',
-                    b2bRec.entity?.otherNames.map(elem => ({ value: elem.name, opts: { addtlInfo: elem.type } })),
-                ) */
-            ].filter(labelValue => labelValue !== null && !labelValue.valueEmpty)
-        ))],
-        ['address(es)', new RptSection( 'Addresses', new LabelValues(
-            getAddrArr(b2bRec)
-        ))]
-    ])
+                new LabelArrValues( 'LEI', b2bRec.attribs?.lei ),
+                new LabelArrValues( 'Name', b2bRec.entity.legalName.name ),
+                new LabelArrValues( 'Other name(s)', b2bRec.entity.otherNames.map(elem => elem.name) )
+            ].filter(lav => lav !== null && !lav.valueEmpty)
+        ),
+        new RptSection( 'Address(es)', getArrAddrLavs(b2bRec) )
+    ];
 }
 
 //A HTML5 B2B report custom component class
@@ -73,7 +62,7 @@ export default class B2bReport extends HTMLElement {
         this.attachShadow({ mode: 'open' });
 
         //The b2bKey property contains B2B key value
-        this.b2bKey = this.getAttribute('b2b-key') || '14';
+        this.b2bKey = this.getAttribute('b2b-key') || '0';
 
         //Create an B2B object wrapper
         this.b2bRec = new LeiRec(LEIs[this.b2bKey]);
@@ -108,9 +97,7 @@ export default class B2bReport extends HTMLElement {
 
         this.shadowRoot.appendChild(b2bRptDiv);
 
-        for(const [key, section] of this.sections.entries()) {
-            b2bRptDiv.appendChild(section.domElems)
-        }
+        this.sections.forEach(section => b2bRptDiv.appendChild(section.domElems));
     }
 
     //When the component is removed from the DOM, clean up references
@@ -133,8 +120,6 @@ export default class B2bReport extends HTMLElement {
         const b2bRptDiv = this.shadowRoot.querySelector('div.b2b-report');
     
         //Append a table with label/value pairs for the current LEI record
-        for(const [key, section] of this.sections.entries()) {
-            b2bRptDiv.appendChild(section.domElems)
-        }
+        this.sections.forEach(section => b2bRptDiv.appendChild(section.domElems));
     }
 }

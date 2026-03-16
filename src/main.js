@@ -20,10 +20,6 @@
 // ***************************************************************** */
 
 import setupEventListeners from './evntListen.js';
-import { LEIs } from './assets/data/LEIs.js';
-import LeiRec from './js/gleif/leiRec.js';
-import LabelArrValues from './js/ui/lvsLabelArrValues.js';
-import RptSection from './js/ui/rptSection.js';
 import B2bReport from './js/components/b2bReport.js';
 
 customElements.define('b2b-report', B2bReport);
@@ -61,66 +57,20 @@ document.querySelector('#app-main').innerHTML = `
   </dialog>
 `;
 
-const leiRec = new LeiRec(LEIs[1]);
-
-const arrLavs = [
-    new LabelArrValues('LEI', leiRec.attribs?.lei),
-    new LabelArrValues('Name', leiRec.entity.legalName.name),
-    new LabelArrValues('Other name(s)', leiRec.entity.otherNames.map(elem => elem.name))
-];
-
-const rptSection = new RptSection('LEI record', arrLavs);
-
-document.querySelector('#app-main').appendChild(rptSection.domElems);
-
-console.log(rptSection.toString());
-/*
+//Instantiate a B2B report component and add it to the page
 const b2bReport = document.createElement('b2b-report');
 document.querySelector('#app-main').appendChild(b2bReport);
-/*
+
+//Update the B2B report component every 5 seconds
+//with a different LEI record from the test data
 setInterval(() => {
   let idx = +b2bReport.getAttribute('b2b-key') + 1;
+  
   if(idx > 14) idx = 0;
+
   b2bReport.setAttribute('b2b-key', idx)
-}, 2500);
+}, 5000);
 
-const leiRec = new LeiRec(LEIs[1]);
-
-const lvs = new LabelArrValues([
-    new LabelArrValue('LEI', leiRec.attribs?.lei),
-    new LabelArrValue('Name', leiRec.entity.legalName.name),
-    new LabelArrValue('Other name(s)', leiRec.entity.otherNames.map(elem => elem.name)),
-    new LabelArrValue('Legal address', leiRec.entity.legalAddress.toArr())
-]);
-
-//const aLV = new LabelValue('LEI', leiRec.attribs?.lei);
-//const aLV = new LabelValue('Name', leiRec.entity.legalName.name);
-//const aLV = new LabelValue('Other name(s)', leiRec.entity.otherNames.map(elem => elem.name));
-
-const rptSection = new RptSection('LEI record', lvs);
-
-console.log(rptSection.toString());
-
-document.querySelector('#app-main').appendChild(rptSection.domElems);
-
-/*
-const leiRecSection01 = document.createElement('lei-rec');
-document.querySelector('#app-main').appendChild(leiRecSection01);
-*/ /*
-const leiRecSection01 = document.createElement('lei-rec-txt');
-leiRecSection01.setAttribute('idx', '13');
-
-const leiRecSection02 = document.createElement('lei-rec-txt');
-leiRecSection02.setAttribute('idx', '3');
-
-const leiRecSection03 = document.createElement('lei-rec-txt');
-leiRecSection03.setAttribute('idx', '5');
-
-//Add the custom components for the LEI records
-document.querySelector('#app-main').appendChild(leiRecSection01);
-document.querySelector('#app-main').appendChild(leiRecSection02);
-document.querySelector('#app-main').appendChild(leiRecSection03);
-*/
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM content loaded');
 

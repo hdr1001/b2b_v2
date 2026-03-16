@@ -20,10 +20,6 @@
 // ***************************************************************** */
 
 import globals from '../globals.js';
-import { sDateIsoToYYYYMMDD } from '../utils.js';
-import { entLegalForms } from '../../assets/codes/entityLegalForms.js';
-import { entRegAuthorities as entRegAuths } from '../../assets/codes/entityRegAuths.js';
-//import LabelValue from '../ui/labelValue.js';
 
 //Convert an address object to an array, filtering out null values
 function addrToArr() {
@@ -101,33 +97,6 @@ function LeiRec(objLEI) {
 
         this.entity.hqAddr = hqAddr;
     }
-}
-/*
-//A template for producing a record consisting of label/value pairs
-Object.defineProperty(LeiRec.prototype, 'toLabelValueRec', {
-    get: function() {
-        return [
-            new LabelValue( 'LEI', this.attribs?.lei ),
-            new LabelValue( 'Name', this.entity?.legalName?.name ),
-            new LabelValue( 'Other names', this.entity?.otherNames ),
-            new LabelValue( 'Legal address', this.entity?.legalAddress),
-            this.entity?.legalAddress && this.entity.legalAddress.sameValueAs(this.entity?.headquartersAddress)
-                ? null
-                : new LabelValue( 'HQ address', this.entity?.headquartersAddress),
-            new LabelValue( 'Legal form', entLegalForms.get(this.entity?.legalForm?.id)?.desc || this.entity?.legalForm?.id ),
-            new LabelValue( 'Registration number', this.entity?.registeredAs ),
-            new LabelValue( 'Registered at', entRegAuths.get(this.entity?.registeredAt?.id)?.desc || this.entity?.registeredAt?.id ),
-            new LabelValue( 'Status', this.entity?.status ),
-            new LabelValue( 'Published on', sDateIsoToYYYYMMDD(this.meta?.goldenCopy?.publishDate))
-        ].filter(elem => elem !== null);
-    }
-});
-*/
-LeiRec.prototype.toString = function() {
-    return this.toLabelValueRec
-        .map( elem => String(elem) )
-        .filter( elem => elem !== '' )
-        .join( globals.newLineSep );
 }
 
 export default LeiRec;
