@@ -21,37 +21,8 @@
 
 import { LEIs } from '../../assets/data/LEIs.js';
 import LeiRec from '../gleif/leiRec.js';
-import RptSection from '../ui/rptSection.js';
-import LabelArrValues from '../ui/lvsLabelArrValues.js';
+import { getLeiSections } from '../gleif/leiLavs.js';
 const cssB2bReport = new URL('./css/b2bReport.css', import.meta.url).href;
-
-function getSections(b2bRec) {
-    function getArrAddrLavs(b2bRec) {
-        const retArr = [];
-
-        const legalAddr = b2bRec.entity.legalAddr;
-        const hqAddr = b2bRec.entity.hqAddr;
-
-        retArr.push( new LabelArrValues( 'Legal address', legalAddr.toArr() ));
-
-        if(!legalAddr.sameValueAs(hqAddr)) {
-            retArr.push( new LabelArrValues( 'HQ address', hqAddr.toArr() ));
-        }
-
-        return retArr;
-    }
-
-    return [
-        new RptSection( 'LEI record', 
-            [
-                new LabelArrValues( 'LEI', b2bRec.attribs?.lei ),
-                new LabelArrValues( 'Name', b2bRec.entity.legalName.name ),
-                new LabelArrValues( 'Other name(s)', b2bRec.entity.otherNames.map(elem => elem.name) )
-            ].filter(lav => lav !== null && !lav.valueEmpty)
-        ),
-        new RptSection( 'Address(es)', getArrAddrLavs(b2bRec) )
-    ];
-}
 
 //A HTML5 B2B report custom component class
 export default class B2bReport extends HTMLElement {
@@ -68,7 +39,7 @@ export default class B2bReport extends HTMLElement {
         this.b2bRec = new LeiRec(LEIs[this.b2bKey]);
 
         //Array of report sections
-        this.sections = getSections(this.b2bRec);
+        this.sections = getLeiSections(this.b2bRec);
     }
 
     //Observe the 'b2bKey' attribute for changes
@@ -112,7 +83,7 @@ export default class B2bReport extends HTMLElement {
     renderComponentUpdate() {
         this.b2bRec = new LeiRec(LEIs[this.b2bKey]);
 
-        this.sections = getSections(this.b2bRec)
+        this.sections = getLeiSections(this.b2bRec)
 
         //Reset the report content
         this.shadowRoot.querySelectorAll('.rpt-section-wrapper').forEach(rptSection => rptSection.remove());
