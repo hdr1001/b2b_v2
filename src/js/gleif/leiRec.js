@@ -23,22 +23,42 @@ import globals from '../globals.js';
 
 //Convert an address object to an array, filtering out null values
 function addrToArr() {
+    const { addressLines, postalCode, city, region, country } = this;
+
+    let postalCodeBeforeCity = true;
+    let postalCodeCitySep = ' ';
+    let postalCodeCityLine = city.length ? [ city ] : [];
+
     let arrLeiAddr;
 
-    if(Array.isArray(this.addressLines) && this.addressLines.length) {
-        arrLeiAddr = Array.from(this.addressLines)
+    if(Array.isArray(addressLines) && addressLines.length) {
+        arrLeiAddr = Array.from(addressLines)
     }
     else {
         arrLeiAddr = [];
     }
 
-    arrLeiAddr.push(this.postalCode);
+    switch(country) {
+        case 'US':
+            postalCodeBeforeCity = false;
+            postalCodeCitySep = ', ';
+            break;
+    }
 
-    arrLeiAddr.push(this.city);
+    if(postalCodeBeforeCity) {
+        if(postalCode) { postalCodeCityLine.unshift(postalCode) }
+    }
+    else {
+        if(postalCode) { postalCodeCityLine.push(postalCode) }
+    }
 
-    arrLeiAddr.push(this.region);
+    if(postalCodeCityLine.length) {
+        arrLeiAddr.push(postalCodeCityLine.join(postalCodeCitySep));
+    }
 
-    arrLeiAddr.push(this.country);
+    //arrLeiAddr.push(region);
+
+    arrLeiAddr.push(country);
 
     return arrLeiAddr.filter(elem => elem != null);
 }
