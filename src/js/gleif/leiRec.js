@@ -23,38 +23,53 @@ import globals from '../globals.js';
 
 //Convert an address object to an array, filtering out null values
 function addrToArr() {
+    const addrConversion = {
+        postalCodeBeforeCity: true,
+        postalCodeCitySep: '',
+        regionBeforePostalCode: false
+    };
+
     const { addressLines, postalCode, city, region, country } = this;
 
-    let postalCodeBeforeCity = true;
-    let postalCodeCitySep = ' ';
-    let postalCodeCityLine = city.length ? [ city ] : [];
+    const cleanRegion = region && region.startsWith( country + '-' ) ? region.substring(3) : region;
 
-    let arrLeiAddr;
+    let arrLeiAddr = [];
 
     if(Array.isArray(addressLines) && addressLines.length) {
         arrLeiAddr = Array.from(addressLines)
     }
-    else {
-        arrLeiAddr = [];
-    }
+
+    let postalCodeCityLine = city.length ? [ city ] : [];
 
     switch(country) {
+        case 'AU':
+            addrConversion.postalCodeBeforeCity = false;
+            addrConversion.regionBeforePostalCode = true;
+            break;
+        case 'CA':
         case 'US':
-            postalCodeBeforeCity = false;
-            postalCodeCitySep = ', ';
+            addrConversion.postalCodeBeforeCity = false;
+            addrConversion.cityPostalCodeComma = ','
+            addrConversion.regionBeforePostalCode = true;
             break;
     }
 
-    if(postalCodeBeforeCity) {
-        if(postalCode) { postalCodeCityLine.unshift(postalCode) }
-    }
-    else {
-        if(postalCode) { postalCodeCityLine.push(postalCode) }
+    if(postalCode) {
+        if(addrConversion.postalCodeBeforeCity) { //Postalcode should come before city                
+            if(addrConversion.postalCodeCitySep && postalCodeCityLine.length) postalCodeCityLine.unshift(addrConversion.postalCodeCitySep);
+
+            postalCodeCityLine.unshift(postalCode);
+        }
+        else { //Postalcode should come after city
+            if(addrConversion.cityPostalCodeComma && postalCodeCityLine.length) postalCodeCityLine[0] += addrConversion.cityPostalCodeComma;
+
+            if(addrConversion.regionBeforePostalCode && cleanRegion) postalCodeCityLine.push(cleanRegion);
+
+            postalCodeCityLine.push(postalCode);
+        }
     }
 
-    if(postalCodeCityLine.length) {
-        arrLeiAddr.push(postalCodeCityLine.join(postalCodeCitySep));
-    }
+    arrLeiAddr.push(postalCodeCityLine.join(' '));
 
     //arrLeiAddr.push(region);
 
