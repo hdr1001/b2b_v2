@@ -30,11 +30,23 @@ export function getLeiSections(b2bRec) {
 
         const legalAddr = b2bRec.entity.legalAddr;
         const hqAddr = b2bRec.entity.hqAddr;
+        const otherAddr = b2bRec.entity.otherAddresses;
 
         retArr.push( new LabelArrValues( 'Legal address', legalAddr.toArr() ));
 
         if(!legalAddr.sameValueAs(hqAddr)) {
             retArr.push( new LabelArrValues( 'HQ address', hqAddr.toArr() ));
+        }
+
+        if(otherAddr && otherAddr.length > 0) {
+            otherAddr.forEach((elem, idx) => {
+                if( idx > 0 ) {
+                    if( elem.sameValueAs(otherAddr[ idx - 1 ]) ) return;
+                }
+
+                //Only add other address if it is different from legal and hq address
+                retArr.push( new LabelArrValues( `Other address ${idx + 1}`, elem.toArr() ));
+            })
         }
 
         return retArr;

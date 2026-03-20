@@ -132,6 +132,16 @@ function LeiRec(objLEI) {
 
         this.entity.hqAddr = hqAddr;
     }
+
+    if(this.entity?.otherAddresses && this.entity.otherAddresses.length) {
+        //Array otherAddresses exists and is not empty
+        const otherAddrs = this.entity.otherAddresses;
+
+        //Add methods to return ...
+        otherAddrs.forEach(elem => elem.toString = addrToStr); //... a concatenated address
+        otherAddrs.forEach(elem => elem.sameValueAs = addrSameValueAs); //... a method to compare other address objects
+        otherAddrs.forEach(elem => elem.toArr = addrToArr); //... an array of address components
+    }
 }
 
 export default LeiRec;
