@@ -19,6 +19,7 @@
 //
 // ***************************************************************** */
 
+import { LEIs } from './assets/data/LEIs.js';
 import setupEventListeners from './evntListen.js';
 import B2bReport from './js/components/b2bReport.js';
 
@@ -61,12 +62,20 @@ document.querySelector('#app-main').innerHTML = `
 const b2bReport = document.createElement('b2b-report');
 document.querySelector('#app-main').appendChild(b2bReport);
 
+let doSkip = true;
+
+document.querySelector('#nav-contact').addEventListener('click', () => {
+  doSkip = !doSkip;
+});
+
 //Update the B2B report component every 5 seconds
 //with a different LEI record from the test data
 setInterval(() => {
+  if(doSkip) return;
+
   let idx = +b2bReport.getAttribute('b2b-key') + 1;
   
-  if(idx > 14) idx = 0;
+  if(idx > LEIs.length - 1) idx = 0;
 
   b2bReport.setAttribute('b2b-key', idx)
 }, 5000);
