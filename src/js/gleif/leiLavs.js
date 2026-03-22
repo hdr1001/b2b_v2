@@ -20,6 +20,7 @@
 // ***************************************************************** */
 
 import { entRegAuthorities as entRegAuths } from '../../assets/codes/entityRegAuths.js';
+import { isoCountries } from '../../assets/codes/isoCountries.js';
 import { entLegalForms } from '../../assets/codes/entityLegalForms.js';
 import LabelArrValues from '../ui/lvsLabelArrValues.js';
 import RptSection from '../ui/rptSection.js';
@@ -66,7 +67,7 @@ export function getLeiSections(b2bRec) {
             [
                 new LabelArrValues( 'Identifier', b2bRec.entity?.registeredAs ),
                 new LabelArrValues( 'Authority', entRegAuths.get(b2bRec.entity?.registeredAt?.id)?.desc || b2bRec.entity?.registeredAt?.id ),
-                new LabelArrValues( 'Jurisdiction', b2bRec.entity?.jurisdiction ),
+                new LabelArrValues( 'Jurisdiction', isoCountries.get(b2bRec.entity?.jurisdiction)?.name || b2bRec.entity?.jurisdiction ),
                 new LabelArrValues( 'Legal form', entLegalForms.get(b2bRec.entity?.legalForm?.id)?.desc || b2bRec.entity?.legalForm?.id ),
                 new LabelArrValues( 'Status', b2bRec.entity?.status )
             ]

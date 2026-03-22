@@ -20,6 +20,7 @@
 // ***************************************************************** */
 
 import globals from '../globals.js';
+import { isoCountries } from '../../assets/codes/isoCountries.js';
 
 //Check for a duplicate postal code (and city)
 function dupPostalCodeCity(arrLeiAddr, postalCode) {
@@ -104,9 +105,7 @@ function addrToArr() {
 
     arrLeiAddr.push(arrPostalCodeCityLine.join(' '));
 
-    //arrLeiAddr.push(region);
-
-    arrLeiAddr.push(country);
+    arrLeiAddr.push(isoCountries.get(country)?.name || country);
 
     return arrLeiAddr.filter(elem => elem != null);
 }
