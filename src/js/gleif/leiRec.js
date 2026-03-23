@@ -48,17 +48,11 @@ function dupPostalCodeCity(arrLeiAddr, postalCode) {
 
 //Convert an address object to an array, filtering out null values
 function addrToArr() {
-    const addrConversion = {
-        postalCodeBeforeCity: true,
-        postalCodeCitySep: '',
-        regionBeforePostalCode: false
-    };
-
     const { addressLines, postalCode, city, region, country } = this;
 
-    const cleanRegion = region && region.startsWith( country + '-' ) ? region.substring(3) : region;
+    const cleanRegion = region && region.startsWith( country + '-' ) ? region.slice(3) : region;
 
-    let sPostalCode, arrLeiAddr = [];
+    let arrLeiAddr = [], sPcCityLine;
 
     if(Array.isArray(addressLines) && addressLines.length) {
         arrLeiAddr = Array.from(addressLines)
@@ -66,44 +60,29 @@ function addrToArr() {
 
     switch(country) {
         case 'AU':
-            addrConversion.postalCodeBeforeCity = false;
-            addrConversion.regionBeforePostalCode = true;
+            sPcCityLine = `${city?.length ? city + ' ' : ''}${cleanRegion?.length ? cleanRegion + ' ' : ''}${postalCode?.length ? postalCode : ''}`;
             break;
         case 'CA':
         case 'US':
-            addrConversion.postalCodeBeforeCity = false;
-            addrConversion.cityPostalCodeComma = ','
-            addrConversion.regionBeforePostalCode = true;
+            sPcCityLine = `${city?.length ? city + ', ' : ''}${cleanRegion?.length ? cleanRegion + ' ' : ''}${postalCode?.length ? postalCode : ''}`;
             break;
         case 'CY':
-            if(postalCode) sPostalCode = country + '-' + postalCode;
+            sPcCityLine = `${postalCode?.length ? country + '-' + postalCode + ' ' : ''}${city?.length ? city : ''}`;
             break;
         case 'ES':
-            if(postalCode) sPostalCode = `/${country}/${postalCode}.- `;
+            sPcCityLine = `${postalCode?.length ? '/' + country + '/' + postalCode + '.- ' : ''}${city?.length ? city : ''}`;
             break;
         case 'FI':
-            if(dupPostalCodeCity(arrLeiAddr, postalCode)) arrLeiAddr.pop();
+//            if(dupPostalCodeCity(arrLeiAddr, postalCode)) arrLeiAddr.pop();
             break;
+        case 'GB':
+//            addrConversion.postalCodeOnLastLine = true;
+            break;
+        default:
+            sPcCityLine = `${postalCode?.length ? postalCode + ' ' : ''}${city?.length ? city : ''}`;
     }
 
-    let arrPostalCodeCityLine = city.length ? [ city ] : [];
-
-    if(postalCode) {
-        if(addrConversion.postalCodeBeforeCity) { //Postal code should come before city                
-            if(addrConversion.postalCodeCitySep && arrPostalCodeCityLine.length) arrPostalCodeCityLine.unshift(addrConversion.postalCodeCitySep);
-
-            arrPostalCodeCityLine.unshift(sPostalCode || postalCode);
-        }
-        else { //Postal code should come after city
-            if(addrConversion.cityPostalCodeComma && arrPostalCodeCityLine.length) arrPostalCodeCityLine[0] += addrConversion.cityPostalCodeComma;
-
-            if(addrConversion.regionBeforePostalCode && cleanRegion) arrPostalCodeCityLine.push(cleanRegion);
-
-            arrPostalCodeCityLine.push(sPostalCode || postalCode);
-        }
-    }
-
-    arrLeiAddr.push(arrPostalCodeCityLine.join(' '));
+    arrLeiAddr.push(sPcCityLine);
 
     arrLeiAddr.push(isoCountries.get(country)?.name || country);
 
