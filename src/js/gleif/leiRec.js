@@ -21,6 +21,7 @@
 
 import globals from '../globals.js';
 import { isoCountries } from '../../assets/codes/isoCountries.js';
+import { gbRegions } from '../../assets/codes/gbRegions.js';
 
 //Check for a duplicate postal code (and city)
 function dupPostalCodeCity(arrLeiAddr, postalCode) {
@@ -61,25 +62,28 @@ function addrToArr() {
 
     //Specifics of the postalcode & city line are very local
     switch(country) {
-        case 'AU':
+        case 'AU': //Australia
             arrLeiAddr.push(`${city?.length ? city + ' ' : ''}${cleanRegion?.length ? cleanRegion + ' ' : ''}${postalCode?.length ? postalCode : ''}`);
             break;
-        case 'CA':
-        case 'US':
+        case 'CA': //Canada
+        case 'US': //United States
             arrLeiAddr.push(`${city?.length ? city + ', ' : ''}${cleanRegion?.length ? cleanRegion + ' ' : ''}${postalCode?.length ? postalCode : ''}`);
             break;
-        case 'CY':
+        case 'CY': //Cyprus
             arrLeiAddr.push(`${postalCode?.length ? country + '-' + postalCode + ' ' : ''}${city?.length ? city : ''}`);
             break;
-        case 'ES':
+        case 'ES': //Spain
             arrLeiAddr.push(`${postalCode?.length ? '/' + country + '/' + postalCode + '.- ' : ''}${city?.length ? city : ''}`);
             break;
-        case 'GB':
+        case 'GB': //Great Britain
+        case 'GG': //Guernsey
+        case 'JE': //Jersey
+        case 'IM': //Isle of Man
             arrLeiAddr.push(city);
-            arrLeiAddr.push(cleanRegion);
+            arrLeiAddr.push(gbRegions.get(region) || cleanRegion);
             arrLeiAddr.push(postalCode);
             break;
-        case 'FI':
+        case 'FI': //Finland
             if(dupPostalCodeCity(arrLeiAddr, postalCode)) arrLeiAddr.pop(); //fall through intended
         default:
             arrLeiAddr.push(`${postalCode?.length ? postalCode + ' ' : ''}${city?.length ? city : ''}`);
