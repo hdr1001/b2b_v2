@@ -1,3 +1,14 @@
+// ***************************************************************** */
+//
+// The International Organization for Standardization maintains the 
+// copyright on the ISO country codes and related other code tables. 
+// The organization controls it's use carefully!
+//
+// For more information:
+// https://www.iso.org/iso-3166-country-codes.html 
+//
+// ***************************************************************** */
+
 export const gbRegions = new Map([
     [ 'GB-CAM', 'Cambridgeshire' ],
     [ 'GB-CMA', 'Cumbria' ],
