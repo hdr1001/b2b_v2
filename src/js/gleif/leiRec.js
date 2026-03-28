@@ -52,9 +52,14 @@ function dupPostalCodeCity(arrLeiAddr, postalCode) {
 function addrToArr() {
     const { addressLines, postalCode, city, region, country } = this;
 
-    const cleanRegion = region && region.startsWith( country + '-' ) ? region.slice(3) : region;
+    let cleanRegion = region && region.startsWith( country + '-' ) ? region.slice(3) : region;
 
     let arrLeiAddr = [];
+    
+    let leiAddrCountry = isoCountries.get(country)?.name || country;
+    let leiAddrRegion = '';
+
+    const addrComponents = [];
 
     //Address lines come first
     if(Array.isArray(addressLines) && addressLines.length) {
@@ -64,18 +69,44 @@ function addrToArr() {
     //Specifics of the region, postalcode & city line(s) are very local
     switch(country) {
         case 'AU': //Australia
-            arrLeiAddr.push(`${city?.length ? city + ' ' : ''}${cleanRegion?.length ? cleanRegion + ' ' : ''}${postalCode?.length ? postalCode : ''}`);
+        case 'NZ': //New Zealand
+            if(country === 'NZ') cleanRegion = null;
+
+            addrComponents.push(city);
+            addrComponents.push(cleanRegion);
+            addrComponents.push(postalCode);
+
+            arrLeiAddr.push(addrComponents.filter(elem => !!elem).join(' '));
+
             break;
         case 'CA': //Canada
         case 'US': //United States
-            arrLeiAddr.push(`${city?.length ? city + ', ' : ''}${cleanRegion?.length ? cleanRegion + ' ' : ''}${postalCode?.length ? postalCode : ''}`);
+        case 'LV': //Latvia
+            if(country === 'LV') cleanRegion = null;
+
+            addrComponents.push(city);
+            addrComponents.push(cleanRegion);
+            addrComponents.push(postalCode);
+
+            if(city && (cleanRegion || postalCode)) addrComponents[0] += ',';
+
+            arrLeiAddr.push(addrComponents.filter(elem => !!elem).join(' '));
+
             break;
         case 'CY': //Cyprus
         case 'HR': //Croatia
-            arrLeiAddr.push(`${postalCode?.length ? country + '-' + postalCode + ' ' : ''}${city?.length ? city : ''}`);
+            addrComponents.push(postalCode?.length ? country + '-' + postalCode : '');
+            addrComponents.push(city);
+
+            arrLeiAddr.push(addrComponents.filter(elem => !!elem).join(' '));
+
             break;
         case 'ES': //Spain
-            arrLeiAddr.push(`${postalCode?.length ? '/' + country + '/' + postalCode + '.- ' : ''}${city?.length ? city : ''}`);
+            addrComponents.push(postalCode?.length ? '/' + country + '/' + postalCode + '.- ' : '');
+            addrComponents.push(city);
+
+            arrLeiAddr.push(addrComponents.filter(elem => !!elem).join(' '));
+
             break;
         case 'GB': //Great Britain
         case 'GG': //Guernsey
@@ -83,36 +114,49 @@ function addrToArr() {
         case 'IE': //Ireland
         case 'IM': //Isle of Man
             arrLeiAddr.push(city);
+
             if(region) {
                 switch(country) {
                     case 'GB':
                         arrLeiAddr.push(gbRegions.get(region) || cleanRegion);
                         break;
                     case 'IE':
-                        arrLeiAddr.push(ieRegions.get(region) || cleanRegion);
-                        if(arrLeiAddr[arrLeiAddr.length - 1]) {
-                            arrLeiAddr[arrLeiAddr.length - 1] = 'Co. ' + arrLeiAddr[arrLeiAddr.length - 1]
+                        leiAddrRegion = ieRegions.get(region);
+                        if(leiAddrRegion) {
+                            arrLeiAddr.push('Co. ' + leiAddrRegion)
+                        }
+                        else {
+                            if(cleanRegion) arrLeiAddr.push(cleanRegion)
                         }
                         break;
                     default:
                         arrLeiAddr.push(cleanRegion);
                 }
             }
+
             arrLeiAddr.push(postalCode);
+
             break;
         case 'HK': //Hong Kong
+        case 'JP': //Japan
             arrLeiAddr.push(city?.length ? city : '');
+
+            if(country === 'JP' && postalCode) leiAddrCountry = postalCode + ' ' + leiAddrCountry
+
             break;
         case 'FI': //Finland
             if(dupPostalCodeCity(arrLeiAddr, postalCode)) arrLeiAddr.pop(); //fall through intended
         default:
-            arrLeiAddr.push(`${postalCode?.length ? postalCode + ' ' : ''}${city?.length ? city : ''}`);
+            addrComponents.push(postalCode);
+            addrComponents.push(city);
+
+            arrLeiAddr.push(addrComponents.filter(elem => !!elem).join(' '));
     }
 
     //Add the country name/ISO code
-    arrLeiAddr.push(isoCountries.get(country)?.name || country);
+    arrLeiAddr.push(leiAddrCountry);
 
-    return arrLeiAddr.filter(elem => elem != null);
+    return arrLeiAddr.filter(elem => (elem != null || elem === ''));
 }
 
 //Convert an address object to a concatenated string
