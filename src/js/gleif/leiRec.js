@@ -48,17 +48,17 @@ function dupPostalCodeCity(arrLeiAddr, postalCode) {
     return false;
 }
 
-//Convert an address object to an array, filtering out null values
+//Convert an address object to a localized array, filtering out null values
 function addrToArr() {
     const { addressLines, postalCode, city, region, country } = this;
 
     let cleanRegion = region && region.startsWith( country + '-' ) ? region.slice(3) : region;
 
-    let arrLeiAddr = [];
-    
-    let leiAddrCountry = isoCountries.get(country)?.name || country;
-    let leiAddrRegion = '';
+    let arrLeiAddr = []; //This array will be returned
 
+    let leiAddrCountry = isoCountries.get(country)?.name || country;
+
+    //Postalcode, city and region address components
     const addrComponents = [];
 
     //Address lines come first
@@ -70,7 +70,25 @@ function addrToArr() {
     switch(country) {
         case 'AU': //Australia
         case 'NZ': //New Zealand
+        case 'SG': //Singapore
             if(country === 'NZ') cleanRegion = null;
+
+            if(country === 'SG') {
+                cleanRegion = null;
+
+                const idxLastAddrLine = arrLeiAddr.length - 1;
+
+                if(idxLastAddrLine >= 0) {
+                    const wSpace = [ 32, 44 ]; //A space or a comma
+                    let idx = 'SINGAPORE'.length + 1;
+
+                    if(arrLeiAddr[idxLastAddrLine].slice('SINGAPORE'.length * -1).toUpperCase() === 'SINGAPORE') {
+                        while(wSpace.indexOf(arrLeiAddr[idxLastAddrLine].charCodeAt(arrLeiAddr[idxLastAddrLine].length - idx)) >= 0) { idx++ }
+
+                        arrLeiAddr[idxLastAddrLine] = arrLeiAddr[idxLastAddrLine].slice(0, -1 * (idx - 1))
+                    }
+                }
+            }
 
             addrComponents.push(city);
             addrComponents.push(cleanRegion);
@@ -95,6 +113,7 @@ function addrToArr() {
             break;
         case 'CY': //Cyprus
         case 'HR': //Croatia
+        case 'SE': //Sweden
             addrComponents.push(postalCode?.length ? country + '-' + postalCode : '');
             addrComponents.push(city);
 
@@ -121,13 +140,15 @@ function addrToArr() {
                         arrLeiAddr.push(gbRegions.get(region) || cleanRegion);
                         break;
                     case 'IE':
-                        leiAddrRegion = ieRegions.get(region);
+                        const leiAddrRegion = ieRegions.get(region);
+
                         if(leiAddrRegion) {
                             arrLeiAddr.push('Co. ' + leiAddrRegion)
                         }
                         else {
                             if(cleanRegion) arrLeiAddr.push(cleanRegion)
                         }
+
                         break;
                     default:
                         arrLeiAddr.push(cleanRegion);
@@ -146,6 +167,10 @@ function addrToArr() {
             break;
         case 'FI': //Finland
             if(dupPostalCodeCity(arrLeiAddr, postalCode)) arrLeiAddr.pop(); //fall through intended
+
+        //Default tested for Austria (AT), Belgium (BE), China (CN), Germany (DE),
+        //France (FR), Italy (IT, no 2-letter province codes), The Netherlands (NL)
+        //and Norway (NO)
         default:
             addrComponents.push(postalCode);
             addrComponents.push(city);
@@ -156,7 +181,7 @@ function addrToArr() {
     //Add the country name/ISO code
     arrLeiAddr.push(leiAddrCountry);
 
-    return arrLeiAddr.filter(elem => (elem != null || elem === ''));
+    return arrLeiAddr.filter(elem => (elem != null && elem !== ''));
 }
 
 //Convert an address object to a concatenated string
