@@ -19,6 +19,15 @@
 //
 // ***************************************************************** */
 
+:root {
+  --color-bg-color: #fffcf2;
+  --color-darkest: #252422;
+  --color-dark: #403d39;
+  --color-middle: #ccc5b9;
+  --color-lighter: #fffcf2;
+  --color-lively: #eb5e28;
+}
+
 .b2b-report {
     max-width: 360px;
     min-width: 180px;
@@ -26,7 +35,7 @@
     margin: 1em 0.5em;
     padding: 0.5em;
 
-    border: 2px solid #bccfde;
+    border: 2px solid var(--color-middle);
     border-radius: 8px;
 }
 
@@ -37,7 +46,7 @@
 
     margin: 0.25em 0;
 
-    border: 2px solid #bccfde;
+    border: 2px solid var(--color-middle);
     border-radius: 8px;
     overflow: hidden;
 }
@@ -51,14 +60,14 @@ table.rpt-section {
 table.rpt-section caption {
     padding: 0.75em;
 
-    color: #f0f6fb;
-    background-color: #4d718c;
+    color: var(--color-lively);
+    background-color: var(--color-dark);
 
     font-weight: bolder;
 }
 
 table.rpt-section tbody tr.last-row {
-    border-bottom: 2px solid #bccfde;
+    border-bottom: 2px solid var(--color-middle);
 }
 
 table.rpt-section tbody tr:last-child {

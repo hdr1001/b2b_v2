@@ -3,15 +3,20 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  --color-bg-color: #fffcf2;
+  --color-darkest: #252422;
+  --color-dark: #403d39;
+  --color-middle: #ccc5b9;
+  --color-lighter: #fffcf2;
+  --color-lively: #eb5e28;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
+
+   color: var(--color-darkest);
+ }
 
 a {
   font-weight: 500;
@@ -31,7 +36,7 @@ body {
 
   margin: 0;
 
-  background-color: #f0f6fb;
+  background-color: var(--color-bg-color);
 }
 
 #app {
@@ -53,13 +58,13 @@ header {
 
   padding: 1rem 0.5rem;
 
-  background-color: #2a6592;
+  background-color: var(--color-dark);
 }
 
 header div.app-name {
   font-weight: bolder;
 
-  color: #f0f6fb;
+  color: var(--color-lively);
 }
 
 header nav {
@@ -69,11 +74,11 @@ header nav {
 header nav a {
   margin-left: 1.5rem;
 
-  color: #f0f6fb;
+  color: var(--color-lively);
 }
 
 header nav a:hover {
-  color: #cde1f1;
+  color: var(--color-lighter);
 }
 
 *:focus { 
