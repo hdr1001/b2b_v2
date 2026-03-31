@@ -20,12 +20,11 @@
 // ***************************************************************** */
 
 :root {
-  --color-bg-color: #fffcf2;
-  --color-darkest: #252422;
-  --color-dark: #403d39;
-  --color-middle: #ccc5b9;
-  --color-lighter: #fffcf2;
-  --color-lively: #eb5e28;
+    --color-bg-color: #fffcf2;
+    --color-darkest:  #252422;
+    --color-dark:     #403d39;
+    --color-middle:   #ccc5b9;
+    --color-lively:   #eb5e28;
 }
 
 .b2b-report {
@@ -48,11 +47,13 @@
 
     border: 2px solid var(--color-middle);
     border-radius: 8px;
+
     overflow: hidden;
 }
 
 table.rpt-section {
     width: 100%;
+
     border-collapse: collapse;
     border: none;
 }
@@ -78,6 +79,7 @@ th.label {
     padding-left: 0.5em;
     padding-right: 0.25em;
 
+    color: var(--color-darkest);
     text-align: right;
 
     font-weight: normal;
@@ -92,6 +94,7 @@ td.value {
     padding-left: 0.25em;
     padding-right: 0.5em;
 
+    color: var(--color-darkest);
     text-align: left;
 }
 
