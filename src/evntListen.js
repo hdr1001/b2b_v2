@@ -32,7 +32,7 @@ function setupEventListeners() {
 
     //About dialog event listeners
     dialogAbout.addEventListener('click', event => { if(event.target === dialogAbout) dialogAbout.close() });
-    dialogAbout.querySelector('.icon-close').addEventListener('click', () => dialogAbout.close());
+    //dialogAbout.querySelector('.icon-close').addEventListener('click', () => dialogAbout.close());
 }
 
 export default setupEventListeners;
