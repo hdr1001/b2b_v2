@@ -99,15 +99,18 @@ dialog div#about-title {
   background-color: var(--color-dark);
 }
 
-.icon {
+.icon-close {
   position: absolute;
   right: 0.4em;
   top: 0.3em;
 
+  width: 16px;
+  height: 16px;
+
   cursor: pointer;
 }
 
-.icon:hover {
+.icon-close:hover {
   color: var(--color-bg-color);
 }
 

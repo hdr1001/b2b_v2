@@ -21,7 +21,14 @@
 
     <!-- Module will be loaded when the document has been parsed-->
     <script type="module" src="/src/main.js"></script>
+ 
+    <!-- Load the Lucide icon library and create the icons in use -->
+    <script type="module">
+      import { createIcons, X } from 'lucide';
 
+      createIcons({ icons: { X } });
+    </script>
+ 
     <title>B2B v2</title>
   </head>
   <body><div id="app"></div></body>

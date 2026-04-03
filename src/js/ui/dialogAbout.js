@@ -19,10 +19,6 @@
 //
 // ***************************************************************** */
 
-import { createIcons, X } from 'lucide';
-
-createIcons({ icons: { X } });
-
 function addAboutRow(table, sHeader, sData) {
     const tr = document.createElement('tr');
     const th = document.createElement('th');
@@ -44,7 +40,7 @@ export default function addDialogAbout(parent) {
 
     const aboutTitle = document.createElement('div');
     aboutTitle.id = 'about-title';
-    aboutTitle.innerHTML = 'About B2B v2 <i data-lucide="X"></i>';
+    aboutTitle.innerHTML = 'About B2B v2<i data-lucide="X" class="icon-close"></i>';
  
     dialogAbout.appendChild(aboutTitle);
 
