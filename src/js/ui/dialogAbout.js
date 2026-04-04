@@ -39,7 +39,7 @@ export default function addDialogAbout(parent) {
     dialogAbout.id = 'dialog-about';
 
     const aboutTitle = document.createElement('div');
-    aboutTitle.id = 'about-title';
+    aboutTitle.id = 'dialog-title';
     aboutTitle.innerHTML = 'About B2B v2<i data-lucide="X" class="icon-close"></i>';
  
     dialogAbout.appendChild(aboutTitle);

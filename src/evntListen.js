@@ -21,14 +21,21 @@
 
 function setupEventListeners() {
     //HTML element references
+    const navSearch    = document.querySelector('#nav-search');
     const navAbout     = document.querySelector('#nav-about');
     const navContact   = document.querySelector('#nav-contact');
 
     const dialogAbout  = document.querySelector('#dialog-about');
+    const dialogSearch = document.querySelector('#dialog-search');
 
     //Navigation menu event listeners
+    navSearch.addEventListener('click', () => dialogSearch.showModal());
     navAbout.addEventListener('click', () => dialogAbout.showModal());
     navContact.addEventListener('click', () => console.log('Contact clicked'));
+
+    //Search dialog event listeners
+    dialogSearch.addEventListener('click', event => { if(event.target === dialogSearch) dialogSearch.close() });  
+    dialogSearch.querySelector('.icon-close').addEventListener('click', () => dialogSearch.close());
 
     //About dialog event listeners
     dialogAbout.addEventListener('click', event => { if(event.target === dialogAbout) dialogAbout.close() });

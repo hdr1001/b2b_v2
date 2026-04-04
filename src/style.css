@@ -89,7 +89,7 @@ dialog::backdrop {
   background-color: rgba(0, 0, 0, 0.3);
 }
 
-dialog div#about-title {
+dialog div#dialog-title {
   padding: 0.25em;
 
   font-size: 1.5em;
@@ -97,6 +97,26 @@ dialog div#about-title {
 
   color: var(--color-lively);
   background-color: var(--color-dark);
+}
+
+dialog form {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  grid-gap: 0.5em;
+  padding: 0.7em 1em;
+  max-width: 480px;
+  align-items: center;
+}
+
+dialog form label {
+  text-align: right;
+  font-size: smaller;
+}
+
+dialog form input {
+  border-radius: 8px;
+  border: 1px solid var(--color-middle);
+  padding: 0.4em 0.5em;
 }
 
 .icon-close {

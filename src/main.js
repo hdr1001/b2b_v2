@@ -20,6 +20,7 @@
 // ***************************************************************** */
 
 import { LEIs } from './assets/data/LEIs.js';
+import addDialogSearch from './js/ui/dialogSearch.js';
 import addDialogAbout from './js/ui/dialogAbout.js';
 import setupEventListeners from './evntListen.js';
 import B2bReport from './js/components/b2bReport.js';
@@ -34,6 +35,7 @@ document.querySelector('#app').innerHTML = `
     <div class="app-name">B2B v2</div>
     <nav>
       <a href="javascript:void(0)">Home</a>
+      <a href="javascript:void(0)" id="nav-search">Search</a>
       <a href="javascript:void(0)" id="nav-about">About</a>
       <a href="javascript:void(0)" id="nav-contact">Contact</a>
     </nav>
@@ -41,7 +43,8 @@ document.querySelector('#app').innerHTML = `
   <main id="app-main"></main>
 `;
 
-//The about dialog
+//Add dialogs
+addDialogSearch(document.querySelector('#app-main'));
 addDialogAbout(document.querySelector('#app-main'));
 
 //Instantiate a B2B report component and add it to the page
