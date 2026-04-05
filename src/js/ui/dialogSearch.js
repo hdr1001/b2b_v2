@@ -33,31 +33,39 @@ export default function addDialogSearch(parent) {
 
     const searchForm = document.createElement('form');
 
-    let formLabel = document.createElement('label');
-    formLabel.setAttribute('for', 'search-country');
-    formLabel.textContent = 'Country';
-
-    searchForm.appendChild(formLabel);
+    let div = document.createElement('div');
 
     let searchInput = document.createElement('input');
     searchInput.type = 'text';
     searchInput.id = 'search-country';
     searchInput.name = 'country';
 
-    searchForm.appendChild(searchInput);
+    div.appendChild(searchInput);
+    div.setAttribute('class', 'html-input');
 
-    formLabel = document.createElement('label');
-    formLabel.setAttribute('for', 'search-name');
-    formLabel.textContent = 'Name';
+    let formLabel = document.createElement('label');
+    formLabel.setAttribute('for', 'search-country');
+    formLabel.textContent = 'Country';
 
-    searchForm.appendChild(formLabel);
+    div.appendChild(formLabel);
+    searchForm.appendChild(div);
+
+    div = document.createElement('div');
 
     searchInput = document.createElement('input');
     searchInput.type = 'text';
     searchInput.id = 'search-name';
     searchInput.name = 'name';
 
-    searchForm.appendChild(searchInput);
+    div.appendChild(searchInput);
+    div.setAttribute('class', 'html-input');
+
+    formLabel = document.createElement('label');
+    formLabel.setAttribute('for', 'search-name');
+    formLabel.textContent = 'Name';
+
+    div.appendChild(formLabel);
+    searchForm.appendChild(div);
 
     dialogSearch.appendChild(searchForm);
 
