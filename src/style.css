@@ -139,12 +139,20 @@ dialog form div.html-input input {
   width:92%;
 }
 
+dialog form div.html-input {
+  font-style: italic;
+  color: var(--color-lively);
+}
+
 dialog form div.html-input input:focus {
   border-color: var(--color-lively);
 }
 
-dialog form div.html-input input:focus~label {
+dialog form div.html-input input:focus~label,
+dialog form div.html-input input.has-none-empty-value~label {
   transform: translateY(-58%);
+
+  font-style: italic;
   font-size: 0.8em;
 
   padding: 2px;

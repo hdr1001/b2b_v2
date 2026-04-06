@@ -19,6 +19,20 @@
 //
 // ***************************************************************** */
 
+const iniValues = {
+    country: 'NL',
+    name: ''
+};
+
+function hasChanged(evnt) {
+    if(!evnt.currentTarget.value) {
+        evnt.currentTarget.classList.remove('has-none-empty-value');
+        return;
+    }
+
+    evnt.currentTarget.classList.add('has-none-empty-value');
+}
+
 export default function addDialogSearch(parent) {
     if(!parent) return;
 
@@ -39,6 +53,11 @@ export default function addDialogSearch(parent) {
     searchInput.type = 'text';
     searchInput.id = 'search-country';
     searchInput.name = 'country';
+    if(iniValues.country) {
+        searchInput.value = iniValues.country;  
+        searchInput.classList.add('has-none-empty-value');
+    }
+    searchInput.addEventListener('change', hasChanged);
 
     div.appendChild(searchInput);
     div.setAttribute('class', 'html-input');
@@ -56,6 +75,11 @@ export default function addDialogSearch(parent) {
     searchInput.type = 'text';
     searchInput.id = 'search-name';
     searchInput.name = 'name';
+    if(iniValues.name) {
+        searchInput.value = iniValues.name;
+        searchInput.classList.add('has-none-empty-value');
+    }
+    searchInput.addEventListener('change', hasChanged);
 
     div.appendChild(searchInput);
     div.setAttribute('class', 'html-input');
