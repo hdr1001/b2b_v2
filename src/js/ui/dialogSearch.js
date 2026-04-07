@@ -21,7 +21,12 @@
 
 const iniValues = {
     country: 'NL',
-    name: ''
+    name: '',
+    addr1: '',
+    addr2: '',
+    postalCode: '',
+    city: '',
+    regNumber: ''
 };
 
 function hasChanged(evnt) {
@@ -31,6 +36,31 @@ function hasChanged(evnt) {
     }
 
     evnt.currentTarget.classList.add('has-none-empty-value');
+}
+
+function getInputElement(id, name, value, label) {
+    const div = document.createElement('div');
+    div.setAttribute('class', 'html-input');
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = id;
+    input.name = name;
+    if(value) {
+        input.value = value;
+        input.classList.add('has-none-empty-value');
+    }
+    input.addEventListener('change', hasChanged);
+
+    div.appendChild(input);
+
+    const formLabel = document.createElement('label');
+    formLabel.setAttribute('for', id);
+    formLabel.textContent = label;
+
+    div.appendChild(formLabel);
+
+    return div;
 }
 
 export default function addDialogSearch(parent) {
@@ -47,49 +77,34 @@ export default function addDialogSearch(parent) {
 
     const searchForm = document.createElement('form');
 
-    let div = document.createElement('div');
+    searchForm.appendChild(getInputElement('search-country', 'country', iniValues.country, 'Country'));
+    searchForm.appendChild(getInputElement('search-name', 'name', iniValues.name, 'Name'));
+    searchForm.appendChild(getInputElement('search-addr1', 'addr1', iniValues.addr1, 'Address 1'));
+    searchForm.appendChild(getInputElement('search-addr2', 'addr2', iniValues.addr2, 'Address 2'));
+/*
+    const divOneLine = document.createElement('div');
+    divOneLine.setAttribute('class', 'one-line');
+*/
+    searchForm.appendChild(getInputElement('search-postal-code', 'postalCode', iniValues.postalCode, 'Postal code'));
+    searchForm.appendChild(getInputElement('search-city', 'city', iniValues.city, 'City'));
+/*
+    searchForm.appendChild(divOneLine);
+*/
+    searchForm.appendChild(getInputElement('search-reg-number', 'regNumber', iniValues.regNumber, 'Registration number'));
 
-    let searchInput = document.createElement('input');
-    searchInput.type = 'text';
-    searchInput.id = 'search-country';
-    searchInput.name = 'country';
-    if(iniValues.country) {
-        searchInput.value = iniValues.country;  
-        searchInput.classList.add('has-none-empty-value');
-    }
-    searchInput.addEventListener('change', hasChanged);
+    const div = document.createElement('div');
+    div.classList.add('html-input');
 
-    div.appendChild(searchInput);
-    div.setAttribute('class', 'html-input');
+    let button = document.createElement('button')
+    button.type = 'button';
+    button.id = 'search-submit';
+    button.textContent = 'Submit';
+    button.setAttribute('class', 'html-input');
+    button.addEventListener('click', evt => console.log('Clicked event'));
 
-    let formLabel = document.createElement('label');
-    formLabel.setAttribute('for', 'search-country');
-    formLabel.textContent = 'Country';
+    div.appendChild(button);
 
-    div.appendChild(formLabel);
-    searchForm.appendChild(div);
-
-    div = document.createElement('div');
-
-    searchInput = document.createElement('input');
-    searchInput.type = 'text';
-    searchInput.id = 'search-name';
-    searchInput.name = 'name';
-    if(iniValues.name) {
-        searchInput.value = iniValues.name;
-        searchInput.classList.add('has-none-empty-value');
-    }
-    searchInput.addEventListener('change', hasChanged);
-
-    div.appendChild(searchInput);
-    div.setAttribute('class', 'html-input');
-
-    formLabel = document.createElement('label');
-    formLabel.setAttribute('for', 'search-name');
-    formLabel.textContent = 'Name';
-
-    div.appendChild(formLabel);
-    searchForm.appendChild(div);
+    searchForm.appendChild(div)
 
     dialogSearch.appendChild(searchForm);
 

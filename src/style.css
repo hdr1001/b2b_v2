@@ -139,6 +139,17 @@ dialog form div.html-input input {
   width:92%;
 }
 
+dialog form div.html-input button {
+  padding: 0.75em 0;
+
+  border: none;
+  border-radius: 8px;
+
+  background-color: var(--color-middle);
+
+  width: 33%;
+}
+
 dialog form div.html-input {
   font-style: italic;
   color: var(--color-lively);
