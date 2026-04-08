@@ -40,7 +40,7 @@ function hasChanged(evnt) {
 
 function getInputElement(id, name, value, label) {
     const div = document.createElement('div');
-    div.setAttribute('class', 'html-input');
+    div.classList.add('html-input');
 
     const input = document.createElement('input');
     input.type = 'text';
@@ -55,12 +55,26 @@ function getInputElement(id, name, value, label) {
     div.appendChild(input);
 
     const formLabel = document.createElement('label');
-    formLabel.setAttribute('for', id);
+    formLabel.htmlFor = id;
     formLabel.textContent = label;
 
     div.appendChild(formLabel);
 
     return div;
+}
+
+function getButtonElement(id, name, label) {
+    const button = document.createElement('button');
+
+    button.id = id;
+    button.name = name;
+    button.type = 'button';
+
+    button.textContent = label;
+
+    button.addEventListener('click', evt => console.log(`${name} clicked event`));
+
+    return button;
 }
 
 export default function addDialogSearch(parent) {
@@ -93,14 +107,13 @@ export default function addDialogSearch(parent) {
     searchForm.appendChild(getInputElement('search-reg-number', 'regNumber', iniValues.regNumber, 'Registration number'));
 
     const div = document.createElement('div');
-    div.classList.add('html-input');
+    div.classList.add('html-input', 'one-row');
 
-    let button = document.createElement('button')
-    button.type = 'button';
-    button.id = 'search-submit';
-    button.textContent = 'Submit';
-    button.setAttribute('class', 'html-input');
-    button.addEventListener('click', evt => console.log('Clicked event'));
+    let button = getButtonElement('search-submit', 'submit', 'Submit');
+
+    div.appendChild(button);
+
+    button = getButtonElement('search-reset', 'reset', 'Reset');
 
     div.appendChild(button);
 
