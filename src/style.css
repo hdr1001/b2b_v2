@@ -152,6 +152,8 @@ dialog form div.html-input button {
   border: 1px solid var(--color-middle);
   border-radius: 8px;
 
+  font-weight: bolder;
+
   color: var(--color-lively);
   background-color: var(--color-middle);
 
