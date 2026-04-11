@@ -29,7 +29,7 @@ const iniValues = {
     regNumber: ''
 };
 
-function hasChanged(evnt) {
+function hasNoneEmptyValue(evnt) {
     if(!evnt.currentTarget.value) {
         evnt.currentTarget.classList.remove('has-none-empty-value');
         return;
@@ -38,29 +38,30 @@ function hasChanged(evnt) {
     evnt.currentTarget.classList.add('has-none-empty-value');
 }
 
-function getInputElement(id, name, value, label) {
-    const div = document.createElement('div');
-    div.classList.add('html-input');
+function getInputElement(inpElem) {
+    const docFrag = document.createDocumentFragment();
 
     const input = document.createElement('input');
     input.type = 'text';
-    input.id = id;
-    input.name = name;
-    if(value) {
-        input.value = value;
+    input.id = inpElem.id;
+    input.name = inpElem.name;
+
+    if(inpElem.value) {
+        input.value = inpElem.value;
         input.classList.add('has-none-empty-value');
     }
-    input.addEventListener('change', hasChanged);
 
-    div.appendChild(input);
+    input.addEventListener('change', hasNoneEmptyValue);
+
+    docFrag.appendChild(input);
 
     const formLabel = document.createElement('label');
-    formLabel.htmlFor = id;
-    formLabel.textContent = label;
+    formLabel.htmlFor = inpElem.id;
+    formLabel.textContent = inpElem.label;
 
-    div.appendChild(formLabel);
+    docFrag.appendChild(formLabel);
 
-    return div;
+    return docFrag;
 }
 
 function getButtonElement(id, name, label) {
@@ -91,33 +92,56 @@ export default function addDialogSearch(parent) {
 
     const searchForm = document.createElement('form');
 
-    searchForm.appendChild(getInputElement('search-country', 'country', iniValues.country, 'Country'));
-    searchForm.appendChild(getInputElement('search-name', 'name', iniValues.name, 'Name'));
-    searchForm.appendChild(getInputElement('search-addr1', 'addr1', iniValues.addr1, 'Address 1'));
-    searchForm.appendChild(getInputElement('search-addr2', 'addr2', iniValues.addr2, 'Address 2'));
-/*
-    const divOneLine = document.createElement('div');
-    divOneLine.setAttribute('class', 'one-line');
-*/
-    searchForm.appendChild(getInputElement('search-postal-code', 'postalCode', iniValues.postalCode, 'Postal code'));
-    searchForm.appendChild(getInputElement('search-city', 'city', iniValues.city, 'City'));
-/*
-    searchForm.appendChild(divOneLine);
-*/
-    searchForm.appendChild(getInputElement('search-reg-number', 'regNumber', iniValues.regNumber, 'Registration number'));
+    const inpElems = new Map([
+        ['search-country', {id: 'search-country', name: 'country', value: iniValues.country, label: 'Country'}],
+        ['search-name', {id: 'search-name', name: 'name', value: iniValues.name, label: 'Name'}],
+        ['search-addr1', {id: 'search-addr1', name: 'addr1', value: iniValues.addr1, label: 'Address 1'}],
+        ['search-addr2', {id: 'search-addr2', name: 'addr2', value: iniValues.addr2, label: 'Address 2'}],
+        ['search-postal-code', {id: 'search-postal-code', name: 'postalCode', value: iniValues.postalCode, label: 'Postal code'}],
+        ['search-city', {id: 'search-city', name: 'city', value: iniValues.city, label: 'City'}],
+        ['search-reg-number', {id: 'search-reg-number', name: 'regNumber', value: iniValues.regNumber, label: 'Registration number'}]
+    ]);
 
-    const div = document.createElement('div');
-    div.classList.add('html-input', 'one-row');
+    let htmlInputDiv = document.createElement('div');
+    htmlInputDiv.classList.add('html-input');
+
+    let div = htmlInputDiv.cloneNode();
+    div.appendChild(getInputElement(inpElems.get('search-country')));
+    searchForm.appendChild(div);
+
+    div = htmlInputDiv.cloneNode();
+    div.appendChild(getInputElement(inpElems.get('search-name')));
+    searchForm.appendChild(div);
+
+    div = htmlInputDiv.cloneNode();
+    div.appendChild(getInputElement(inpElems.get('search-addr1')));
+    searchForm.appendChild(div);
+
+    div = htmlInputDiv.cloneNode();
+    div.appendChild(getInputElement(inpElems.get('search-addr2')));
+    searchForm.appendChild(div);
+
+    div = htmlInputDiv.cloneNode();
+    div.classList.add('one-row');
+    div.appendChild(getInputElement(inpElems.get('search-postal-code')));
+    div.appendChild(getInputElement(inpElems.get('search-city')));
+    searchForm.appendChild(div);
+
+    div = htmlInputDiv.cloneNode();
+    div.appendChild(getInputElement(inpElems.get('search-reg-number')));
+    searchForm.appendChild(div);
+
+    htmlInputDiv.classList.add('one-row');
 
     let button = getButtonElement('search-submit', 'submit', 'Submit');
 
-    div.appendChild(button);
+    htmlInputDiv.appendChild(button);
 
     button = getButtonElement('search-reset', 'reset', 'Reset');
 
-    div.appendChild(button);
+    htmlInputDiv.appendChild(button);
 
-    searchForm.appendChild(div)
+    searchForm.appendChild(htmlInputDiv)
 
     dialogSearch.appendChild(searchForm);
 

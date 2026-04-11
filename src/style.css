@@ -105,13 +105,11 @@ dialog form {
 
   padding: 0 15px 15px 15px;
 
-  max-width: 480px;
+  min-width: 320px;
+  max-width: 440px;
 }
 
 dialog form div.html-input {
-  position: relative;
-
-  min-width: 320px;
   margin-top: 15px;
 
   font-style: italic;
@@ -126,7 +124,7 @@ dialog form div.html-input label {
 
   background-color: transparent;
 
-  left: 10px;
+  left: 1.6em;
 
   transition: all 0.3s ease;
 }
@@ -137,9 +135,10 @@ dialog form div.html-input input {
   border: 1px solid var(--color-middle);
   border-radius: 8px;
 
-  background-color: transparent;
+  box-sizing: border-box;
+  width: 100%;
 
-  width:92%;
+  background-color: transparent;
 }
 
 dialog form div.html-input input:focus {
@@ -171,7 +170,7 @@ dialog form div.html-input input.has-none-empty-value~label {
   font-style: italic;
   font-size: 0.8em;
 
-  padding: 2px;
+  padding: 3px;
 
   background-color: var(--color-bg-color);
   color: var(--color-lively);
@@ -196,6 +195,10 @@ dialog form div.html-input input.has-none-empty-value~label {
 .one-row {
   display: flex;
   justify-content: space-evenly;
+}
+
+input#search-city {
+  width: 150%;
 }
 
 table {
