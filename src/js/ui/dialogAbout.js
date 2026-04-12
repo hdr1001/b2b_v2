@@ -32,9 +32,7 @@ function addAboutRow(table, sHeader, sData) {
     table.appendChild(tr);
 }
 
-export default function addDialogAbout(parent) {
-    if(!parent) return;
-
+export default function addDialogAbout() {
     const dialogAbout = document.createElement('dialog');
     dialogAbout.id = 'dialog-about';
 
@@ -53,5 +51,5 @@ export default function addDialogAbout(parent) {
 
     dialogAbout.appendChild(table);
 
-    parent.appendChild(dialogAbout);
+    return dialogAbout;
 }

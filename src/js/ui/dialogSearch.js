@@ -29,69 +29,60 @@ const iniValues = {
     regNumber: ''
 };
 
-function hasNoneEmptyValue(evnt) {
-    if(!evnt.currentTarget.value) {
-        evnt.currentTarget.classList.remove('has-none-empty-value');
-        return;
+export default function addDialogSearch() {
+    //Onclick event handler for text-input elements
+    function hasNoneEmptyValue(evnt) {
+        if(!evnt.currentTarget.value) {
+            evnt.currentTarget.classList.remove('has-none-empty-value');
+            return;
+        }
+
+        evnt.currentTarget.classList.add('has-none-empty-value');
     }
 
-    evnt.currentTarget.classList.add('has-none-empty-value');
-}
+    //Function to create a label/(text-)input element pair
+    function getInputElement(inpElem) {
+        const docFrag = document.createDocumentFragment();
 
-function getInputElement(inpElem) {
-    const docFrag = document.createDocumentFragment();
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = inpElem.id;
+        input.name = inpElem.name;
 
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.id = inpElem.id;
-    input.name = inpElem.name;
+        if(inpElem.value) {
+            input.value = inpElem.value;
+            input.classList.add('has-none-empty-value');
+        }
 
-    if(inpElem.value) {
-        input.value = inpElem.value;
-        input.classList.add('has-none-empty-value');
+        input.addEventListener('change', hasNoneEmptyValue);
+
+        docFrag.appendChild(input);
+
+        const formLabel = document.createElement('label');
+        formLabel.htmlFor = inpElem.id;
+        formLabel.textContent = inpElem.label;
+
+        docFrag.appendChild(formLabel);
+
+        return docFrag;
     }
 
-    input.addEventListener('change', hasNoneEmptyValue);
+    //Function to create a dialog button element
+    function getButtonElement(id, name, label) {
+        const button = document.createElement('button');
 
-    docFrag.appendChild(input);
+        button.id = id;
+        button.name = name;
+        button.type = 'button';
 
-    const formLabel = document.createElement('label');
-    formLabel.htmlFor = inpElem.id;
-    formLabel.textContent = inpElem.label;
+        button.textContent = label;
 
-    docFrag.appendChild(formLabel);
+        button.addEventListener('click', evt => console.log(`${name} clicked event`));
 
-    return docFrag;
-}
+        return button;
+    }
 
-function getButtonElement(id, name, label) {
-    const button = document.createElement('button');
-
-    button.id = id;
-    button.name = name;
-    button.type = 'button';
-
-    button.textContent = label;
-
-    button.addEventListener('click', evt => console.log(`${name} clicked event`));
-
-    return button;
-}
-
-export default function addDialogSearch(parent) {
-    if(!parent) return;
-
-    const dialogSearch = document.createElement('dialog');
-    dialogSearch.id = 'dialog-search';
-
-    const searchTitle = document.createElement('div');
-    searchTitle.id = 'dialog-title';
-    searchTitle.innerHTML = 'Search<i data-lucide="X" class="icon-close"></i>';
- 
-    dialogSearch.appendChild(searchTitle);
-
-    const searchForm = document.createElement('form');
-
+    //The text-input elements which are part of the dialog
     const inpElems = new Map([
         ['search-country', {id: 'search-country', name: 'country', value: iniValues.country, label: 'Country'}],
         ['search-name', {id: 'search-name', name: 'name', value: iniValues.name, label: 'Name'}],
@@ -102,48 +93,98 @@ export default function addDialogSearch(parent) {
         ['search-reg-number', {id: 'search-reg-number', name: 'regNumber', value: iniValues.regNumber, label: 'Registration number'}]
     ]);
 
-    let htmlInputDiv = document.createElement('div');
-    htmlInputDiv.classList.add('html-input');
+    //Create dialog element
+    const dialogSearch = document.createElement('dialog');
+    dialogSearch.id = 'dialog-search';
 
-    let div = htmlInputDiv.cloneNode();
-    div.appendChild(getInputElement(inpElems.get('search-country')));
-    searchForm.appendChild(div);
+    //Create dialog title in a div
+    const searchTitle = document.createElement('div');
+    searchTitle.id = 'dialog-title';
+    searchTitle.innerHTML = 'Search<i data-lucide="X" class="icon-close"></i>';
+ 
+    dialogSearch.appendChild(searchTitle);
 
-    div = htmlInputDiv.cloneNode();
-    div.appendChild(getInputElement(inpElems.get('search-name')));
-    searchForm.appendChild(div);
+    //Create a form element
+    const searchForm = document.createElement('form');
 
-    div = htmlInputDiv.cloneNode();
-    div.appendChild(getInputElement(inpElems.get('search-addr1')));
-    searchForm.appendChild(div);
+    //All input elements are created in a div with class html-input
+    const dialogFormRow = document.createElement('div');
+    dialogFormRow.classList.add('form-row');
 
-    div = htmlInputDiv.cloneNode();
-    div.appendChild(getInputElement(inpElems.get('search-addr2')));
-    searchForm.appendChild(div);
+    const inpText = document.createElement('div');
+    inpText.classList.add('input-text');
 
-    div = htmlInputDiv.cloneNode();
-    div.classList.add('one-row');
-    div.appendChild(getInputElement(inpElems.get('search-postal-code')));
-    div.appendChild(getInputElement(inpElems.get('search-city')));
-    searchForm.appendChild(div);
+    //Create label/input elements, country first
+    let divFormRow = dialogFormRow.cloneNode();
+    let divInpText = inpText.cloneNode();
 
-    div = htmlInputDiv.cloneNode();
-    div.appendChild(getInputElement(inpElems.get('search-reg-number')));
-    searchForm.appendChild(div);
+    divInpText.appendChild(getInputElement(inpElems.get('search-country')));
+    divFormRow.appendChild(divInpText);
+    searchForm.appendChild(divFormRow);
 
-    htmlInputDiv.classList.add('one-row');
+    //Create label/input elements for name
+    divFormRow = dialogFormRow.cloneNode();
+    divInpText = inpText.cloneNode();
+
+    divInpText.appendChild(getInputElement(inpElems.get('search-name')));
+    divFormRow.appendChild(divInpText);
+    searchForm.appendChild(divFormRow);
+
+    //Create label/input elements for address 1
+    divFormRow = dialogFormRow.cloneNode();
+    divInpText = inpText.cloneNode();
+
+    divInpText.appendChild(getInputElement(inpElems.get('search-addr1')));
+    divFormRow.appendChild(divInpText);
+    searchForm.appendChild(divFormRow);
+
+    //Create label/input elements for address 2
+    divFormRow = dialogFormRow.cloneNode();
+    divInpText = inpText.cloneNode();
+
+    divInpText.appendChild(getInputElement(inpElems.get('search-addr2')));
+    divFormRow.appendChild(divInpText);
+    searchForm.appendChild(divFormRow);
+
+    //Create label/input elements for postal code and city on the same row
+    divFormRow = dialogFormRow.cloneNode();
+    divFormRow.classList.add('mult-elem');
+
+    divInpText = inpText.cloneNode();
+    divInpText.classList.add('mult-elem-4');
+
+    divInpText.appendChild(getInputElement(inpElems.get('search-postal-code')));
+    divFormRow.appendChild(divInpText);
+
+    divInpText = inpText.cloneNode();
+    divInpText.classList.add('mult-elem-6');
+
+    divInpText.appendChild(getInputElement(inpElems.get('search-city')));
+
+    divFormRow.appendChild(divInpText);
+    searchForm.appendChild(divFormRow);
+
+    //Create label/input elements for registration number
+    divFormRow = dialogFormRow.cloneNode();
+    divInpText = inpText.cloneNode();
+
+    divInpText.appendChild(getInputElement(inpElems.get('search-reg-number')));
+    divFormRow.appendChild(divInpText);
+    searchForm.appendChild(divFormRow);
+
+    //The last row in the form contains buttons
+    divFormRow = dialogFormRow.cloneNode();
 
     let button = getButtonElement('search-submit', 'submit', 'Submit');
 
-    htmlInputDiv.appendChild(button);
+    divFormRow.appendChild(button);
 
     button = getButtonElement('search-reset', 'reset', 'Reset');
 
-    htmlInputDiv.appendChild(button);
+    divFormRow.appendChild(button);
 
-    searchForm.appendChild(htmlInputDiv)
-
+    searchForm.appendChild(divFormRow);
     dialogSearch.appendChild(searchForm);
 
-    parent.appendChild(dialogSearch);
+    return dialogSearch;
 }

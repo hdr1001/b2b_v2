@@ -100,6 +100,10 @@ dialog div#dialog-title {
 }
 
 dialog form {
+  /* 
+  // The form is made up of multiple rows. The
+  // input elements are placed in one column 
+  */
   display: flex;
   flex-direction: column;
 
@@ -109,14 +113,43 @@ dialog form {
   max-width: 440px;
 }
 
-dialog form div.html-input {
+div.form-row {
+  /*
+  // A row can contain one or more input elements.
+  // If there are multiple input elements, they are 
+  // spaced out evenly.
+  */
+  flex: 1;
+
+  display: flex;
+  flex-direction: row;
+
+  justify-content: space-evenly;
+
   margin-top: 15px;
+}
+
+div.form-row.mult-elem {
+  /*
+  // A row with multiple input elements is spaced out
+  // evenly with a space in between
+  */
+  justify-content: space-between;
+
+  gap: 0.5em;
+}
+
+div.input-text {
+  display: flex;
+  flex: 1;
+
+  position: relative;
 
   font-style: italic;
   color: var(--color-lively);
 }
 
-dialog form div.html-input label {
+div.input-text label {
   position: absolute;
 
   padding-top: 0.3em;
@@ -124,28 +157,41 @@ dialog form div.html-input label {
 
   background-color: transparent;
 
-  left: 1.6em;
+  left: 0.8em;
 
   transition: all 0.3s ease;
 }
 
-dialog form div.html-input input {
+div.input-text input {
+  flex: 1;
+
   padding: 0.75em;
 
   border: 1px solid var(--color-middle);
   border-radius: 8px;
 
-  box-sizing: border-box;
-  width: 100%;
-
   background-color: transparent;
 }
 
-dialog form div.html-input input:focus {
+div.input-text input:focus {
   border-color: var(--color-lively);
 }
 
-dialog form div.html-input button {
+div.form-row input:focus~label,
+div.input-text input.has-none-empty-value~label {
+  transform: translateY(-58%);
+
+  font-style: italic;
+  font-size: 0.8em;
+
+  padding: 3px;
+
+  background-color: var(--color-bg-color);
+  color: var(--color-lively);
+  border-radius: 8px;
+}
+
+div.form-row button {
   padding: 0.75em 0;
 
   border: 1px solid var(--color-middle);
@@ -159,22 +205,8 @@ dialog form div.html-input button {
   width: 33%;
 }
 
-dialog form div.html-input button:focus {
+div.form-row button:focus {
   border-color: var(--color-dark);
-}
-
-dialog form div.html-input input:focus~label,
-dialog form div.html-input input.has-none-empty-value~label {
-  transform: translateY(-58%);
-
-  font-style: italic;
-  font-size: 0.8em;
-
-  padding: 3px;
-
-  background-color: var(--color-bg-color);
-  color: var(--color-lively);
-  border-radius: 8px;
 }
 
 .icon-close {
@@ -190,15 +222,6 @@ dialog form div.html-input input.has-none-empty-value~label {
 
 .icon-close:hover {
   color: var(--color-bg-color);
-}
-
-.one-row {
-  display: flex;
-  justify-content: space-evenly;
-}
-
-input#search-city {
-  width: 150%;
 }
 
 table {

@@ -44,8 +44,9 @@ document.querySelector('#app').innerHTML = `
 `;
 
 //Add dialogs
-addDialogSearch(document.querySelector('#app-main'));
-addDialogAbout(document.querySelector('#app-main'));
+const appMain = document.querySelector('#app-main');
+appMain.appendChild(addDialogSearch());
+appMain.appendChild(addDialogAbout());
 
 //Instantiate a B2B report component and add it to the page
 const b2bReport = document.createElement('b2b-report');
