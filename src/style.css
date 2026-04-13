@@ -119,8 +119,6 @@ div.form-row {
   // If there are multiple input elements, they are 
   // spaced out evenly.
   */
-  flex: 1;
-
   display: flex;
   flex-direction: row;
 
@@ -149,6 +147,14 @@ div.input-text {
   color: var(--color-lively);
 }
 
+div.input-text.mult-elem-4 {
+  flex: 4;
+}
+
+div.input-text.mult-elem-6 {
+  flex: 6;
+}
+
 div.input-text label {
   position: absolute;
 
@@ -163,7 +169,8 @@ div.input-text label {
 }
 
 div.input-text input {
-  flex: 1;
+  box-sizing: border-box;
+  width: 100%;
 
   padding: 0.75em;
 
