@@ -135,11 +135,34 @@ export default function addDialogSearch() {
     divInpText = inpText.cloneNode();
 
     divInpText.appendChild(getInputElement(inpElems.get('search-addr1')));
+
+    //Add a button to toggle the visibility of the address 2 element
+    const inpBtn = document.createElement('button');
+    inpBtn.type = 'button';
+    inpBtn.id = 'addr2-visible';
+    inpBtn.classList.add('addr2-visible');
+    inpBtn.innerHTML = '<i data-lucide="Plus"></i>';
+    
+    inpBtn.addEventListener('click', evt => {
+        const addr2InpText = searchForm.querySelector('#row-addr2');
+
+        const isVisible = addr2InpText.classList.toggle('visible');
+
+        if(isVisible) {
+            console.log('<i data-lucide="Minus"></i>');
+        }
+        else{
+            console.log('<i data-lucide="Plus"></i>');
+        }
+    });
+
+    divInpText.insertBefore(inpBtn, divInpText.lastChild);
     divFormRow.appendChild(divInpText);
     searchForm.appendChild(divFormRow);
 
     //Create label/input elements for address 2
     divFormRow = dialogFormRow.cloneNode();
+    divFormRow.id = 'row-addr2';
     divInpText = inpText.cloneNode();
 
     divInpText.appendChild(getInputElement(inpElems.get('search-addr2')));
@@ -174,6 +197,7 @@ export default function addDialogSearch() {
 
     //The last row in the form contains buttons
     divFormRow = dialogFormRow.cloneNode();
+    divFormRow.classList.add('submit-reset');
 
     let button = getButtonElement('search-submit', 'submit', 'Submit');
 

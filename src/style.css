@@ -168,6 +168,33 @@ div.input-text label {
   transition: all 0.3s ease;
 }
 
+div.input-text button {
+  position: absolute;
+  right: 4px;
+
+  align-self: center;
+
+  padding: 2px 0 0 0;
+
+  border: 1px solid var(--color-middle);
+  border-radius: 14px;
+
+  color: var(--color-lively);
+  background-color: var(--color-middle);
+}
+
+div.input-text button:focus {
+  align-self: center;
+
+  color: var(--color-dark);
+  border-color: var(--color-lively);
+}
+
+div.input-text button svg {
+  width: 70%;
+  height: auto;
+}
+
 div.input-text input {
   box-sizing: border-box;
   width: 100%;
@@ -198,7 +225,7 @@ div.input-text input.has-none-empty-value~label {
   border-radius: 8px;
 }
 
-div.form-row button {
+div.form-row.submit-reset button {
   padding: 0.75em 0;
 
   border: 1px solid var(--color-middle);
@@ -212,7 +239,7 @@ div.form-row button {
   width: 33%;
 }
 
-div.form-row button:focus {
+div.form-row.submit-reset button:focus {
   border-color: var(--color-dark);
 }
 
