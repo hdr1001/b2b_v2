@@ -174,7 +174,7 @@ div.input-text button {
 
   align-self: center;
 
-  padding: 2px 0 0 0;
+  padding: 3px 0 0 0;
 
   border: 1px solid var(--color-middle);
   border-radius: 14px;
@@ -191,8 +191,14 @@ div.input-text button:focus {
 }
 
 div.input-text button svg {
+  display: inline;
+
   width: 70%;
   height: auto;
+}
+
+.display-none{
+  display: none !important;
 }
 
 div.input-text input {

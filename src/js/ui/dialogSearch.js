@@ -139,20 +139,22 @@ export default function addDialogSearch() {
     //Add a button to toggle the visibility of the address 2 element
     const inpBtn = document.createElement('button');
     inpBtn.type = 'button';
-    inpBtn.id = 'addr2-visible';
-    inpBtn.classList.add('addr2-visible');
-    inpBtn.innerHTML = '<i data-lucide="Plus"></i>';
+    inpBtn.innerHTML = '<i data-lucide="Plus"></i><i data-lucide="Minus" class="display-none"></i>';
     
     inpBtn.addEventListener('click', evt => {
-        const addr2InpText = searchForm.querySelector('#row-addr2');
+        inpBtn.querySelectorAll('svg').forEach(svg => svg.classList.toggle('display-none'));
 
-        const isVisible = addr2InpText.classList.toggle('visible');
+        const divAddr2 = searchForm.querySelector('#row-addr2');
 
-        if(isVisible) {
-            console.log('<i data-lucide="Minus"></i>');
-        }
-        else{
-            console.log('<i data-lucide="Plus"></i>');
+        if(divAddr2) {
+            const bHidden = divAddr2.classList.toggle('display-none');
+
+            if(bHidden) {
+                divAddr2.querySelector('input').value = '';
+            }
+            else {
+                divAddr2.querySelector('input').focus();
+            }
         }
     });
 
@@ -163,6 +165,7 @@ export default function addDialogSearch() {
     //Create label/input elements for address 2
     divFormRow = dialogFormRow.cloneNode();
     divFormRow.id = 'row-addr2';
+    divFormRow.classList.add('display-none');
     divInpText = inpText.cloneNode();
 
     divInpText.appendChild(getInputElement(inpElems.get('search-addr2')));
