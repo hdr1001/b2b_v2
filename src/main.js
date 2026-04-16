@@ -20,6 +20,7 @@
 // ***************************************************************** */
 
 import { LEIs } from './assets/data/LEIs.js';
+import { isoCountries, fetchCountries } from './assets/codes/isoCountries.js';
 import addDialogSearch from './js/ui/dialogSearch.js';
 import addDialogAbout from './js/ui/dialogAbout.js';
 import setupEventListeners from './evntListen.js';
@@ -71,7 +72,10 @@ setInterval(() => {
 }, 5000);
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM content loaded');
+  console.log('DOM content loaded');
 
-    setupEventListeners();
+  setupEventListeners();
+
+  //If needed, fetch the ISO country data and store it in a Map for easy access
+  if(!(isoCountries && isoCountries.size)) fetchCountries();
 });
