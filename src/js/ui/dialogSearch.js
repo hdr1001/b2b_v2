@@ -111,6 +111,9 @@ export default function addDialogSearch() {
     const dialogFormRow = document.createElement('div');
     dialogFormRow.classList.add('form-row');
 
+    const divTypeaheadInput = document.createElement('div');
+    divTypeaheadInput.classList.add('typeahead-input');
+
     const inpText = document.createElement('div');
     inpText.classList.add('input-text');
 
@@ -119,9 +122,22 @@ export default function addDialogSearch() {
     let divInpText = inpText.cloneNode();
 
     divInpText.appendChild(getInputElement(inpElems.get('search-country')));
-    divFormRow.appendChild(divInpText);
+    divTypeaheadInput.appendChild(divInpText);
+    divFormRow.appendChild(divTypeaheadInput);
     searchForm.appendChild(divFormRow);
+/*
+    //Add dropdown options for country input element
+    const countryOpts = divTypeaheadInput.appendChild(document.createElement('div'));
+    countryOpts.classList.add('dropdown-options');
 
+    const ul = countryOpts.appendChild(document.createElement('ul'));
+    let li = ul.appendChild(document.createElement('li'));
+    li.appendChild(document.createElement('button')).appendChild(document.createTextNode('The Netherlands'));
+    li.appendChild(document.createElement('button')).appendChild(document.createTextNode('Belgium'));
+    li.appendChild(document.createElement('button')).appendChild(document.createTextNode('Germany'));
+    li.appendChild(document.createElement('button')).appendChild(document.createTextNode('France'));
+    li.appendChild(document.createElement('button')).appendChild(document.createTextNode('United Kingdom'));
+*/
     //Create label/input elements for name
     divFormRow = dialogFormRow.cloneNode();
     divInpText = inpText.cloneNode();

@@ -101,16 +101,12 @@ dialog div#dialog-title {
 
 dialog form {
   /* 
-  // The form is made up of multiple rows. The
-  // input elements are placed in one column 
+  // The form is made up of multiple rows.
   */
-  display: flex;
-  flex-direction: column;
-
   padding: 0 15px 15px 15px;
 
-  min-width: 320px;
-  max-width: 440px;
+  min-width: 270px;
+  max-width: 380px;
 }
 
 div.form-row {
@@ -122,19 +118,10 @@ div.form-row {
   display: flex;
   flex-direction: row;
 
-  justify-content: space-evenly;
+  justify-content: space-between;
+  gap: 0.5em;
 
   margin-top: 15px;
-}
-
-div.form-row.mult-elem {
-  /*
-  // A row with multiple input elements is spaced out
-  // evenly with a space in between
-  */
-  justify-content: space-between;
-
-  gap: 0.5em;
 }
 
 div.input-text {
@@ -191,14 +178,8 @@ div.input-text button:focus {
 }
 
 div.input-text button svg {
-  display: inline;
-
   width: 70%;
   height: auto;
-}
-
-.display-none{
-  display: none !important;
 }
 
 div.input-text input {
@@ -231,6 +212,56 @@ div.input-text input.has-none-empty-value~label {
   border-radius: 8px;
 }
 
+div.typeahead-input {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+div.typeahead-input div.dropdown-options {
+  position: absolute;
+  width: 80%;
+
+  border: 1px solid var(--color-lively);
+  border-top: none;
+  border-radius: 8px;
+
+  background-color: var(--color-bg-color);
+  z-index: 9;  
+}
+
+div.typeahead-input div.dropdown-options ul {
+  display: flex;
+  flex-direction: row;
+
+  list-style: none;
+
+  padding: 0.2em 0;
+  margin: 0;
+}
+
+div.typeahead-input div.dropdown-options ul li {
+  flex: 1;
+
+  width: 100%;
+
+  padding: 0;
+  margin: 0;
+}
+
+div.typeahead-input div.dropdown-options ul li button {
+  width: 100%;
+
+  border: none;
+
+  background-color: inherit;
+
+  text-align: left;
+}
+
+div.form-row.submit-reset {
+  justify-content: space-evenly;
+}
+
 div.form-row.submit-reset button {
   padding: 0.75em 0;
 
@@ -247,6 +278,10 @@ div.form-row.submit-reset button {
 
 div.form-row.submit-reset button:focus {
   border-color: var(--color-dark);
+}
+
+.display-none{
+  display: none !important;
 }
 
 .icon-close {
