@@ -122,22 +122,28 @@ export default function addDialogSearch() {
     let divInpText = inpText.cloneNode();
 
     divInpText.appendChild(getInputElement(inpElems.get('search-country')));
-    divTypeaheadInput.appendChild(divInpText);
-    divFormRow.appendChild(divTypeaheadInput);
+    divFormRow.appendChild(divInpText);
     searchForm.appendChild(divFormRow);
-/*
-    //Add dropdown options for country input element
-    const countryOpts = divTypeaheadInput.appendChild(document.createElement('div'));
-    countryOpts.classList.add('dropdown-options');
 
-    const ul = countryOpts.appendChild(document.createElement('ul'));
-    let li = ul.appendChild(document.createElement('li'));
-    li.appendChild(document.createElement('button')).appendChild(document.createTextNode('The Netherlands'));
-    li.appendChild(document.createElement('button')).appendChild(document.createTextNode('Belgium'));
-    li.appendChild(document.createElement('button')).appendChild(document.createTextNode('Germany'));
-    li.appendChild(document.createElement('button')).appendChild(document.createTextNode('France'));
-    li.appendChild(document.createElement('button')).appendChild(document.createTextNode('United Kingdom'));
-*/
+    const inpCountry = divInpText.querySelector('#search-country');
+
+    if(inpCountry) {
+        inpCountry.setAttribute('list', 'country-list');
+        inpCountry.autocomplete = 'off';
+    }
+
+    const dataList = divFormRow.appendChild(document.createElement('datalist'));
+    dataList.id = 'country-list';
+
+    const docFrag = new DocumentFragment;
+
+    [ 'The Netherlands', 'Belgium', 'Germany', 'France', 'United Kingdom' ].forEach(elem => {
+        const opt = docFrag.appendChild(document.createElement('option'));
+        opt.value = elem;
+    });
+
+    dataList.appendChild(docFrag);
+
     //Create label/input elements for name
     divFormRow = dialogFormRow.cloneNode();
     divInpText = inpText.cloneNode();
