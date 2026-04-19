@@ -134,12 +134,20 @@ div.input-text {
   color: var(--color-lively);
 }
 
+div.input-text.mult-elem-15 {
+  flex: 15;
+}
+
 div.input-text.mult-elem-4 {
   flex: 4;
 }
 
 div.input-text.mult-elem-6 {
   flex: 6;
+}
+
+div.input-text.mult-elem-85 {
+  flex: 85;
 }
 
 div.input-text label {
