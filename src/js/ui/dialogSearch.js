@@ -19,14 +19,10 @@
 //
 // ***************************************************************** */
 
+import { isoCountries } from '../../assets/codes/isoCountries';
+
 const iniValues = {
-    country: 'NL',
-    name: '',
-    addr1: '',
-    addr2: '',
-    postalCode: '',
-    city: '',
-    regNumber: ''
+    isoAlpha2: 'DE'
 };
 
 export default function addDialogSearch() {
@@ -84,6 +80,7 @@ export default function addDialogSearch() {
 
     //The text-input elements which are part of the dialog
     const inpElems = new Map([
+        ['search-isoAlpha2', {id: 'search-isoAlpha2', name: 'isoAlpha2', value: iniValues.isoAlpha2, label: 'ISO'}],
         ['search-country', {id: 'search-country', name: 'country', value: iniValues.country, label: 'Country'}],
         ['search-name', {id: 'search-name', name: 'name', value: iniValues.name, label: 'Name'}],
         ['search-addr1', {id: 'search-addr1', name: 'addr1', value: iniValues.addr1, label: 'Address 1'}],
@@ -96,6 +93,18 @@ export default function addDialogSearch() {
     //Create dialog element
     const dialogSearch = document.createElement('dialog');
     dialogSearch.id = 'dialog-search';
+
+    dialogSearch.addEventListener('toggle', evt => {
+        const inpIsoAlpha2 = dialogSearch.querySelector('#search-isoAlpha2');
+
+        if(evt.newState === 'open' && inpIsoAlpha2?.value) {
+            const countryName = isoCountries.get(inpIsoAlpha2.value)?.name;
+
+            const inpCountry = dialogSearch.querySelector('#search-country');
+
+            if(inpCountry) inpCountry.value = countryName;
+        }
+    });
 
     //Create dialog title in a div
     const searchTitle = document.createElement('div');
@@ -119,9 +128,25 @@ export default function addDialogSearch() {
 
     //Create label/input elements, country first
     let divFormRow = dialogFormRow.cloneNode();
+    divFormRow.classList.add('mult-elem');
+
     let divInpText = inpText.cloneNode();
+    divInpText.classList.add('mult-elem-15');
+
+    divInpText.appendChild(getInputElement(inpElems.get('search-isoAlpha2')));
+    divFormRow.appendChild(divInpText);
+
+    let inp = divInpText.querySelector('#search-isoAlpha2');
+
+    if(inp) {
+        inp.disabled = true;
+    }
+
+    divInpText = inpText.cloneNode();
+    divInpText.classList.add('mult-elem-85')
 
     divInpText.appendChild(getInputElement(inpElems.get('search-country')));
+    
     divFormRow.appendChild(divInpText);
     searchForm.appendChild(divFormRow);
 
