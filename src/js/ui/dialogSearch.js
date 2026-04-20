@@ -20,9 +20,10 @@
 // ***************************************************************** */
 
 import { isoCountries } from '../../assets/codes/isoCountries';
+import '/node_modules/flag-icons/css/flag-icons.min.css';
 
 const iniValues = {
-    isoAlpha2: 'DE'
+    isoAlpha2: 'CH'
 };
 
 export default function addDialogSearch() {
@@ -95,14 +96,14 @@ export default function addDialogSearch() {
     dialogSearch.id = 'dialog-search';
 
     dialogSearch.addEventListener('toggle', evt => {
-        const inpIsoAlpha2 = dialogSearch.querySelector('#search-isoAlpha2');
+        const inpFlag = dialogSearch.querySelector('.flag-icon');
 
-        if(evt.newState === 'open' && inpIsoAlpha2?.value) {
-            const countryName = isoCountries.get(inpIsoAlpha2.value)?.name;
+        if(evt.newState === 'open' && inpFlag) {
+            const isoCountry = inpFlag.firstChild.getAttribute('data-iso-alpha2');
 
             const inpCountry = dialogSearch.querySelector('#search-country');
 
-            if(inpCountry) inpCountry.value = countryName;
+            if(inpCountry) inpCountry.value = isoCountries.get(isoCountry)?.name;
         }
     });
 
@@ -131,19 +132,13 @@ export default function addDialogSearch() {
     divFormRow.classList.add('mult-elem');
 
     let divInpText = inpText.cloneNode();
-    divInpText.classList.add('mult-elem-15');
-
-    divInpText.appendChild(getInputElement(inpElems.get('search-isoAlpha2')));
     divFormRow.appendChild(divInpText);
 
-    let inp = divInpText.querySelector('#search-isoAlpha2');
-
-    if(inp) {
-        inp.disabled = true;
-    }
+    divInpText.classList.add('mult-elem-5', 'flag-icon');
+    divInpText.innerHTML = `<span data-iso-alpha2="${iniValues.isoAlpha2}" class="fi fi-${iniValues.isoAlpha2.toLowerCase()}"></span>`;
 
     divInpText = inpText.cloneNode();
-    divInpText.classList.add('mult-elem-85')
+    divInpText.classList.add('mult-elem-95')
 
     divInpText.appendChild(getInputElement(inpElems.get('search-country')));
     
