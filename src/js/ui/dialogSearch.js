@@ -23,11 +23,31 @@ import { isoCountries } from '../../assets/codes/isoCountries';
 import '/node_modules/flag-icons/css/flag-icons.min.css';
 
 const iniValues = {
-    isoAlpha2: 'CH'
+    isoAlpha2: 'BE'
 };
 
+//Create a span to hold the https://flagicons.lipis.dev/ flags
+function flagSpan(isoAlpha2) {
+    if(isoAlpha2) {
+        return `<span data-iso-alpha2="${isoAlpha2}" class="fi fi-${isoAlpha2.toLowerCase()}"></span>`
+    }
+
+    return '<span></span>';
+}
+
 export default function addDialogSearch() {
-    //Onclick event handler for text-input elements
+    //References to specific dialog parts
+    const dialogSearch = document.createElement('dialog');
+    const searchTitle = document.createElement('div');
+    const searchForm = document.createElement('form');
+    const divFlag = document.createElement('div');
+    let inpCountry = null; //Will be associated with the country text input
+
+    //A data list containing countries
+    const dataList = dialogSearch.appendChild(document.createElement('datalist'));
+    dataList.id = 'country-list';
+
+    //onclick event handler for text-input elements
     function hasNoneEmptyValue(evnt) {
         if(!evnt.currentTarget.value) {
             evnt.currentTarget.classList.remove('has-none-empty-value');
@@ -35,6 +55,29 @@ export default function addDialogSearch() {
         }
 
         evnt.currentTarget.classList.add('has-none-empty-value');
+    }
+
+    //Sync up flag with selected country
+    function syncUpFlag(isoCountry) {
+
+    }
+
+    //Event handler for dealing with changes to the country input
+    function inpCountryChange(evnt) {
+        console.log(event.target.getAttribute('data-iso-country'))
+    }
+
+    //Function to handle everything related to dialog open/close
+    function dialogOpenClose(evnt) {
+        const inpFlag = dialogSearch.querySelector('.flag-icon');
+
+        if(evnt.newState === 'open' && inpFlag) {
+            const isoCountry = inpFlag.firstChild.getAttribute('data-iso-alpha2');
+
+            const inpCountry = dialogSearch.querySelector('#search-country');
+
+            if(inpCountry) inpCountry.value = isoCountries.get(isoCountry)?.name;
+        }
     }
 
     //Function to create a label/(text-)input element pair
@@ -74,7 +117,7 @@ export default function addDialogSearch() {
 
         button.textContent = label;
 
-        button.addEventListener('click', evt => console.log(`${name} clicked event`));
+        button.addEventListener('click', evnt => console.log(`${name} clicked event`));
 
         return button;
     }
@@ -91,39 +134,21 @@ export default function addDialogSearch() {
         ['search-reg-number', {id: 'search-reg-number', name: 'regNumber', value: iniValues.regNumber, label: 'Registration number'}]
     ]);
 
-    //Create dialog element
-    const dialogSearch = document.createElement('dialog');
+    //Set dialog properties
     dialogSearch.id = 'dialog-search';
+    dialogSearch.addEventListener('toggle', dialogOpenClose);
 
-    dialogSearch.addEventListener('toggle', evt => {
-        const inpFlag = dialogSearch.querySelector('.flag-icon');
-
-        if(evt.newState === 'open' && inpFlag) {
-            const isoCountry = inpFlag.firstChild.getAttribute('data-iso-alpha2');
-
-            const inpCountry = dialogSearch.querySelector('#search-country');
-
-            if(inpCountry) inpCountry.value = isoCountries.get(isoCountry)?.name;
-        }
-    });
-
-    //Create dialog title in a div
-    const searchTitle = document.createElement('div');
+    //Set dialog title and add a close icon 
     searchTitle.id = 'dialog-title';
     searchTitle.innerHTML = 'Search<i data-lucide="X" class="icon-close"></i>';
  
     dialogSearch.appendChild(searchTitle);
 
-    //Create a form element
-    const searchForm = document.createElement('form');
-
-    //All input elements are created in a div with class html-input
+    //All input elements are laid out in rows
     const dialogFormRow = document.createElement('div');
     dialogFormRow.classList.add('form-row');
 
-    const divTypeaheadInput = document.createElement('div');
-    divTypeaheadInput.classList.add('typeahead-input');
-
+    //All input elements are created in a div with class html-input
     const inpText = document.createElement('div');
     inpText.classList.add('input-text');
 
@@ -131,13 +156,14 @@ export default function addDialogSearch() {
     let divFormRow = dialogFormRow.cloneNode();
     divFormRow.classList.add('mult-elem');
 
+    //Add the div for the country flag and set flag properties
+    divFormRow.appendChild(divFlag);
+
+    divFlag.classList.add('mult-elem-5', 'flag-icon');
+    divFlag.innerHTML = flagSpan(iniValues.isoAlpha2);
+
+    //The text input element for specifying a country name
     let divInpText = inpText.cloneNode();
-    divFormRow.appendChild(divInpText);
-
-    divInpText.classList.add('mult-elem-5', 'flag-icon');
-    divInpText.innerHTML = `<span data-iso-alpha2="${iniValues.isoAlpha2}" class="fi fi-${iniValues.isoAlpha2.toLowerCase()}"></span>`;
-
-    divInpText = inpText.cloneNode();
     divInpText.classList.add('mult-elem-95')
 
     divInpText.appendChild(getInputElement(inpElems.get('search-country')));
@@ -145,24 +171,39 @@ export default function addDialogSearch() {
     divFormRow.appendChild(divInpText);
     searchForm.appendChild(divFormRow);
 
-    const inpCountry = divInpText.querySelector('#search-country');
+    //An input lement with id search-country must be available
+    inpCountry = divInpText.querySelector('#search-country');
 
-    if(inpCountry) {
-        inpCountry.setAttribute('list', 'country-list');
-        inpCountry.autocomplete = 'off';
-    }
-
-    const dataList = divFormRow.appendChild(document.createElement('datalist'));
-    dataList.id = 'country-list';
+    //Associate the input element with a list of options
+    inpCountry.setAttribute('list', 'country-list');
+    inpCountry.addEventListener('change', inpCountryChange)
 
     const docFrag = new DocumentFragment;
 
-    [ 'The Netherlands', 'Belgium', 'Germany', 'France', 'United Kingdom' ].forEach(elem => {
+    [ 
+        { alpha2: 'BE', name: 'Belgium' },
+        { alpha2: 'DE', name: 'Germany' },
+        { alpha2: 'FR', name: 'France' },
+        { alpha2: 'GB', name: 'Great Britain' },
+        { alpha2: 'NL', name: 'The Netherlands' },
+    ]
+    .forEach(elem => {
         const opt = docFrag.appendChild(document.createElement('option'));
-        opt.value = elem;
+
+        opt.value = elem.name;
+        opt.setAttribute('data-iso-Alpha2', elem.alpha2);
+
+        if(elem.alpha2 === iniValues.isoAlpha2) {
+            opt.setAttribute('selected', true);
+            inpCountry.setAttribute('data-iso-country', elem.alpha2);
+            inpCountry.classList.add('has-none-empty-value');
+        }
     });
 
     dataList.appendChild(docFrag);
+
+    //Sync up the flag with the country input
+    syncUpFlag();
 
     //Create label/input elements for name
     divFormRow = dialogFormRow.cloneNode();
@@ -183,7 +224,7 @@ export default function addDialogSearch() {
     inpBtn.type = 'button';
     inpBtn.innerHTML = '<i data-lucide="Plus"></i><i data-lucide="Minus" class="display-none"></i>';
     
-    inpBtn.addEventListener('click', evt => {
+    inpBtn.addEventListener('click', evnt => {
         inpBtn.querySelectorAll('svg').forEach(svg => svg.classList.toggle('display-none'));
 
         const divAddr2 = searchForm.querySelector('#row-addr2');

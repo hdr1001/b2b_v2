@@ -290,7 +290,7 @@ div.form-row.submit-reset button:focus {
 
 div.flag-icon {
   margin: 0 auto;
-  padding: 0 0.75em;
+  padding: 0.35em 0.75em;
 
   border: 1px solid var(--color-middle);
   border-radius: 8px;
