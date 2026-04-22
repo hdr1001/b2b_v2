@@ -23,7 +23,7 @@ import { isoCountries } from '../../assets/codes/isoCountries';
 import '/node_modules/flag-icons/css/flag-icons.min.css';
 
 const iniValues = {
-    isoAlpha2: 'BE'
+    isoAlpha2: 'BE' //Please specify in uppercase
 };
 
 //Create a span to hold the https://flagicons.lipis.dev/ flags
@@ -57,14 +57,20 @@ export default function addDialogSearch() {
         evnt.currentTarget.classList.add('has-none-empty-value');
     }
 
-    //Sync up flag with selected country
-    function syncUpFlag(isoCountry) {
-
-    }
-
     //Event handler for dealing with changes to the country input
     function inpCountryChange(evnt) {
-        console.log(event.target.getAttribute('data-iso-country'))
+        let opt = null;
+    
+        for(let i = 0; i < dataList.children.length; i++) {
+            if(dataList.children[i].value === evnt.target.value) {
+                opt = dataList.children[i];
+                break;
+            }
+        }
+
+        if(opt) {
+            divFlag.innerHTML = flagSpan(opt.getAttribute('data-iso-alpha2'));
+        }
     }
 
     //Function to handle everything related to dialog open/close
@@ -194,16 +200,12 @@ export default function addDialogSearch() {
         opt.setAttribute('data-iso-Alpha2', elem.alpha2);
 
         if(elem.alpha2 === iniValues.isoAlpha2) {
-            opt.setAttribute('selected', true);
             inpCountry.setAttribute('data-iso-country', elem.alpha2);
             inpCountry.classList.add('has-none-empty-value');
         }
     });
 
     dataList.appendChild(docFrag);
-
-    //Sync up the flag with the country input
-    syncUpFlag();
 
     //Create label/input elements for name
     divFormRow = dialogFormRow.cloneNode();
