@@ -23,7 +23,7 @@ import { isoCountries } from '../../assets/codes/isoCountries';
 import '/node_modules/flag-icons/css/flag-icons.min.css';
 
 const iniValues = {
-    isoAlpha2: 'BE' //Please specify in uppercase
+    isoAlpha2: 'GB' //Please specify the country code in uppercase
 };
 
 //Create a span to hold the https://flagicons.lipis.dev/ flags
@@ -35,7 +35,32 @@ function flagSpan(isoAlpha2) {
     return '<span></span>';
 }
 
+//Code for creating the search dialog
 export default function addDialogSearch() {
+    //String constants
+    const DIALOG_SEARCH = 'dialog-search';
+    const DIALOG_TITLE = 'dialog-title';
+    const FORM_ROW = 'form-row';
+    const FLAG_ICON = 'flag-icon';
+    const MULT_ELEM = 'mult-elem';
+    const INPUT_TXT = 'input-text';
+    const HAS_NONE_EMPTY_VALUE = 'has-none-empty-value';
+    const ROW_ADDR2 = 'row-addr2';
+    const CTRY_DATA_LIST = 'country-list';
+    const CTRY_ISO_ALPHA2 = 'data-iso-alpha2';
+
+    //The text-input elements which are part of the dialog
+    const inpElems = new Map([
+        ['search-isoAlpha2', {id: 'search-isoAlpha2', name: 'isoAlpha2', value: iniValues.isoAlpha2, label: 'ISO'}],
+        ['search-country', {id: 'search-country', name: 'country', value: iniValues.country, label: 'Country'}],
+        ['search-name', {id: 'search-name', name: 'name', value: iniValues.name, label: 'Name'}],
+        ['search-addr1', {id: 'search-addr1', name: 'addr1', value: iniValues.addr1, label: 'Address 1'}],
+        ['search-addr2', {id: 'search-addr2', name: 'addr2', value: iniValues.addr2, label: 'Address 2'}],
+        ['search-postal-code', {id: 'search-postal-code', name: 'postalCode', value: iniValues.postalCode, label: 'Postal code'}],
+        ['search-city', {id: 'search-city', name: 'city', value: iniValues.city, label: 'City'}],
+        ['search-reg-number', {id: 'search-reg-number', name: 'regNumber', value: iniValues.regNumber, label: 'Registration number'}]
+    ]);
+
     //References to specific dialog parts
     const dialogSearch = document.createElement('dialog');
     const searchTitle = document.createElement('div');
@@ -45,16 +70,16 @@ export default function addDialogSearch() {
 
     //A data list containing countries
     const dataList = dialogSearch.appendChild(document.createElement('datalist'));
-    dataList.id = 'country-list';
+    dataList.id = CTRY_DATA_LIST;
 
     //onclick event handler for text-input elements
     function hasNoneEmptyValue(evnt) {
         if(!evnt.currentTarget.value) {
-            evnt.currentTarget.classList.remove('has-none-empty-value');
+            evnt.currentTarget.classList.remove(HAS_NONE_EMPTY_VALUE);
             return;
         }
 
-        evnt.currentTarget.classList.add('has-none-empty-value');
+        evnt.currentTarget.classList.add(HAS_NONE_EMPTY_VALUE);
     }
 
     //Event handler for dealing with changes to the country input
@@ -68,21 +93,16 @@ export default function addDialogSearch() {
             }
         }
 
-        if(opt) {
-            divFlag.innerHTML = flagSpan(opt.getAttribute('data-iso-alpha2'));
-        }
+        divFlag.innerHTML = flagSpan(opt?.getAttribute(CTRY_ISO_ALPHA2));
     }
 
     //Function to handle everything related to dialog open/close
     function dialogOpenClose(evnt) {
-        const inpFlag = dialogSearch.querySelector('.flag-icon');
-
-        if(evnt.newState === 'open' && inpFlag) {
-            const isoCountry = inpFlag.firstChild.getAttribute('data-iso-alpha2');
-
-            const inpCountry = dialogSearch.querySelector('#search-country');
-
-            if(inpCountry) inpCountry.value = isoCountries.get(isoCountry)?.name;
+        if(evnt.newState === 'open' && divFlag) {
+            //Update the country flag in case the country text input and flag are not in sync
+            if(inpCountry.getAttribute(CTRY_ISO_ALPHA2) !== divFlag?.firstChild.getAttribute(CTRY_ISO_ALPHA2)) {
+                flagSpan(inpCountry.getAttribute(CTRY_ISO_ALPHA2))
+            }
         }
     }
 
@@ -97,7 +117,7 @@ export default function addDialogSearch() {
 
         if(inpElem.value) {
             input.value = inpElem.value;
-            input.classList.add('has-none-empty-value');
+            input.classList.add(HAS_NONE_EMPTY_VALUE);
         }
 
         input.addEventListener('change', hasNoneEmptyValue);
@@ -128,49 +148,37 @@ export default function addDialogSearch() {
         return button;
     }
 
-    //The text-input elements which are part of the dialog
-    const inpElems = new Map([
-        ['search-isoAlpha2', {id: 'search-isoAlpha2', name: 'isoAlpha2', value: iniValues.isoAlpha2, label: 'ISO'}],
-        ['search-country', {id: 'search-country', name: 'country', value: iniValues.country, label: 'Country'}],
-        ['search-name', {id: 'search-name', name: 'name', value: iniValues.name, label: 'Name'}],
-        ['search-addr1', {id: 'search-addr1', name: 'addr1', value: iniValues.addr1, label: 'Address 1'}],
-        ['search-addr2', {id: 'search-addr2', name: 'addr2', value: iniValues.addr2, label: 'Address 2'}],
-        ['search-postal-code', {id: 'search-postal-code', name: 'postalCode', value: iniValues.postalCode, label: 'Postal code'}],
-        ['search-city', {id: 'search-city', name: 'city', value: iniValues.city, label: 'City'}],
-        ['search-reg-number', {id: 'search-reg-number', name: 'regNumber', value: iniValues.regNumber, label: 'Registration number'}]
-    ]);
-
     //Set dialog properties
-    dialogSearch.id = 'dialog-search';
+    dialogSearch.id = DIALOG_SEARCH;
     dialogSearch.addEventListener('toggle', dialogOpenClose);
 
     //Set dialog title and add a close icon 
-    searchTitle.id = 'dialog-title';
+    searchTitle.id = DIALOG_TITLE;
     searchTitle.innerHTML = 'Search<i data-lucide="X" class="icon-close"></i>';
  
     dialogSearch.appendChild(searchTitle);
 
     //All input elements are laid out in rows
     const dialogFormRow = document.createElement('div');
-    dialogFormRow.classList.add('form-row');
+    dialogFormRow.classList.add(FORM_ROW);
 
     //All input elements are created in a div with class html-input
     const inpText = document.createElement('div');
-    inpText.classList.add('input-text');
+    inpText.classList.add(INPUT_TXT);
 
     //Create label/input elements, country first
     let divFormRow = dialogFormRow.cloneNode();
-    divFormRow.classList.add('mult-elem');
+    divFormRow.classList.add(MULT_ELEM);
 
     //Add the div for the country flag and set flag properties
     divFormRow.appendChild(divFlag);
 
-    divFlag.classList.add('mult-elem-5', 'flag-icon');
-    divFlag.innerHTML = flagSpan(iniValues.isoAlpha2);
+    divFlag.classList.add(`${MULT_ELEM}-5`, FLAG_ICON);
+    divFlag.innerHTML = flagSpan('');
 
     //The text input element for specifying a country name
     let divInpText = inpText.cloneNode();
-    divInpText.classList.add('mult-elem-95')
+    divInpText.classList.add(`${MULT_ELEM}-95`)
 
     divInpText.appendChild(getInputElement(inpElems.get('search-country')));
     
@@ -181,7 +189,7 @@ export default function addDialogSearch() {
     inpCountry = divInpText.querySelector('#search-country');
 
     //Associate the input element with a list of options
-    inpCountry.setAttribute('list', 'country-list');
+    inpCountry.setAttribute('list', CTRY_DATA_LIST);
     inpCountry.addEventListener('change', inpCountryChange)
 
     const docFrag = new DocumentFragment;
@@ -197,11 +205,16 @@ export default function addDialogSearch() {
         const opt = docFrag.appendChild(document.createElement('option'));
 
         opt.value = elem.name;
-        opt.setAttribute('data-iso-Alpha2', elem.alpha2);
+        opt.setAttribute(CTRY_ISO_ALPHA2, elem.alpha2);
 
         if(elem.alpha2 === iniValues.isoAlpha2) {
+            inpCountry.value = elem.name;
+
             inpCountry.setAttribute('data-iso-country', elem.alpha2);
-            inpCountry.classList.add('has-none-empty-value');
+            inpCountry.classList.add(HAS_NONE_EMPTY_VALUE);
+
+            //Sync the flag
+            divFlag.innerHTML = flagSpan(elem.alpha2);
         }
     });
 
@@ -229,7 +242,7 @@ export default function addDialogSearch() {
     inpBtn.addEventListener('click', evnt => {
         inpBtn.querySelectorAll('svg').forEach(svg => svg.classList.toggle('display-none'));
 
-        const divAddr2 = searchForm.querySelector('#row-addr2');
+        const divAddr2 = searchForm.querySelector(`#${ROW_ADDR2}`);
 
         if(divAddr2) {
             const bHidden = divAddr2.classList.toggle('display-none');
@@ -249,7 +262,7 @@ export default function addDialogSearch() {
 
     //Create label/input elements for address 2
     divFormRow = dialogFormRow.cloneNode();
-    divFormRow.id = 'row-addr2';
+    divFormRow.id = ROW_ADDR2;
     divFormRow.classList.add('display-none');
     divInpText = inpText.cloneNode();
 
@@ -259,16 +272,16 @@ export default function addDialogSearch() {
 
     //Create label/input elements for postal code and city on the same row
     divFormRow = dialogFormRow.cloneNode();
-    divFormRow.classList.add('mult-elem');
+    divFormRow.classList.add(MULT_ELEM);
 
     divInpText = inpText.cloneNode();
-    divInpText.classList.add('mult-elem-4');
+    divInpText.classList.add(`${MULT_ELEM}-4`);
 
     divInpText.appendChild(getInputElement(inpElems.get('search-postal-code')));
     divFormRow.appendChild(divInpText);
 
     divInpText = inpText.cloneNode();
-    divInpText.classList.add('mult-elem-6');
+    divInpText.classList.add(`${MULT_ELEM}-6`);
 
     divInpText.appendChild(getInputElement(inpElems.get('search-city')));
 
