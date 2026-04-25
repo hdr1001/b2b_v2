@@ -22,8 +22,12 @@
 import { isoCountries } from '../../assets/codes/isoCountries';
 import '/node_modules/flag-icons/css/flag-icons.min.css';
 
+const CTRY_DATA_LIST = 'country-list';
+const CTRY_ISO_ALPHA2 = 'data-iso-alpha2';
+const HAS_NONE_EMPTY_VALUE = 'has-none-empty-value';
+
 const iniValues = {
-    isoAlpha2: 'GB' //Please specify the country code in uppercase
+    isoAlpha2: 'NL' //Please specify the country code in uppercase
 };
 
 //Create a span to hold the https://flagicons.lipis.dev/ flags
@@ -44,10 +48,7 @@ export default function addDialogSearch() {
     const FLAG_ICON = 'flag-icon';
     const MULT_ELEM = 'mult-elem';
     const INPUT_TXT = 'input-text';
-    const HAS_NONE_EMPTY_VALUE = 'has-none-empty-value';
     const ROW_ADDR2 = 'row-addr2';
-    const CTRY_DATA_LIST = 'country-list';
-    const CTRY_ISO_ALPHA2 = 'data-iso-alpha2';
 
     //The text-input elements which are part of the dialog
     const inpElems = new Map([
@@ -67,6 +68,7 @@ export default function addDialogSearch() {
     const searchForm = document.createElement('form');
     const divFlag = document.createElement('div');
     let inpCountry = null; //Will be associated with the country text input
+    let inpName = null; //Will be associated with the name text input
 
     //A data list containing countries
     const dataList = dialogSearch.appendChild(document.createElement('datalist'));
@@ -93,7 +95,12 @@ export default function addDialogSearch() {
             }
         }
 
-        divFlag.innerHTML = flagSpan(opt?.getAttribute(CTRY_ISO_ALPHA2));
+        const newIsoAlpha2 = opt?.getAttribute(CTRY_ISO_ALPHA2);
+
+        if(newIsoAlpha2) {
+            inpCountry.setAttribute(CTRY_ISO_ALPHA2, newIsoAlpha2)
+            divFlag.innerHTML = flagSpan(newIsoAlpha2);
+        }
     }
 
     //Function to handle everything related to dialog open/close
@@ -101,7 +108,11 @@ export default function addDialogSearch() {
         if(evnt.newState === 'open' && divFlag) {
             //Update the country flag in case the country text input and flag are not in sync
             if(inpCountry.getAttribute(CTRY_ISO_ALPHA2) !== divFlag?.firstChild.getAttribute(CTRY_ISO_ALPHA2)) {
-                flagSpan(inpCountry.getAttribute(CTRY_ISO_ALPHA2))
+                divFlag.innerHTML = flagSpan(inpCountry.getAttribute(CTRY_ISO_ALPHA2))
+            }
+
+            if(inpCountry.getAttribute(CTRY_ISO_ALPHA2)) {
+                inpName.focus();
             }
         }
     }
@@ -115,7 +126,7 @@ export default function addDialogSearch() {
         input.id = inpElem.id;
         input.name = inpElem.name;
 
-        if(inpElem.value) {
+        if(inpElem.value && inpElem.id !== 'search-country') {
             input.value = inpElem.value;
             input.classList.add(HAS_NONE_EMPTY_VALUE);
         }
@@ -192,39 +203,14 @@ export default function addDialogSearch() {
     inpCountry.setAttribute('list', CTRY_DATA_LIST);
     inpCountry.addEventListener('change', inpCountryChange)
 
-    const docFrag = new DocumentFragment;
-
-    [ 
-        { alpha2: 'BE', name: 'Belgium' },
-        { alpha2: 'DE', name: 'Germany' },
-        { alpha2: 'FR', name: 'France' },
-        { alpha2: 'GB', name: 'Great Britain' },
-        { alpha2: 'NL', name: 'The Netherlands' },
-    ]
-    .forEach(elem => {
-        const opt = docFrag.appendChild(document.createElement('option'));
-
-        opt.value = elem.name;
-        opt.setAttribute(CTRY_ISO_ALPHA2, elem.alpha2);
-
-        if(elem.alpha2 === iniValues.isoAlpha2) {
-            inpCountry.value = elem.name;
-
-            inpCountry.setAttribute('data-iso-country', elem.alpha2);
-            inpCountry.classList.add(HAS_NONE_EMPTY_VALUE);
-
-            //Sync the flag
-            divFlag.innerHTML = flagSpan(elem.alpha2);
-        }
-    });
-
-    dataList.appendChild(docFrag);
-
     //Create label/input elements for name
     divFormRow = dialogFormRow.cloneNode();
     divInpText = inpText.cloneNode();
 
     divInpText.appendChild(getInputElement(inpElems.get('search-name')));
+
+    inpName = divInpText.querySelector('#search-name'); //for set focus
+
     divFormRow.appendChild(divInpText);
     searchForm.appendChild(divFormRow);
 
@@ -312,4 +298,25 @@ export default function addDialogSearch() {
     dialogSearch.appendChild(searchForm);
 
     return dialogSearch;
+}
+
+export function populateDataList() {
+    const docFrag = new DocumentFragment;
+
+    isoCountries.forEach(elem => {
+        const opt = docFrag.appendChild(document.createElement('option'));
+
+        opt.value = elem.name;
+        opt.setAttribute(CTRY_ISO_ALPHA2, elem.alpha2);
+
+        if(elem.alpha2 === iniValues.isoAlpha2) {
+            const inpCountry = document.querySelector('#search-country');
+            inpCountry.value = elem.name;
+
+            inpCountry.setAttribute(CTRY_ISO_ALPHA2, elem.alpha2);
+            inpCountry.classList.add(HAS_NONE_EMPTY_VALUE);
+        }
+    });
+
+    document.querySelector(`#${CTRY_DATA_LIST}`).appendChild(docFrag);
 }
