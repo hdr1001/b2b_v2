@@ -86,8 +86,8 @@ export default function addDialogSearch() {
 
     //Event handler for dealing with changes to the country input
     function inpCountryChange(evnt) {
-        let opt = null;
-    
+        let opt = null, newIsoAlpha2 = '';
+
         for(let i = 0; i < dataList.children.length; i++) {
             if(dataList.children[i].value === evnt.target.value) {
                 opt = dataList.children[i];
@@ -95,7 +95,19 @@ export default function addDialogSearch() {
             }
         }
 
-        const newIsoAlpha2 = opt?.getAttribute(CTRY_ISO_ALPHA2);
+        if(opt) {
+            newIsoAlpha2 = opt.getAttribute(CTRY_ISO_ALPHA2);
+        }
+
+        if(!newIsoAlpha2 && inpCountry.value.length === 2) {
+            console.log('here');
+            const oCountry = isoCountries.get(inpCountry.value.toUpperCase());
+
+            if(oCountry.name) {
+                newIsoAlpha2 = inpCountry.value.toUpperCase();
+                inpCountry.value = oCountry.name;
+            }
+        }
 
         if(newIsoAlpha2) {
             inpCountry.setAttribute(CTRY_ISO_ALPHA2, newIsoAlpha2)
