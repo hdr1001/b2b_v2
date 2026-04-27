@@ -100,7 +100,6 @@ export default function addDialogSearch() {
         }
 
         if(!newIsoAlpha2 && inpCountry.value.length === 2) {
-            console.log('here');
             const oCountry = isoCountries.get(inpCountry.value.toUpperCase());
 
             if(oCountry.name) {
@@ -109,9 +108,22 @@ export default function addDialogSearch() {
             }
         }
 
+        if(!newIsoAlpha2 && inpCountry.value.length > 2) {
+            const oCountry = [...isoCountries.values()].find(elem => elem.name?.toUpperCase() === inpCountry.value.toUpperCase());
+
+            if(oCountry) {
+                newIsoAlpha2 = oCountry.alpha2;
+                inpCountry.value = oCountry.name;
+            }
+        }
+
         if(newIsoAlpha2) {
             inpCountry.setAttribute(CTRY_ISO_ALPHA2, newIsoAlpha2)
             divFlag.innerHTML = flagSpan(newIsoAlpha2);
+        }
+        else { //Invalid input
+            inpCountry.setAttribute(CTRY_ISO_ALPHA2, '')
+            divFlag.innerHTML = flagSpan('');
         }
     }
 
@@ -213,7 +225,7 @@ export default function addDialogSearch() {
 
     //Associate the input element with a list of options
     inpCountry.setAttribute('list', CTRY_DATA_LIST);
-    inpCountry.addEventListener('change', inpCountryChange)
+    inpCountry.addEventListener('change', inpCountryChange);
 
     //Create label/input elements for name
     divFormRow = dialogFormRow.cloneNode();
