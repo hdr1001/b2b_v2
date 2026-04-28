@@ -102,7 +102,7 @@ export default function addDialogSearch() {
         if(!newIsoAlpha2 && inpCountry.value.length === 2) {
             const oCountry = isoCountries.get(inpCountry.value.toUpperCase());
 
-            if(oCountry.name) {
+            if(oCountry?.name) {
                 newIsoAlpha2 = inpCountry.value.toUpperCase();
                 inpCountry.value = oCountry.name;
             }
@@ -168,6 +168,28 @@ export default function addDialogSearch() {
         return docFrag;
     }
 
+    //Submit button click event
+    function submitClick() {
+        const searchCriteria = {};
+
+        dialogSearch.querySelectorAll('input').forEach(inp => { 
+            if(inp.value) searchCriteria[inp.name] = inp.value;
+
+            if(inp === inpCountry) searchCriteria.isoAlpha2 = inp.getAttribute(CTRY_ISO_ALPHA2);
+        });
+
+        console.log(searchCriteria);
+    }
+
+    //Reset button click event
+    function resetClick() {
+        dialogSearch.querySelectorAll('input').forEach(inp => {
+            if(inp !== inpCountry) {
+                inp.value = iniValues[inp.name] ? iniValues[inp.name] : '';
+            }
+        });
+    }
+
     //Function to create a dialog button element
     function getButtonElement(id, name, label) {
         const button = document.createElement('button');
@@ -177,8 +199,6 @@ export default function addDialogSearch() {
         button.type = 'button';
 
         button.textContent = label;
-
-        button.addEventListener('click', evnt => console.log(`${name} clicked event`));
 
         return button;
     }
@@ -312,9 +332,13 @@ export default function addDialogSearch() {
 
     let button = getButtonElement('search-submit', 'submit', 'Submit');
 
+    button.addEventListener('click', submitClick);
+
     divFormRow.appendChild(button);
 
     button = getButtonElement('search-reset', 'reset', 'Reset');
+
+    button.addEventListener('click', resetClick);
 
     divFormRow.appendChild(button);
 
