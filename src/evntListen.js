@@ -21,12 +21,17 @@
 
 function setupEventListeners() {
     //HTML element references
+    const appMain      = document.querySelector('#app-main');
+
     const navSearch    = document.querySelector('#nav-search');
     const navAbout     = document.querySelector('#nav-about');
     const navContact   = document.querySelector('#nav-contact');
 
     const dialogAbout  = document.querySelector('#dialog-about');
     const dialogSearch = document.querySelector('#dialog-search');
+
+    //Top level listeners
+    appMain.addEventListener('submitSearchCriteria', evnt => console.log(event.detail));
 
     //Navigation menu event listeners
     navSearch.addEventListener('click', () => dialogSearch.showModal());

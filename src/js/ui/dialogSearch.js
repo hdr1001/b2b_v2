@@ -178,7 +178,14 @@ export default function addDialogSearch() {
             if(inp === inpCountry) searchCriteria.isoAlpha2 = inp.getAttribute(CTRY_ISO_ALPHA2);
         });
 
-        console.log(searchCriteria);
+        dialogSearch.dispatchEvent(
+            new CustomEvent(
+                'submitSearchCriteria',
+                {
+                    bubbles: true,
+                    detail: searchCriteria
+                }
+        ));
     }
 
     //Reset button click event
@@ -188,6 +195,8 @@ export default function addDialogSearch() {
                 inp.value = iniValues[inp.name] ? iniValues[inp.name] : '';
             }
         });
+
+        inpName.focus();
     }
 
     //Function to create a dialog button element
