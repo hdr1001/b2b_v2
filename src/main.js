@@ -22,6 +22,7 @@
 import { LEIs } from './assets/data/LEIs.js';
 import { isoCountries, fetchCountries } from './assets/codes/isoCountries.js';
 import addDialogSearch from './js/ui/dialogSearch.js';
+import addDialogPlzWait from './js/ui/dialogPlzWait.js';
 import addDialogAbout from './js/ui/dialogAbout.js';
 import setupEventListeners from './evntListen.js';
 import B2bReport from './js/components/b2bReport.js';
@@ -47,6 +48,7 @@ document.querySelector('#app').innerHTML = `
 //Add dialogs
 const appMain = document.querySelector('#app-main');
 appMain.appendChild(addDialogSearch());
+appMain.appendChild(addDialogPlzWait());
 appMain.appendChild(addDialogAbout());
 
 //Instantiate a B2B report component and add it to the page
