@@ -29,9 +29,15 @@ function setupEventListeners() {
 
     const dialogAbout  = document.querySelector('#dialog-about');
     const dialogSearch = document.querySelector('#dialog-search');
+    const dialogPlzWait = document.querySelector('#dialog-plz-wait');
 
     //Top level listeners
-    appMain.addEventListener('submitSearchCriteria', evnt => console.log(event.detail));
+    appMain.addEventListener('submitSearchCriteria', evnt => {
+        console.log(event.detail);
+        dialogSearch.close();
+        dialogPlzWait.showModal();
+        setTimeout(() => dialogPlzWait.close(), 10000);
+    });
 
     //Navigation menu event listeners
     navSearch.addEventListener('click', () => dialogSearch.showModal());
