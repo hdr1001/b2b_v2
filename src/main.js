@@ -22,16 +22,21 @@
 import { LEIs } from './assets/data/LEIs.js';
 import { isoCountries, fetchCountries } from './assets/codes/isoCountries.js';
 import addDialogSearch from './js/ui/dialogSearch.js';
-import addDialogPlzWait from './js/ui/dialogPlzWait.js';
 import addDialogAbout from './js/ui/dialogAbout.js';
 import setupEventListeners from './evntListen.js';
 import B2bReport from './js/components/b2bReport.js';
+import B2bSearchCriteria from './js/components/b2bSearchCriteria.js';
 import B2bPlzWait from './js/components/b2bPlzWait.js';
 
 customElements.define('b2b-report', B2bReport);
+customElements.define('b2b-search-criteria', B2bSearchCriteria);
 customElements.define('b2b-plz-wait', B2bPlzWait);
 
 console.log('Top of main.js');
+
+const iniValues = {
+    isoAlpha2: 'NL' //Please specify the country code in uppercase
+};
 
 //Main application structure
 document.querySelector('#app').innerHTML = `
@@ -50,13 +55,17 @@ document.querySelector('#app').innerHTML = `
 //Add dialogs
 const appMain = document.querySelector('#app-main');
 appMain.appendChild(addDialogSearch());
-//appMain.appendChild(addDialogPlzWait());
 appMain.appendChild(addDialogAbout());
 
-const dialogPlzWait = document.createElement('dialog');
-dialogPlzWait.id = 'dialog-plz-wait';
-dialogPlzWait.appendChild(document.createElement('b2b-plz-wait'));
-appMain.appendChild(dialogPlzWait);
+const dialogSearchChoose = document.createElement('dialog');
+dialogSearchChoose.id = 'dialog-search-choose';
+const searchCriteria = document.createElement('b2b-search-criteria');
+searchCriteria.setAttribute('ini-values', JSON.stringify(iniValues));
+dialogSearchChoose.appendChild(searchCriteria);
+const plzWait = document.createElement('b2b-plz-wait');
+plzWait.style.display = 'none';
+dialogSearchChoose.appendChild(plzWait);
+appMain.appendChild(dialogSearchChoose);
 
 //Instantiate a B2B report component and add it to the page
 const b2bReport = document.createElement('b2b-report');

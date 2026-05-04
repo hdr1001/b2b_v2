@@ -29,12 +29,12 @@ function setupEventListeners() {
 
     const dialogAbout  = document.querySelector('#dialog-about');
     const dialogSearch = document.querySelector('#dialog-search');
-    const dialogPlzWait = document.querySelector('#dialog-plz-wait');
+    const dialogSearchChoose = document.querySelector('#dialog-search-choose');
 
     //Navigation menu event listeners
     navSearch.addEventListener('click', () => dialogSearch.showModal());
     navAbout.addEventListener('click', () => dialogAbout.showModal());
-    navContact.addEventListener('click', () => dialogPlzWait.showModal());
+    navContact.addEventListener('click', () => dialogSearchChoose.showModal());
 
     //Search dialog event listeners
     dialogSearch.addEventListener('click', event => { if(event.target === dialogSearch) dialogSearch.close() });  
