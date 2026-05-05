@@ -19,22 +19,22 @@
 //
 // ***************************************************************** */
 
-function setupEventListeners() {
+export default function setupEventListeners() {
     //HTML element references
-    const appMain      = document.querySelector('#app-main');
+    const appMain          = document.querySelector('#app-main');
 
-    const navSearch    = document.querySelector('#nav-search');
-    const navAbout     = document.querySelector('#nav-about');
-    const navContact   = document.querySelector('#nav-contact');
+    const navSearch        = document.querySelector('#nav-search');
+    const navAbout         = document.querySelector('#nav-about');
+    const navContact       = document.querySelector('#nav-contact');
 
-    const dialogAbout  = document.querySelector('#dialog-about');
-    const dialogSearch = document.querySelector('#dialog-search');
-    const dialogSearchChoose = document.querySelector('#dialog-search-choose');
+    const dialogAbout      = document.querySelector('#dialog-about');
+    const dialogMultStepID = document.querySelector('#dialog-mult-step-id');
+    const dialogSearch     = document.querySelector('#dialog-search');
 
     //Navigation menu event listeners
     navSearch.addEventListener('click', () => dialogSearch.showModal());
     navAbout.addEventListener('click', () => dialogAbout.showModal());
-    navContact.addEventListener('click', () => dialogSearchChoose.showModal());
+    navContact.addEventListener('click', () => dialogMultStepID.showModal());
 
     //Search dialog event listeners
     dialogSearch.addEventListener('click', event => { if(event.target === dialogSearch) dialogSearch.close() });  
@@ -44,5 +44,3 @@ function setupEventListeners() {
     dialogAbout.addEventListener('click', event => { if(event.target === dialogAbout) dialogAbout.close() });
     dialogAbout.querySelector('.icon-close').addEventListener('click', () => dialogAbout.close());
 }
-
-export default setupEventListeners;

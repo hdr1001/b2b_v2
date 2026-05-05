@@ -41,7 +41,7 @@ export default class B2bPlzWait extends HTMLElement {
 
         //The div container for the waiting animation
         const b2bPlzWait = document.createElement('div');
-        b2bPlzWait.id = 'b2b-plz-wait';
+        b2bPlzWait.id = 'top-plz-wait';
 
         //The wait animation title
         const plzWaitTitle = document.createElement('div');

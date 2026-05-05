@@ -31,15 +31,6 @@ export default class B2bReport extends HTMLElement {
 
         //Create the component's shadow DOM tree 
         this.attachShadow({ mode: 'open' });
-
-        //The b2bKey property contains B2B key value
-        this.b2bKey = this.getAttribute('b2b-key') || '0';
-
-        //Create an B2B object wrapper
-        this.b2bRec = new LeiRec(LEIs[this.b2bKey]);
-
-        //Array of report sections
-        this.sections = getLeiSections(this.b2bRec);
     }
 
     //Observe the 'b2bKey' attribute for changes
@@ -50,7 +41,7 @@ export default class B2bReport extends HTMLElement {
         if(name === 'b2b-key' && oldValue !== newValue) {
             this.b2bKey = newValue;
 
-            this.renderComponentUpdate();
+            if(this.isConnected) this.renderComponentUpdate();
         }
     }
 
@@ -62,6 +53,17 @@ export default class B2bReport extends HTMLElement {
         css.setAttribute('href', cssB2bReport);
 
         this.shadowRoot.appendChild(css);
+
+        //The b2bKey property contains B2B key value
+        if(!this.b2bKey) {
+            this.b2bKey = this.getAttribute('b2b-key') || '0';
+        }
+
+        //Create an B2B object wrapper
+        this.b2bRec = new LeiRec(LEIs[this.b2bKey]);
+
+        //Array of report sections
+        this.sections = getLeiSections(this.b2bRec);
 
         const b2bRptDiv = document.createElement('div');
         b2bRptDiv.classList.add('b2b-report');

@@ -57,18 +57,24 @@ const appMain = document.querySelector('#app-main');
 appMain.appendChild(addDialogSearch());
 appMain.appendChild(addDialogAbout());
 
-const dialogSearchChoose = document.createElement('dialog');
-dialogSearchChoose.id = 'dialog-search-choose';
+//Multi step dialog for B2B identification
+const dialogMultStepID = document.createElement('dialog');
+dialogMultStepID.id = 'dialog-mult-step-id';
+
+//Instantiate a B2B search criteria component and add it to the multi step dialog
 const searchCriteria = document.createElement('b2b-search-criteria');
 searchCriteria.setAttribute('ini-values', JSON.stringify(iniValues));
-dialogSearchChoose.appendChild(searchCriteria);
+dialogMultStepID.appendChild(searchCriteria);
+
+//Instantiate a B2B please wait component and add it to the multi step dialog
 const plzWait = document.createElement('b2b-plz-wait');
 plzWait.style.display = 'none';
-dialogSearchChoose.appendChild(plzWait);
-appMain.appendChild(dialogSearchChoose);
+dialogMultStepID.appendChild(plzWait);
+appMain.appendChild(dialogMultStepID);
 
 //Instantiate a B2B report component and add it to the page
 const b2bReport = document.createElement('b2b-report');
+b2bReport.setAttribute('b2b-key', '56');
 document.querySelector('#app-main').appendChild(b2bReport);
 
 let doSkip = true;
