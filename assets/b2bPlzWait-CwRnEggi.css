@@ -44,7 +44,7 @@
     position: relative;
 }
 
-#b2b-plz-wait {
+#top-plz-wait {
     margin: 20px;
 
     border: 2px solid var(--color-middle);
@@ -55,7 +55,7 @@
     background-color: var(--color-bg-color);
 }
 
-div#b2b-plz-wait .plz-wait-title {
+div#top-plz-wait .plz-wait-title {
     padding: 0.25em 0.5em;
 
     font-size: 1.5em;
@@ -65,7 +65,7 @@ div#b2b-plz-wait .plz-wait-title {
     background-color: var(--color-dark);
 }
 
-div#b2b-plz-wait .plz-wait-animation {
+div#top-plz-wait .plz-wait-animation {
     display: flex;
     flex-direction: row;
 
@@ -76,7 +76,7 @@ div#b2b-plz-wait .plz-wait-animation {
     align-items: center;
 }
 
-div#b2b-plz-wait .plz-wait-box {
+div#top-plz-wait .plz-wait-box {
     width: var(--box-size);
     height: var(--box-size);
     position: relative;
