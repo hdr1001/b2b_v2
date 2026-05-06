@@ -32,6 +32,11 @@ export default class B2bSearchCriteria extends HTMLElement {
 
     //When the component is added to the DOM, render its content
     connectedCallback() {
+        //Form related string constants
+        const FORM_ROW = 'form-row';
+        const INPUT_TXT = 'input-text';
+        const HAS_NONE_EMPTY_VALUE = 'has-none-empty-value';
+
         //Get the initial values as contained in the 'ini-values' attribute
         this.iniValues = JSON.parse(this.getAttribute('ini-values') || '{}');
 
@@ -78,10 +83,6 @@ export default class B2bSearchCriteria extends HTMLElement {
 
             return docFrag;
         }
-
-        //Form related string constants
-        const FORM_ROW = 'form-row';
-        const INPUT_TXT = 'input-text';
 
         //The text-input elements which are part of the dialog
         const inpElems = new Map([

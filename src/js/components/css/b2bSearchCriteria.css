@@ -20,13 +20,13 @@
 // ***************************************************************** */
 
 :root {
-    --color-bg-color: #fffcf2;
-    --color-darkest:  #252422;
-    --color-dark:     #403d39;
-    --color-middle:   #ccc5b9;
-    --color-lively:   #eb5e28;
+  --color-bg-color: #fffcf2;
+  --color-darkest:  #252422;
+  --color-dark:     #403d39;
+  --color-middle:   #ccc5b9;
+  --color-lively:   #eb5e28;
 
-    --duration: 1.5s;
+  --duration: 1.5s;
 	--container-size: 250px;
 	--box-size: 33px;
 	--box-border-radius: 15%;
@@ -64,31 +64,79 @@ dialog::backdrop {
 
   min-width: 270px;
   max-width: 380px;
-}
 
-div.form-row {
-  /*
-  // A row can contain one or more input elements.
-  // If there are multiple input elements, they are 
-  // spaced out evenly.
-  */
-  display: flex;
-  flex-direction: row;
+  div.form-row {
+    /*
+    // A row can contain one or more input elements.
+    // If there are multiple input elements, they are 
+    // spaced out evenly.
+    */
+    display: flex;
+    flex-direction: row;
 
-  justify-content: space-between;
-  gap: 0.5em;
+    justify-content: space-between;
+    gap: 0.5em;
 
-  margin-top: 15px;
-}
+    margin-top: 15px;
 
-div.input-text {
-  display: flex;
-  flex: 1;
+    div.input-text {
+      /*
+      // An input element is made up of an input field, a label and
+      // optionally a button.
+      */
+      display: flex;
+      flex: 1;
 
-  position: relative;
+      position: relative;
 
-  font-style: italic;
-  color: var(--color-lively);
+      font-style: italic;
+      color: var(--color-lively);
+
+      label {
+        position: absolute;
+
+        padding-top: 0.3em;
+        pointer-events: none;
+
+        background-color: transparent;
+
+        left: 0.8em;
+
+        transition: all 0.3s ease;
+      }
+
+      input {
+        box-sizing: border-box;
+        width: 100%;
+
+        padding: 0.75em;
+
+        border: 1px solid var(--color-middle);
+        border-radius: 8px;
+
+        background-color: transparent;
+      }
+
+      input:focus {
+        border: 1px solid var(--color-lively);
+        outline: var(--color-lively);
+      }
+
+      input:focus~label,
+      input.has-none-empty-value~label {
+        transform: translateY(-58%);
+
+        font-style: italic;
+        font-size: 0.8em;
+
+        padding: 3px;
+
+        background-color: var(--color-bg-color);
+        color: var(--color-lively);
+        border-radius: 8px;
+      }
+    }
+  }
 }
 
 div.mult-elem-5.flag-icon {
@@ -105,19 +153,6 @@ div.input-text.mult-elem-6 {
 
 div.input-text.mult-elem-95 {
   flex: 95;
-}
-
-div.input-text label {
-  position: absolute;
-
-  padding-top: 0.3em;
-  pointer-events: none;
-
-  background-color: transparent;
-
-  left: 0.8em;
-
-  transition: all 0.3s ease;
 }
 
 div.input-text button {
@@ -145,36 +180,6 @@ div.input-text button:focus {
 div.input-text button svg {
   width: 70%;
   height: auto;
-}
-
-div.input-text input {
-  box-sizing: border-box;
-  width: 100%;
-
-  padding: 0.75em;
-
-  border: 1px solid var(--color-middle);
-  border-radius: 8px;
-
-  background-color: transparent;
-}
-
-div.input-text input:focus {
-  border-color: var(--color-lively);
-}
-
-div.form-row input:focus~label,
-div.input-text input.has-none-empty-value~label {
-  transform: translateY(-58%);
-
-  font-style: italic;
-  font-size: 0.8em;
-
-  padding: 3px;
-
-  background-color: var(--color-bg-color);
-  color: var(--color-lively);
-  border-radius: 8px;
 }
 
 div.typeahead-input {
