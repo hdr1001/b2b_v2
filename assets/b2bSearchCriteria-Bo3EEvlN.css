@@ -20,13 +20,13 @@
 // ***************************************************************** */
 
 :root {
-    --color-bg-color: #fffcf2;
-    --color-darkest:  #252422;
-    --color-dark:     #403d39;
-    --color-middle:   #ccc5b9;
-    --color-lively:   #eb5e28;
+  --color-bg-color: #fffcf2;
+  --color-darkest:  #252422;
+  --color-dark:     #403d39;
+  --color-middle:   #ccc5b9;
+  --color-lively:   #eb5e28;
 
-    --duration: 1.5s;
+  --duration: 1.5s;
 	--container-size: 250px;
 	--box-size: 33px;
 	--box-border-radius: 15%;
