@@ -57,6 +57,40 @@ export default class B2bSearchCriteria extends HTMLElement {
             evnt.currentTarget.classList.add(HAS_NONE_EMPTY_VALUE);
         }
 
+        //Submit button click event
+        function submitClick() {
+            const searchCriteria = {};
+
+            searchCriteriaForm.querySelectorAll('input').forEach(inp => { 
+                if(inp.value) searchCriteria[inp.name] = inp.value;
+
+                //todo
+                //if(inp === inpCountry) searchCriteria.isoAlpha2 = inp.getAttribute(CTRY_ISO_ALPHA2);
+            });
+
+            searchCriteriaForm.dispatchEvent(
+                new CustomEvent(
+                    'submitSearchCriteria',
+                    {
+                        composed: true,
+                        bubbles: true,
+                        detail: searchCriteria
+                    }
+            ));
+        }
+
+        //Reset button click event
+        function resetClick() {
+            searchCriteriaForm.querySelectorAll('input').forEach(inp => {
+                //todo
+                //if(inp === inpCountry) {
+                    inp.value = this.iniValues?.[inp.name] ? this.iniValues[inp.name] : '';
+                //}
+            });
+
+            this.shadowRoot?.querySelector('#search-name')?.focus();
+        }
+
         //Function to create a label/(text-)input element pair
         function getInputElement(inpElem) {
             const docFrag = document.createDocumentFragment();
@@ -82,6 +116,19 @@ export default class B2bSearchCriteria extends HTMLElement {
             docFrag.appendChild(formLabel);
 
             return docFrag;
+        }
+
+        //Function to create a dialog button element
+        function getButtonElement(id, name, label) {
+            const button = document.createElement('button');
+
+            button.id = id;
+            button.name = name;
+            button.type = 'button';
+
+            button.textContent = label;
+
+            return button;
         }
 
         //The text-input elements which are part of the dialog
@@ -118,6 +165,24 @@ export default class B2bSearchCriteria extends HTMLElement {
 
         divInpText.appendChild(getInputElement(inpElems.get('search-reg-number')));
         divFormRow.appendChild(divInpText);
+        searchCriteriaForm.appendChild(divFormRow);
+
+        //The last row in the form contains buttons
+        divFormRow = formRow.cloneNode();
+        divFormRow.classList.add('submit-reset');
+
+        let button = getButtonElement('search-submit', 'submit', 'Submit');
+
+        button.addEventListener('click', submitClick);
+
+        divFormRow.appendChild(button);
+
+        button = getButtonElement('search-reset', 'reset', 'Reset');
+
+        button.addEventListener('click', resetClick);
+
+        divFormRow.appendChild(button);
+
         searchCriteriaForm.appendChild(divFormRow);
 
         this.shadowRoot.appendChild(b2bSearchCriteria);

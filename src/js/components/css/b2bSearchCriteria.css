@@ -39,7 +39,7 @@ dialog::backdrop {
 #top-search-criteria {
   padding: 0;
 
-  /* border: 2px solid var(--color-middle); */
+  border: 2px solid var(--color-middle);
   border-radius: 16px;
 
   color: var(--color-darkest);
@@ -137,6 +137,31 @@ dialog::backdrop {
       }
     }
   }
+
+  div.submit-reset {
+    justify-content: space-evenly;
+
+    button {
+      padding: 0.75em 0;
+
+      border: 1px solid var(--color-middle);
+      border-radius: 8px;
+
+      font-weight: bolder;
+
+      color: var(--color-lively);
+      background-color: transparent;
+
+      width: 33%;
+    }
+
+    button:focus {
+      border: 1px solid var(--color-lively);
+      outline: var(--color-lively);
+
+      font-style: italic;
+    }
+  }
 }
 
 div.mult-elem-5.flag-icon {
@@ -226,28 +251,6 @@ div.typeahead-input div.dropdown-options ul li button {
   background-color: inherit;
 
   text-align: left;
-}
-
-div.form-row.submit-reset {
-  justify-content: space-evenly;
-}
-
-div.form-row.submit-reset button {
-  padding: 0.75em 0;
-
-  border: 1px solid var(--color-middle);
-  border-radius: 8px;
-
-  font-weight: bolder;
-
-  color: var(--color-lively);
-  background-color: var(--color-middle);
-
-  width: 33%;
-}
-
-div.form-row.submit-reset button:focus {
-  border-color: var(--color-dark);
 }
 
 div.flag-icon {

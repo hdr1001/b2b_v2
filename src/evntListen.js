@@ -37,10 +37,10 @@ export default function setupEventListeners() {
     navContact.addEventListener('click', () => dialogMultStepID.showModal());
 
     //Search dialog event listeners
-    dialogSearch.addEventListener('click', event => { if(event.target === dialogSearch) dialogSearch.close() });  
+    dialogSearch.addEventListener('click', evnt => { if(evnt.target === dialogSearch) dialogSearch.close() });  
     dialogSearch.querySelector('.icon-close').addEventListener('click', () => dialogSearch.close());
 
     //About dialog event listeners
-    dialogAbout.addEventListener('click', event => { if(event.target === dialogAbout) dialogAbout.close() });
+    dialogAbout.addEventListener('click', evnt => { if(evnt.target === dialogAbout) dialogAbout.close() });
     dialogAbout.querySelector('.icon-close').addEventListener('click', () => dialogAbout.close());
 }

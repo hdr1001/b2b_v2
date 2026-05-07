@@ -61,6 +61,11 @@ appMain.appendChild(addDialogAbout());
 const dialogMultStepID = document.createElement('dialog');
 dialogMultStepID.id = 'dialog-mult-step-id';
 
+//Listen for custom events bubbling up
+dialogMultStepID.addEventListener('submitSearchCriteria', evnt => {
+    console.log('Caught custom event submitSearchCriteria: ', evnt.detail);
+});
+
 //Instantiate a B2B search criteria component and add it to the multi step dialog
 const searchCriteria = document.createElement('b2b-search-criteria');
 searchCriteria.setAttribute('ini-values', JSON.stringify(iniValues));
