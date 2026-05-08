@@ -35,7 +35,13 @@ export default class B2bSearchCriteria extends HTMLElement {
         //Form related string constants
         const FORM_ROW = 'form-row';
         const INPUT_TXT = 'input-text';
+        const MULT_ELEM = 'mult-elem';
         const HAS_NONE_EMPTY_VALUE = 'has-none-empty-value';
+
+        //References to specific form parts
+        const b2bSearchCriteria = document.createElement('div');
+        const searchCriteriaForm = document.createElement('form');
+        let inpName = null; //reference to the name input element, for setting focus after reset
 
         //Get the initial values as contained in the 'ini-values' attribute
         this.iniValues = JSON.parse(this.getAttribute('ini-values') || '{}');
@@ -85,10 +91,11 @@ export default class B2bSearchCriteria extends HTMLElement {
                 //todo
                 //if(inp === inpCountry) {
                     inp.value = this.iniValues?.[inp.name] ? this.iniValues[inp.name] : '';
+                    inp.dispatchEvent(new Event('change', { bubbles: false }));
                 //}
             });
 
-            this.shadowRoot?.querySelector('#search-name')?.focus();
+            if(inpName) inpName.focus();
         }
 
         //Function to create a label/(text-)input element pair
@@ -143,10 +150,6 @@ export default class B2bSearchCriteria extends HTMLElement {
             ['search-reg-number', {id: 'search-reg-number', name: 'regNumber', value: this.iniValues?.regNumber, label: 'Registration number'}]
         ]);
 
-        //References to specific form parts
-        const b2bSearchCriteria = document.createElement('div');
-        const searchCriteriaForm = document.createElement('form');
-
         //Create the component's HTML structure
         b2bSearchCriteria.id = 'top-search-criteria';
         b2bSearchCriteria.appendChild(searchCriteriaForm);
@@ -162,6 +165,35 @@ export default class B2bSearchCriteria extends HTMLElement {
         //Create label/input elements for registration number
         let divFormRow = formRow.cloneNode();
         let divInpText = inpText.cloneNode();
+
+        divInpText.appendChild(getInputElement(inpElems.get('search-name')));
+
+        inpName = divInpText.querySelector('#search-name'); //for set focus
+
+        divFormRow.appendChild(divInpText);
+        searchCriteriaForm.appendChild(divFormRow);
+
+        //Create label/input elements for postal code and city on the same row
+        divFormRow = divFormRow.cloneNode();
+        divFormRow.classList.add(MULT_ELEM);
+
+        divInpText = inpText.cloneNode();
+        divInpText.style.flex = '4'; //div takes op 40% of the row's width
+
+        divInpText.appendChild(getInputElement(inpElems.get('search-postal-code')));
+        divFormRow.appendChild(divInpText);
+
+        divInpText = inpText.cloneNode();
+        divInpText.style.flex = '6'; //div takes op 40% of the row's width
+
+        divInpText.appendChild(getInputElement(inpElems.get('search-city')));
+
+        divFormRow.appendChild(divInpText);
+        searchCriteriaForm.appendChild(divFormRow);
+
+        //Create label/input elements for registration number
+        divFormRow = divFormRow.cloneNode();
+        divInpText = inpText.cloneNode();
 
         divInpText.appendChild(getInputElement(inpElems.get('search-reg-number')));
         divFormRow.appendChild(divInpText);
