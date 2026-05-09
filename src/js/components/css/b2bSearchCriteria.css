@@ -135,6 +135,33 @@ dialog::backdrop {
         color: var(--color-lively);
         border-radius: 8px;
       }
+
+      button {
+        position: absolute;
+        right: 4px;
+
+        align-self: center;
+
+        padding: 3px 0 0 0;
+
+        border: 1px solid var(--color-middle);
+        border-radius: 14px;
+
+        color: var(--color-lively);
+        background-color: var(--color-middle);
+
+        svg {
+          width: 70%;
+          height: auto;
+        }
+      }
+
+      button:focus {
+        align-self: center;
+
+        color: var(--color-dark);
+        border-color: var(--color-lively);
+      }
     }
   }
 
@@ -170,33 +197,6 @@ div.mult-elem-5.flag-icon {
 
 div.input-text.mult-elem-95 {
   flex: 95;
-}
-
-div.input-text button {
-  position: absolute;
-  right: 4px;
-
-  align-self: center;
-
-  padding: 3px 0 0 0;
-
-  border: 1px solid var(--color-middle);
-  border-radius: 14px;
-
-  color: var(--color-lively);
-  background-color: var(--color-middle);
-}
-
-div.input-text button:focus {
-  align-self: center;
-
-  color: var(--color-dark);
-  border-color: var(--color-lively);
-}
-
-div.input-text button svg {
-  width: 70%;
-  height: auto;
 }
 
 div.typeahead-input {
@@ -253,4 +253,8 @@ div.flag-icon {
   border-radius: 8px;
 
   background-color: transparent;
+}
+
+.display-none {
+  display: none !important;
 }

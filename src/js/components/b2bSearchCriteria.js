@@ -19,6 +19,8 @@
 //
 // ***************************************************************** */
 
+import  { createElement, X, Plus, Minus } from 'lucide';
+
 const cssB2bSearchCriteria = new URL('./css/b2bSearchCriteria.css', import.meta.url).href;
 
 //A HTML5 B2B search criteria custom component class
@@ -34,8 +36,9 @@ export default class B2bSearchCriteria extends HTMLElement {
     connectedCallback() {
         //Form related string constants
         const FORM_ROW = 'form-row';
-        const INPUT_TXT = 'input-text';
         const MULT_ELEM = 'mult-elem';
+        const INPUT_TXT = 'input-text';
+        const ROW_ADDR2 = 'row-addr2';
         const HAS_NONE_EMPTY_VALUE = 'has-none-empty-value';
 
         //References to specific form parts
@@ -162,7 +165,7 @@ export default class B2bSearchCriteria extends HTMLElement {
         const inpText = document.createElement('div');
         inpText.classList.add(INPUT_TXT);
 
-        //Create label/input elements for registration number
+        //Create label/input elements for name criterium
         let divFormRow = formRow.cloneNode();
         let divInpText = inpText.cloneNode();
 
@@ -173,8 +176,54 @@ export default class B2bSearchCriteria extends HTMLElement {
         divFormRow.appendChild(divInpText);
         searchCriteriaForm.appendChild(divFormRow);
 
+        //Create label/input elements for address 1
+        divFormRow = formRow.cloneNode();
+        divInpText = inpText.cloneNode();
+
+        divInpText.appendChild(getInputElement(inpElems.get('search-addr1')));
+
+        //Add a button to toggle the visibility of the address 2 element
+        const inpBtn = document.createElement('button');
+        inpBtn.type = 'button';
+        inpBtn.appendChild(createElement(Plus));
+        const minusIcon = createElement(Minus);
+        minusIcon.classList.add('display-none');
+        inpBtn.appendChild(minusIcon);
+        
+        inpBtn.addEventListener('click', evnt => {
+            inpBtn.querySelectorAll('svg').forEach(svg => svg.classList.toggle('display-none'));
+
+            const divAddr2 = searchCriteriaForm.querySelector(`#${ROW_ADDR2}`);
+
+            if(divAddr2) {
+                const bHidden = divAddr2.classList.toggle('display-none');
+
+                if(bHidden) {
+                    divAddr2.querySelector('input').value = '';
+                }
+                else {
+                    divAddr2.querySelector('input').focus();
+                }
+            }
+        });
+
+        divInpText.insertBefore(inpBtn, divInpText.lastChild);
+        divFormRow.appendChild(divInpText);
+        searchCriteriaForm.appendChild(divFormRow);
+
+        //Create label/input elements for address 2
+        divFormRow = formRow.cloneNode();
+        divFormRow.id = ROW_ADDR2;
+        divFormRow.classList.add('display-none');
+
+        divInpText = inpText.cloneNode();
+        divInpText.appendChild(getInputElement(inpElems.get('search-addr2')));
+
+        divFormRow.appendChild(divInpText);
+        searchCriteriaForm.appendChild(divFormRow);
+
         //Create label/input elements for postal code and city on the same row
-        divFormRow = divFormRow.cloneNode();
+        divFormRow = formRow.cloneNode();
         divFormRow.classList.add(MULT_ELEM);
 
         divInpText = inpText.cloneNode();
@@ -192,7 +241,7 @@ export default class B2bSearchCriteria extends HTMLElement {
         searchCriteriaForm.appendChild(divFormRow);
 
         //Create label/input elements for registration number
-        divFormRow = divFormRow.cloneNode();
+        divFormRow = formRow.cloneNode();
         divInpText = inpText.cloneNode();
 
         divInpText.appendChild(getInputElement(inpElems.get('search-reg-number')));
