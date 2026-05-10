@@ -161,6 +161,8 @@ dialog::backdrop {
 
         color: var(--color-dark);
         border-color: var(--color-lively);
+
+        outline: var(--color-lively)
       }
     }
   }
