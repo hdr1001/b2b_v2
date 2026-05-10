@@ -19,22 +19,45 @@
 //
 // ***************************************************************** */
 
-export default function setupEventListeners() {
-    //HTML element references
-    const appMain          = document.querySelector('#app-main');
+import { LEIs } from './assets/data/LEIs.js';
 
+export default function setupMainEventListeners() {
+    function changeB2B_key() {
+        let b2bKeyInterval = null;
+
+        return () => {
+            const b2bReport = document.querySelector('b2b-report');
+
+            if(b2bReport && !b2bKeyInterval) {
+                //Update the B2B report component every 5 seconds
+                //with a different LEI record from the test data
+                b2bKeyInterval = setInterval(() => {
+                    let idx = +b2bReport.getAttribute('b2b-key') + 1;
+                    if(idx > LEIs.length - 1) idx = 0;
+                    b2bReport.setAttribute('b2b-key', idx);
+                }, 5000);
+
+                return;
+            }
+
+            if(b2bKeyInterval) clearInterval(b2bKeyInterval);
+            b2bKeyInterval = null;
+        };
+    }
+
+    //HTML element references
     const navSearch        = document.querySelector('#nav-search');
     const navAbout         = document.querySelector('#nav-about');
     const navContact       = document.querySelector('#nav-contact');
 
     const dialogAbout      = document.querySelector('#dialog-about');
-    const dialogMultStepID = document.querySelector('#dialog-mult-step-id');
     const dialogSearch     = document.querySelector('#dialog-search');
 
     //Navigation menu event listeners
     navSearch.addEventListener('click', () => dialogSearch.showModal());
     navAbout.addEventListener('click', () => dialogAbout.showModal());
-    navContact.addEventListener('click', () => dialogMultStepID.showModal());
+    //Clicking the contact menu item will start/stop the automatic update of the B2B report component with different LEI records from the test data
+    navContact.addEventListener('click', changeB2B_key());
 
     //Search dialog event listeners
     dialogSearch.addEventListener('click', evnt => { if(evnt.target === dialogSearch) dialogSearch.close() });  
@@ -43,4 +66,5 @@ export default function setupEventListeners() {
     //About dialog event listeners
     dialogAbout.addEventListener('click', evnt => { if(evnt.target === dialogAbout) dialogAbout.close() });
     dialogAbout.querySelector('.icon-close').addEventListener('click', () => dialogAbout.close());
+
 }

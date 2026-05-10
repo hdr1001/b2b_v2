@@ -19,24 +19,17 @@
 //
 // ***************************************************************** */
 
-import { LEIs } from './assets/data/LEIs.js';
 import { isoCountries, fetchCountries } from './assets/codes/isoCountries.js';
 import addDialogSearch from './js/ui/dialogSearch.js';
 import addDialogAbout from './js/ui/dialogAbout.js';
-import setupEventListeners from './evntListen.js';
+import setupMainEventListeners from './evntListen.js';
 import B2bReport from './js/components/b2bReport.js';
-import B2bSearchCriteria from './js/components/b2bSearchCriteria.js';
-import B2bPlzWait from './js/components/b2bPlzWait.js';
+import B2bMultiStepID from './js/components/b2bMultiStepID.js';
 
 customElements.define('b2b-report', B2bReport);
-customElements.define('b2b-search-criteria', B2bSearchCriteria);
-customElements.define('b2b-plz-wait', B2bPlzWait);
+customElements.define('b2b-multi-step-id', B2bMultiStepID);
 
 console.log('Top of main.js');
-
-const iniValues = {
-    isoAlpha2: 'NL' //Please specify the country code in uppercase
-};
 
 //Main application structure
 document.querySelector('#app').innerHTML = `
@@ -57,54 +50,34 @@ const appMain = document.querySelector('#app-main');
 appMain.appendChild(addDialogSearch());
 appMain.appendChild(addDialogAbout());
 
-//Multi step dialog for B2B identification
-const dialogMultStepID = document.createElement('dialog');
-dialogMultStepID.id = 'dialog-mult-step-id';
-
-//Listen for custom events bubbling up
-dialogMultStepID.addEventListener('submitSearchCriteria', evnt => {
-    console.log('Caught custom event submitSearchCriteria: ', evnt.detail);
-});
-
-//Instantiate a B2B search criteria component and add it to the multi step dialog
-const searchCriteria = document.createElement('b2b-search-criteria');
-searchCriteria.setAttribute('ini-values', JSON.stringify(iniValues));
-dialogMultStepID.appendChild(searchCriteria);
-
-//Instantiate a B2B please wait component and add it to the multi step dialog
-const plzWait = document.createElement('b2b-plz-wait');
-plzWait.style.display = 'none';
-dialogMultStepID.appendChild(plzWait);
-appMain.appendChild(dialogMultStepID);
-
 //Instantiate a B2B report component and add it to the page
 const b2bReport = document.createElement('b2b-report');
 b2bReport.setAttribute('b2b-key', '56');
 document.querySelector('#app-main').appendChild(b2bReport);
 
-let doSkip = true;
-
-document.querySelector('#nav-contact').addEventListener('click', () => {
-  doSkip = !doSkip;
-});
-
-//Update the B2B report component every 5 seconds
-//with a different LEI record from the test data
-setInterval(() => {
-  if(doSkip) return;
-
-  let idx = +b2bReport.getAttribute('b2b-key') + 1;
-  
-  if(idx > LEIs.length - 1) idx = 0;
-
-  b2bReport.setAttribute('b2b-key', idx)
-}, 5000);
-
+//HTML document has been completely parsed
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM content loaded');
+    console.log('DOM content loaded');
 
-  setupEventListeners();
+    //Set up event listeners for elements that are already present in the DOM
+    setupMainEventListeners();
 
-  //If needed, fetch the ISO country data and store it in a Map for easy access
-  if(!(isoCountries && isoCountries.size)) fetchCountries();
+    //If needed, fetch the ISO country data and store it in a Map for easy access
+    if(!(isoCountries && isoCountries.size)) fetchCountries();
+
+    const b2bMultiStepID = document.createElement('b2b-multi-step-id');
+    document.querySelector('#app-main').appendChild(b2bMultiStepID);
+
+    // Wait for the custom element to be registered before attaching the listener
+    customElements.whenDefined('b2b-multi-step-id').then(() => {
+        document.querySelector('#nav-contact').addEventListener('click', () => {
+            // Ensure the method exists on the instance
+            if (typeof b2bMultiStepID.showModal === 'function') {
+                b2bMultiStepID.showModal();
+            }
+            else {
+                console.error('showModal is not defined on <b2b-multi-step-id>');
+            }
+        })
+    });
 });
