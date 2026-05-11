@@ -19,9 +19,14 @@
 //
 // ***************************************************************** */
 
-import  { createElement, X, Plus, Minus } from 'lucide';
+import { createElement, X, Plus, Minus } from 'lucide';
+import { isoCountries } from '../../assets/codes/isoCountries.js';
 
 const cssB2bSearchCriteria = new URL('./css/b2bSearchCriteria.css', import.meta.url).href;
+
+const CTRY_DATA_LIST = 'countries-data-list';
+const CTRY_ISO_ALPHA2 = 'data-iso-alpha2';
+const HAS_NONE_EMPTY_VALUE = 'has-none-empty-value';
 
 //A HTML5 B2B search criteria custom component class
 export default class B2bSearchCriteria extends HTMLElement {
@@ -30,6 +35,22 @@ export default class B2bSearchCriteria extends HTMLElement {
 
         //Create the component's shadow DOM tree 
         this.attachShadow({ mode: 'open' });
+
+        //Build the datalist for the country input element
+        const dataList = document.createElement('datalist');
+        dataList.id = CTRY_DATA_LIST;
+
+        const docFrag = new DocumentFragment;
+
+        isoCountries.forEach(elem => {
+            const opt = docFrag.appendChild(document.createElement('option'));
+
+            opt.value = elem.name;
+            opt.setAttribute(CTRY_ISO_ALPHA2, elem.alpha2);
+        });
+
+        dataList.appendChild(docFrag);
+        this.shadowRoot.appendChild(dataList);
     }
 
     //When the component is added to the DOM, render its content
@@ -39,7 +60,6 @@ export default class B2bSearchCriteria extends HTMLElement {
         const MULT_ELEM = 'mult-elem';
         const INPUT_TXT = 'input-text';
         const ROW_ADDR2 = 'row-addr2';
-        const HAS_NONE_EMPTY_VALUE = 'has-none-empty-value';
 
         //References to specific form parts
         const b2bSearchCriteria = document.createElement('div');

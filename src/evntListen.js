@@ -66,5 +66,4 @@ export default function setupMainEventListeners() {
     //About dialog event listeners
     dialogAbout.addEventListener('click', evnt => { if(evnt.target === dialogAbout) dialogAbout.close() });
     dialogAbout.querySelector('.icon-close').addEventListener('click', () => dialogAbout.close());
-
 }

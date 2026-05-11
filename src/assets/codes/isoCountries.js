@@ -1,5 +1,3 @@
-import { populateDataList } from '../../js/ui/dialogSearch.js';
-
 //Download the JSON data from https://raw.githubusercontent.com/lukes/ISO-3166-Countries-with-Regional-Codes/refs/heads/master/all/all.json
 //Replace the empty array below, leave the semi-colon though
 //⬇️
@@ -26,13 +24,14 @@ function fetchCountries() {
     //If the array is empty, we can fetch the data from the URL below
     const urlIsoCountries = 'https://raw.githubusercontent.com/lukes/ISO-3166-Countries-with-Regional-Codes/refs/heads/master/all/all.json';
 
-    fetch(urlIsoCountries)
+    return fetch(urlIsoCountries)
         .then(resp => resp.json())
-        .then(data => isoCountries = processArrIsoCountries(data))
-        .then(() => {
+        .then(data => {
+            isoCountries = processArrIsoCountries(data);
+
             console.log('Number of ISO countries read: ', isoCountries.size);
 
-            populateDataList();
+            return isoCountries;
         })
         .catch(err => console.error('Error fetching ISO country data: ', err));
 }

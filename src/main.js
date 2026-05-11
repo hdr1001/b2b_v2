@@ -50,23 +50,21 @@ const appMain = document.querySelector('#app-main');
 appMain.appendChild(addDialogSearch());
 appMain.appendChild(addDialogAbout());
 
-//Instantiate a B2B report component and add it to the page
-const b2bReport = document.createElement('b2b-report');
-b2bReport.setAttribute('b2b-key', '56');
-document.querySelector('#app-main').appendChild(b2bReport);
+//Set up event listeners for elements that are already present in the DOM
+setupMainEventListeners();
 
-//HTML document has been completely parsed
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM content loaded');
+//Add application components
+function addApplicationComponents() {
+    const appMain = document.querySelector('#app-main');
 
-    //Set up event listeners for elements that are already present in the DOM
-    setupMainEventListeners();
+    //Instantiate a B2B report component & add it to the page
+    const b2bReport = document.createElement('b2b-report');
+    b2bReport.setAttribute('b2b-key', '56');
+    appMain.appendChild(b2bReport);
 
-    //If needed, fetch the ISO country data and store it in a Map for easy access
-    if(!(isoCountries && isoCountries.size)) fetchCountries();
-
+    //Instantiate a multi step ID component & add it to the page
     const b2bMultiStepID = document.createElement('b2b-multi-step-id');
-    document.querySelector('#app-main').appendChild(b2bMultiStepID);
+    appMain.appendChild(b2bMultiStepID);
 
     // Wait for the custom element to be registered before attaching the listener
     customElements.whenDefined('b2b-multi-step-id').then(() => {
@@ -80,4 +78,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
     });
+}
+
+//HTML document has been completely parsed
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM content loaded');
+
+    //If needed, fetch the ISO country data and store it in a Map for easy access
+    if(!(isoCountries && isoCountries.size)) {
+        fetchCountries()
+            .then(countries => { 
+                addApplicationComponents();
+            })
+            .catch(err => console.error('Error fetching ISO country data: ', err));
+    }
+    else {
+        addApplicationComponents();
+    }
 });
