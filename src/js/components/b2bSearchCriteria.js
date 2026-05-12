@@ -59,11 +59,14 @@ export default class B2bSearchCriteria extends HTMLElement {
         const FORM_ROW = 'form-row';
         const MULT_ELEM = 'mult-elem';
         const INPUT_TXT = 'input-text';
+        const FLAG_ICON = 'flag-icon';
         const ROW_ADDR2 = 'row-addr2';
 
         //References to specific form parts
         const b2bSearchCriteria = document.createElement('div');
         const searchCriteriaForm = document.createElement('form');
+        const divFlag = document.createElement('div');
+        let inpCountry = null; //Will be associated with the country text input
         let inpName = null; //reference to the name input element, for setting focus after reset
 
         //Get the initial values as contained in the 'ini-values' attribute
@@ -84,6 +87,58 @@ export default class B2bSearchCriteria extends HTMLElement {
             }
 
             evnt.currentTarget.classList.add(HAS_NONE_EMPTY_VALUE);
+        }
+
+        //Create a span to hold the https://flagicons.lipis.dev/ flags
+        function flagSpan(isoAlpha2) {
+            if(isoAlpha2) {
+                return `<span data-iso-alpha2="${isoAlpha2}" class="fi fi-${isoAlpha2.toLowerCase()}"></span>`
+            }
+
+            return '<span></span>';
+        }
+
+        //Event handler for dealing with changes to the country input
+        function inpCountryChange(evnt) {
+            let opt = null, newIsoAlpha2 = '';
+
+            for(let i = 0; i < dataList.children.length; i++) {
+                if(dataList.children[i].value === evnt.target.value) {
+                    opt = dataList.children[i];
+                    break;
+                }
+            }
+
+            if(opt) {
+                newIsoAlpha2 = opt.getAttribute(CTRY_ISO_ALPHA2);
+            }
+
+            if(!newIsoAlpha2 && inpCountry.value.length === 2) {
+                const oCountry = isoCountries.get(inpCountry.value.toUpperCase());
+
+                if(oCountry?.name) {
+                    newIsoAlpha2 = inpCountry.value.toUpperCase();
+                    inpCountry.value = oCountry.name;
+                }
+            }
+
+            if(!newIsoAlpha2 && inpCountry.value.length > 2) {
+                const oCountry = [...isoCountries.values()].find(elem => elem.name?.toUpperCase() === inpCountry.value.toUpperCase());
+
+                if(oCountry) {
+                    newIsoAlpha2 = oCountry.alpha2;
+                    inpCountry.value = oCountry.name;
+                }
+            }
+
+            if(newIsoAlpha2) {
+                inpCountry.setAttribute(CTRY_ISO_ALPHA2, newIsoAlpha2)
+                divFlag.innerHTML = flagSpan(newIsoAlpha2);
+            }
+            else { //Invalid input
+                inpCountry.setAttribute(CTRY_ISO_ALPHA2, '')
+                divFlag.innerHTML = flagSpan('');
+            }
         }
 
         //Submit button click event
@@ -185,9 +240,36 @@ export default class B2bSearchCriteria extends HTMLElement {
         const inpText = document.createElement('div');
         inpText.classList.add(INPUT_TXT);
 
-        //Create label/input elements for name criterium
+        //Create label/input elements, country first
         let divFormRow = formRow.cloneNode();
+        divFormRow.classList.add(MULT_ELEM);
+
+        //Add the div for the country flag and set flag properties
+        divFormRow.appendChild(divFlag);
+
+        divFlag.classList.add(FLAG_ICON);
+        divFlag.style.flex = '5'; //div takes op 5% of the row's width
+        divFlag.innerHTML = flagSpan('');
+
+        //The text input element for specifying a country name
         let divInpText = inpText.cloneNode();
+        divInpText.style.flex = '95'; //div takes op 95% of the row's width
+
+        divInpText.appendChild(getInputElement(inpElems.get('search-country')));
+        
+        divFormRow.appendChild(divInpText);
+        searchCriteriaForm.appendChild(divFormRow);
+
+        //An input element with id search-country must be available
+        inpCountry = divInpText.querySelector('#search-country');
+
+        //Associate the input element with a list of options
+        inpCountry.setAttribute('list', CTRY_DATA_LIST);
+        inpCountry.addEventListener('change', inpCountryChange);
+
+        //Create label/input elements for name criterium
+        divFormRow = formRow.cloneNode();
+        divInpText = inpText.cloneNode();
 
         divInpText.appendChild(getInputElement(inpElems.get('search-name')));
 
