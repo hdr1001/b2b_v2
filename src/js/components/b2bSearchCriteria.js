@@ -23,6 +23,7 @@ import { createElement, X, Plus, Minus } from 'lucide';
 import { isoCountries } from '../../assets/codes/isoCountries.js';
 
 const cssB2bSearchCriteria = new URL('./css/b2bSearchCriteria.css', import.meta.url).href;
+const cssFlagIcons = new URL('/node_modules/flag-icons/css/flag-icons.min.css', import.meta.url).href;
 
 const CTRY_DATA_LIST = 'countries-data-list';
 const CTRY_ISO_ALPHA2 = 'data-iso-alpha2';
@@ -35,6 +36,20 @@ export default class B2bSearchCriteria extends HTMLElement {
 
         //Create the component's shadow DOM tree 
         this.attachShadow({ mode: 'open' });
+
+        //Create a link to the component's CSS file
+        let css = document.createElement('link');
+        css.setAttribute('rel', 'stylesheet');
+        css.setAttribute('href', cssB2bSearchCriteria);
+
+        //Add link to the lipis flags to the shadow DOM
+        this.shadowRoot.appendChild(css);
+
+        css = document.createElement('link');
+        css.setAttribute('rel', 'stylesheet');
+        css.setAttribute('href', cssFlagIcons);
+
+        this.shadowRoot.appendChild(css);
 
         //Build the datalist for the country input element
         const dataList = document.createElement('datalist');
@@ -63,6 +78,7 @@ export default class B2bSearchCriteria extends HTMLElement {
         const ROW_ADDR2 = 'row-addr2';
 
         //References to specific form parts
+        const dataList = this.shadowRoot.querySelector(`#${CTRY_DATA_LIST}`);
         const b2bSearchCriteria = document.createElement('div');
         const searchCriteriaForm = document.createElement('form');
         const divFlag = document.createElement('div');
@@ -71,13 +87,6 @@ export default class B2bSearchCriteria extends HTMLElement {
 
         //Get the initial values as contained in the 'ini-values' attribute
         this.iniValues = JSON.parse(this.getAttribute('ini-values') || '{}');
-
-        //Create a link to the component's CSS file
-        const css = document.createElement('link');
-        css.setAttribute('rel', 'stylesheet');
-        css.setAttribute('href', cssB2bSearchCriteria);
-
-        this.shadowRoot.appendChild(css);
 
         //onclick event handler for text-input elements
         function hasNoneEmptyValue(evnt) {
@@ -148,8 +157,7 @@ export default class B2bSearchCriteria extends HTMLElement {
             searchCriteriaForm.querySelectorAll('input').forEach(inp => { 
                 if(inp.value) searchCriteria[inp.name] = inp.value;
 
-                //todo
-                //if(inp === inpCountry) searchCriteria.isoAlpha2 = inp.getAttribute(CTRY_ISO_ALPHA2);
+                if(inp === inpCountry) searchCriteria.isoAlpha2 = inp.getAttribute(CTRY_ISO_ALPHA2);
             });
 
             searchCriteriaForm.dispatchEvent(
@@ -161,16 +169,17 @@ export default class B2bSearchCriteria extends HTMLElement {
                         detail: searchCriteria
                     }
             ));
+
+            resetClick.call(this);
         }
 
         //Reset button click event
         function resetClick() {
             searchCriteriaForm.querySelectorAll('input').forEach(inp => {
-                //todo
-                //if(inp === inpCountry) {
+                if(inp !== inpCountry) {
                     inp.value = this.iniValues?.[inp.name] ? this.iniValues[inp.name] : '';
                     inp.dispatchEvent(new Event('change', { bubbles: false }));
-                //}
+                }
             });
 
             if(inpName) inpName.focus();
@@ -249,7 +258,6 @@ export default class B2bSearchCriteria extends HTMLElement {
 
         divFlag.classList.add(FLAG_ICON);
         divFlag.style.flex = '5'; //div takes op 5% of the row's width
-        divFlag.innerHTML = flagSpan('');
 
         //The text input element for specifying a country name
         let divInpText = inpText.cloneNode();
@@ -273,10 +281,17 @@ export default class B2bSearchCriteria extends HTMLElement {
 
         divInpText.appendChild(getInputElement(inpElems.get('search-name')));
 
-        inpName = divInpText.querySelector('#search-name'); //for set focus
-
         divFormRow.appendChild(divInpText);
         searchCriteriaForm.appendChild(divFormRow);
+
+        inpName = divInpText.querySelector('#search-name'); //for set focus
+
+        if(this.iniValues.isoAlpha2) {
+            inpCountry.value = this.iniValues.isoAlpha2;
+            inpCountry.dispatchEvent(new Event('change', { bubbles: false }));
+        }
+
+        divFlag.innerHTML = flagSpan(inpCountry.getAttribute(CTRY_ISO_ALPHA2));
 
         //Create label/input elements for address 1
         divFormRow = formRow.cloneNode();
