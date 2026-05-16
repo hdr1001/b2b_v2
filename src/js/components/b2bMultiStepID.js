@@ -19,6 +19,8 @@
 //
 // ***************************************************************** */
 
+import { createElement, X, Plus, Minus } from 'lucide';
+
 import B2bSearchCriteria from './b2bSearchCriteria.js';
 import B2bPlzWait from './b2bPlzWait.js';
 
@@ -39,6 +41,14 @@ export default class B2bMultiStepID extends HTMLElement {
         //Create the component's shadow DOM tree 
         this.attachShadow({ mode: 'open' });
 
+        //Create a link to the component's CSS file
+        let css = document.createElement('link');
+        css.setAttribute('rel', 'stylesheet');
+        css.setAttribute('href', cssB2bMultiStepID);
+
+        //Add link to the css file to the shadow DOM
+        this.shadowRoot.appendChild(css);
+       
         //This component is a dialog, so create a dialog element in the shadow DOM tree
         this.dialogMultStepID = document.createElement('dialog');
         this.dialogMultStepID.id = 'dialog-mult-step-id';
@@ -56,6 +66,16 @@ export default class B2bMultiStepID extends HTMLElement {
 
     //When the component is added to the DOM, render its content
     connectedCallback() {
+        const DIALOG_TITLE = 'dialog-title';
+
+        const searchTitle = document.createElement('div');
+
+        //Set dialog title and add a close icon 
+        searchTitle.id = DIALOG_TITLE;
+        searchTitle.innerHTML = 'Specify search criteria<i data-lucide="X" class="icon-close"></i>';
+    
+        this.dialogMultStepID.appendChild(searchTitle);
+
         //Instantiate a B2B search criteria component and add it to the multi step dialog
         const searchCriteria = document.createElement('b2b-search-criteria');
         searchCriteria.setAttribute('ini-values', JSON.stringify(iniValues));

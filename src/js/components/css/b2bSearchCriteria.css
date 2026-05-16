@@ -32,38 +32,11 @@
 	--box-border-radius: 15%;
 }
 
-dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.3);
-}
-
-#top-search-criteria {
-  padding: 0;
-
-  border: 2px solid var(--color-middle);
-  border-radius: 16px;
-
-  color: var(--color-darkest);
-  background-color: var(--color-bg-color);
-}
-
-#top-search-criteria div#dialog-title {
-  padding: 0.25em;
-
-  font-size: 1.5em;
-  text-align: center;
-
-  color: var(--color-lively);
-  background-color: var(--color-dark);
-}
-
 #top-search-criteria form {
   /* 
   // The form is made up of multiple rows.
   */
   padding: 0 15px 15px 15px;
-
-  min-width: 270px;
-  max-width: 380px;
 
   div.form-row {
     /*

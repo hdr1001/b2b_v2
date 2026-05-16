@@ -23,7 +23,7 @@ import { createElement, X, Plus, Minus } from 'lucide';
 import { isoCountries } from '../../assets/codes/isoCountries.js';
 
 const cssB2bSearchCriteria = new URL('./css/b2bSearchCriteria.css', import.meta.url).href;
-const cssFlagIcons = new URL('../../../node_modules/flag-icons/css/flag-icons.min.css', import.meta.url).href;
+const cssFlagIcons = new URL('/node_modules/flag-icons/css/flag-icons.min.css', import.meta.url).href;
 
 const CTRY_DATA_LIST = 'countries-data-list';
 const CTRY_ISO_ALPHA2 = 'data-iso-alpha2';
@@ -42,7 +42,7 @@ export default class B2bSearchCriteria extends HTMLElement {
         css.setAttribute('rel', 'stylesheet');
         css.setAttribute('href', cssB2bSearchCriteria);
 
-        //Add link to the lipis flags to the shadow DOM
+        //Add link to the css file to the shadow DOM
         this.shadowRoot.appendChild(css);
 
         css = document.createElement('link');
