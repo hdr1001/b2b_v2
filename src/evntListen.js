@@ -55,7 +55,7 @@ export default function setupMainEventListeners() {
 
     //Navigation menu event listeners
     navSearch.addEventListener('click', () => dialogSearch.showModal());
-    navAbout.addEventListener('click', () => dialogAbout.showModal());
+    //navAbout.addEventListener('click', () => dialogAbout.showModal());
     //Clicking the contact menu item will start/stop the automatic update of the B2B report component with different LEI records from the test data
     navContact.addEventListener('click', changeB2B_key());
 
@@ -64,6 +64,6 @@ export default function setupMainEventListeners() {
     dialogSearch.querySelector('.icon-close').addEventListener('click', () => dialogSearch.close());
 
     //About dialog event listeners
-    dialogAbout.addEventListener('click', evnt => { if(evnt.target === dialogAbout) dialogAbout.close() });
-    dialogAbout.querySelector('.icon-close').addEventListener('click', () => dialogAbout.close());
+    //dialogAbout.addEventListener('click', evnt => { if(evnt.target === dialogAbout) dialogAbout.close() });
+    //dialogAbout.querySelector('.icon-close').addEventListener('click', () => dialogAbout.close());
 }

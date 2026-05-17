@@ -1,7 +1,7 @@
 /* ********************************************************************
 //
 // Business-to-business (B2B) application v2
-// CSS for the multi-step business identification component
+// About dialog component CSS
 //
 // Copyright 2026 Hans de Rooij 
 //
@@ -20,22 +20,19 @@
 // ***************************************************************** */
 
 :root {
-  --color-bg-color: #fffcf2;
-  --color-darkest:  #252422;
-  --color-dark:     #403d39;
-  --color-middle:   #ccc5b9;
-  --color-lively:   #eb5e28;
+    --color-bg-color: #fffcf2;
+    --color-darkest:  #252422;
+    --color-dark:     #403d39;
+    --color-middle:   #ccc5b9;
+    --color-lively:   #eb5e28;
 }
 
-dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.3);
+*:focus { 
+  outline: none
 }
 
-#dialog-mult-step-id {
+#dialog-about {
   padding: 0;
-
-  min-width: 320px;
-  max-width: 380px;
 
   border: 2px solid var(--color-middle);
   border-radius: 16px;
@@ -51,5 +48,46 @@ dialog::backdrop {
 
     color: var(--color-lively);
     background-color: var(--color-dark);
+    
+    .icon-close {
+      position: absolute;
+      right: 0.4em;
+      top: 0.3em;
+
+      width: 16px;
+      height: 16px;
+
+      cursor: pointer;
+    }
+
+    .icon-close:hover {
+      color: var(--color-bg-color);
+    }
+  }
+
+  table {
+    padding: 10px 15px;
+
+    tr {
+      th {
+        padding-left: 0.5em;
+        padding-right: 0.25em;
+
+        color: var(--color-darkest);
+        text-align: right;
+      }
+
+      th::after {
+        content: ':';
+      }
+
+      td {
+        padding-left: 0.25em;
+        padding-right: 0.5em;
+
+        color: var(--color-darkest);
+        text-align: left;
+      }
+    }
   }
 }
