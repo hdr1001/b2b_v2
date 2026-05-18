@@ -64,28 +64,11 @@ function addApplicationComponents() {
     b2bReport.setAttribute('b2b-key', '56');
     appMain.appendChild(b2bReport);
 
-    //Instantiate a multi step ID component & add it to the page
-    const b2bMultiStepID = document.createElement('b2b-multi-step-id');
-    appMain.appendChild(b2bMultiStepID);
-
     //Instantiate a about dialogcomponent & add it to the page
-    const b2bAboutDialog = document.createElement('b2b-about');
+    const b2bAboutDialog = document.createElement('b2b-about');    
     appMain.appendChild(b2bAboutDialog);
 
-    // Wait for the custom element to be registered before attaching the listener
-    customElements.whenDefined('b2b-multi-step-id').then(() => {
-        document.querySelector('#nav-contact').addEventListener('click', () => {
-            // Ensure the method exists on the instance
-            if (typeof b2bMultiStepID.showModal === 'function') {
-                b2bMultiStepID.showModal();
-            }
-            else {
-                console.error('showModal is not defined on <b2b-multi-step-id>');
-            }
-        })
-    });
-
-    // Wait for the custom element to be registered before attaching the listener
+    //Wait for the custom element to be registered before attaching the listener
     customElements.whenDefined('b2b-about').then(() => {
         document.querySelector('#nav-about').addEventListener('click', () => {
             // Ensure the method exists on the instance
@@ -94,6 +77,23 @@ function addApplicationComponents() {
             }
             else {
                 console.error('showModal is not defined on <b2b-about>');
+            }
+        })
+    });
+
+    //Instantiate a multi step ID component & add it to the page
+    const b2bMultiStepID = document.createElement('b2b-multi-step-id');
+    appMain.appendChild(b2bMultiStepID);
+
+    //Wait for the custom element to be registered before attaching the listener
+    customElements.whenDefined('b2b-multi-step-id').then(() => {
+        document.querySelector('#nav-contact').addEventListener('click', () => {
+            // Ensure the method exists on the instance
+            if (typeof b2bMultiStepID.showModal === 'function') {
+                b2bMultiStepID.showModal();
+            }
+            else {
+                console.error('showModal is not defined on <b2b-multi-step-id>');
             }
         })
     });

@@ -24,7 +24,7 @@ import { createElement, X } from 'lucide';
 const cssB2bAbout = new URL('./css/b2bAbout.css', import.meta.url).href;
 
 //A HTML5 B2B waiting animation custom component class
-export default class B2bPlzWait extends HTMLElement {
+export default class B2bAbout extends HTMLElement {
     constructor() {
         super();
 
@@ -43,14 +43,20 @@ export default class B2bPlzWait extends HTMLElement {
         this.dialogAbout = document.createElement('dialog');
         this.dialogAbout.id = 'dialog-about';
 
+        //Add methods to show and close the dialog
         this.showModal = () => this.dialogAbout.showModal();
         this.close = () => this.dialogAbout.close();
 
+        //Add an event listener to close the dialog when clicking outside of it
+        this.dialogAbout.addEventListener('click', evnt => { if(evnt.target === this.dialogAbout) this.close() });
+
+        //Finish the component's framework
         this.shadowRoot.appendChild(this.dialogAbout);
     }
 
     //When the component is added to the DOM, render its content
     connectedCallback() {
+        //The actual content consists of header/data pairs
         function addAboutRow(table, sHeader, sData) {
             const tr = document.createElement('tr');
             const th = document.createElement('th');
@@ -64,16 +70,22 @@ export default class B2bPlzWait extends HTMLElement {
             table.appendChild(tr);
         }
 
+        //Construct the title bar of the dialog
         const aboutTitle = document.createElement('div');
         aboutTitle.id = 'dialog-title';
         aboutTitle.innerText = 'About B2B v2';
 
+        //The title bar also contains a close icon
         const iconClose = createElement(X);
         iconClose.classList.add('icon-close');
         aboutTitle.appendChild(iconClose);
     
         this.dialogAbout.appendChild(aboutTitle);
 
+        //Add an event listener to the close icon to close the dialog
+        iconClose.addEventListener('click', () => this.close());
+
+        //Display the about information in a table
         const table = document.createElement('table');
 
         addAboutRow(table, 'Application', 'Business-to-business');
