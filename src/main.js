@@ -21,7 +21,6 @@
 
 import { isoCountries, fetchCountries } from './assets/codes/isoCountries.js';
 import addDialogSearch from './js/ui/dialogSearch.js';
-//import addDialogAbout from './js/ui/dialogAbout.js';
 import setupMainEventListeners from './evntListen.js';
 import B2bReport from './js/components/b2bReport.js';
 import B2bMultiStepID from './js/components/b2bMultiStepID.js';
@@ -29,7 +28,6 @@ import B2bAbout from './js/components/b2bAbout.js';
 
 customElements.define('b2b-report', B2bReport);
 customElements.define('b2b-multi-step-id', B2bMultiStepID);
-customElements.define('b2b-about', B2bAbout);
 
 console.log('Top of main.js');
 
@@ -50,7 +48,6 @@ document.querySelector('#app').innerHTML = `
 //Add dialogs
 const appMain = document.querySelector('#app-main');
 appMain.appendChild(addDialogSearch());
-//appMain.appendChild(addDialogAbout());
 
 //Set up event listeners for elements that are already present in the DOM
 setupMainEventListeners();

@@ -25,6 +25,12 @@ const cssB2bAbout = new URL('./css/b2bAbout.css', import.meta.url).href;
 
 //A HTML5 B2B waiting animation custom component class
 export default class B2bAbout extends HTMLElement {
+    #dialogAbout;
+
+    //Event handling functions
+    #dialogClose = evnt => { if(evnt.target === this.#dialogAbout) this.close() }
+    #iconClose = () => this.close();
+
     constructor() {
         super();
 
@@ -38,20 +44,6 @@ export default class B2bAbout extends HTMLElement {
 
         //Add link to the css file to the shadow DOM
         this.shadowRoot.appendChild(css);
-
-        //This component is a dialog, so create a dialog element in the shadow DOM tree
-        this.dialogAbout = document.createElement('dialog');
-        this.dialogAbout.id = 'dialog-about';
-
-        //Add methods to show and close the dialog
-        this.showModal = () => this.dialogAbout.showModal();
-        this.close = () => this.dialogAbout.close();
-
-        //Add an event listener to close the dialog when clicking outside of it
-        this.dialogAbout.addEventListener('click', evnt => { if(evnt.target === this.dialogAbout) this.close() });
-
-        //Finish the component's framework
-        this.shadowRoot.appendChild(this.dialogAbout);
     }
 
     //When the component is added to the DOM, render its content
@@ -70,6 +62,17 @@ export default class B2bAbout extends HTMLElement {
             table.appendChild(tr);
         }
 
+        //This component is a dialog, so create a dialog element in the shadow DOM tree
+        this.#dialogAbout = document.createElement('dialog');
+        this.#dialogAbout.id = 'dialog-about';
+
+        //Add methods to show and close to the B2bAbout element
+        this.showModal = () => this.#dialogAbout.showModal();
+        this.close = () => this.#dialogAbout.close();
+
+        //Finish the component's framework
+        this.shadowRoot.appendChild(this.#dialogAbout);
+
         //Construct the title bar of the dialog
         const aboutTitle = document.createElement('div');
         aboutTitle.id = 'dialog-title';
@@ -80,10 +83,7 @@ export default class B2bAbout extends HTMLElement {
         iconClose.classList.add('icon-close');
         aboutTitle.appendChild(iconClose);
     
-        this.dialogAbout.appendChild(aboutTitle);
-
-        //Add an event listener to the close icon to close the dialog
-        iconClose.addEventListener('click', () => this.close());
+        this.#dialogAbout.appendChild(aboutTitle);
 
         //Display the about information in a table
         const table = document.createElement('table');
@@ -94,6 +94,22 @@ export default class B2bAbout extends HTMLElement {
         addAboutRow(table, 'License', 'Apache 2.0');
         addAboutRow(table, 'Hosted on', window.location?.host || 'N/A');
 
-        this.dialogAbout.appendChild(table);
+        this.#dialogAbout.appendChild(table);
+
+        //Add an event listener to close the dialog when clicking outside of it
+        this.#dialogAbout.addEventListener('click', this.#dialogClose);
+
+        //Add an event listener to the close icon to close the dialog
+        iconClose.addEventListener('click', this.#iconClose);
+    }
+
+    disconnectedCallback() {
+        //Remove the event listeners
+        this.#dialogAbout.removeEventListener('click', this.#dialogClose);
+
+        const iconClose = this.#dialogAbout.querySelector('.icon-close');
+        if(iconClose) iconClose.removeEventListener('click', this.#iconClose);
     }
 }
+
+customElements.define('b2b-about', B2bAbout);
