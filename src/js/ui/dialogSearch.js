@@ -20,7 +20,6 @@
 // ***************************************************************** */
 
 import { isoCountries } from '../../assets/codes/isoCountries';
-import '/node_modules/flag-icons/css/flag-icons.min.css';
 
 const CTRY_DATA_LIST = 'country-list';
 const CTRY_ISO_ALPHA2 = 'data-iso-alpha2';

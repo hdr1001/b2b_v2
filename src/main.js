@@ -25,6 +25,7 @@ import setupMainEventListeners from './evntListen.js';
 import B2bReport from './js/components/b2bReport.js';
 import B2bMultiStepID from './js/components/b2bMultiStepID.js';
 import B2bAbout from './js/components/b2bAbout.js';
+import 'flag-icons';
 
 customElements.define('b2b-report', B2bReport);
 customElements.define('b2b-multi-step-id', B2bMultiStepID);
