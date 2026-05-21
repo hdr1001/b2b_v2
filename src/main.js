@@ -20,15 +20,13 @@
 // ***************************************************************** */
 
 import { isoCountries, fetchCountries } from './assets/codes/isoCountries.js';
-import addDialogSearch from './js/ui/dialogSearch.js';
 import setupMainEventListeners from './evntListen.js';
 import B2bReport from './js/components/b2bReport.js';
 import B2bMultiStepID from './js/components/b2bMultiStepID.js';
 import B2bAbout from './js/components/b2bAbout.js';
-import 'flag-icons';
+//import 'flag-icons';
 
 customElements.define('b2b-report', B2bReport);
-customElements.define('b2b-multi-step-id', B2bMultiStepID);
 
 console.log('Top of main.js');
 
@@ -45,10 +43,6 @@ document.querySelector('#app').innerHTML = `
   </header>
   <main id="app-main"></main>
 `;
-
-//Add dialogs
-const appMain = document.querySelector('#app-main');
-appMain.appendChild(addDialogSearch());
 
 //Set up event listeners for elements that are already present in the DOM
 setupMainEventListeners();
@@ -85,7 +79,7 @@ function addApplicationComponents() {
 
     //Wait for the custom element to be registered before attaching the listener
     customElements.whenDefined('b2b-multi-step-id').then(() => {
-        document.querySelector('#nav-contact').addEventListener('click', () => {
+        document.querySelector('#nav-search').addEventListener('click', () => {
             // Ensure the method exists on the instance
             if (typeof b2bMultiStepID.showModal === 'function') {
                 b2bMultiStepID.showModal();

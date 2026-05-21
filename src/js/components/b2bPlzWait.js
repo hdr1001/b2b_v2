@@ -64,3 +64,5 @@ export default class B2bPlzWait extends HTMLElement {
         this.shadowRoot.appendChild(b2bPlzWait);
     }
 }
+
+customElements.define('b2b-plz-wait', B2bPlzWait);

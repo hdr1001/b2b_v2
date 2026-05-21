@@ -409,3 +409,5 @@ export default class B2bSearchCriteria extends HTMLElement {
         this.#searchCriteriaForm.querySelector(`#${BTN_RESET}`).removeEventListener('click', this.#resetClick);
     }
 }
+
+customElements.define('b2b-search-criteria', B2bSearchCriteria);
