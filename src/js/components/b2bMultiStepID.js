@@ -26,8 +26,6 @@ import B2bPlzWait from './b2bPlzWait.js';
 
 const cssB2bMultiStepID = new URL('./css/b2bMultiStepID.css', import.meta.url).href;
 
-const DIALOG_TITLE = 'dialog-title';
-
 const iniValues = {
     isoAlpha2: 'NL' //Please specify the country code in uppercase
 };
@@ -36,9 +34,28 @@ const iniValues = {
 export default class B2bMultiStepID extends HTMLElement {
     #dialogMultStepID;
 
+    #dialogTitle = null;
+    #dialogSteps = new Map([
+        ['searchCriteria', { component: null, dialogTitle: 'Specify search criteria' }],
+        ['plzWait', { component: null, dialogTitle: 'One moment please ...' }],
+        ['selectCandidate', { component: null, dialogTitle: 'Select the correct entity' }]
+    ]);
+    #currentStep = 'searchCriteria';
+
     //Event handling functions
     #dialogClose = evnt => { if(evnt.target === this.#dialogMultStepID) this.close() }
     #iconClose = () => this.close();
+
+    //Change the active step in the multi-step dialog
+    #changeCurrentStepFromTo = (fromStep, toStep) => {
+        this.#dialogSteps.forEach((step, key) => {
+            if(step.component) step.component.style.display = key === toStep ? 'block' : 'none';
+        });
+
+        this.#dialogTitle.textContent = this.#dialogSteps.get(toStep).dialogTitle;
+
+        this.#currentStep = toStep;
+    }
 
     constructor() {
         super();
@@ -66,38 +83,46 @@ export default class B2bMultiStepID extends HTMLElement {
 
         this.shadowRoot.appendChild(this.#dialogMultStepID);
 
-        const searchTitle = document.createElement('div');
+        //Set dialog title and add a close icon
+        this.#dialogTitle = document.createElement('div');
+        this.#dialogTitle.id = 'dialog-title';
 
-        //Set dialog title and add a close icon 
-        searchTitle.id = DIALOG_TITLE;
-        searchTitle.innerText = 'Specify search criteria';
+        let dialogStep = this.#dialogSteps.get(this.#currentStep);
+
+        //Title bar contains title text
+        this.#dialogTitle.appendChild(document.createTextNode(dialogStep.dialogTitle));
 
         //The title bar also contains a close icon
         const iconClose = createElement(X);
         iconClose.classList.add('icon-close');
-        searchTitle.appendChild(iconClose);
 
-        this.#dialogMultStepID.appendChild(searchTitle);
+        this.#dialogTitle.appendChild(iconClose);
+        this.#dialogMultStepID.appendChild(this.#dialogTitle);
 
         //Instantiate a B2B search criteria component and add it to the multi step dialog
-        const searchCriteria = document.createElement('b2b-search-criteria');
-        searchCriteria.setAttribute('ini-values', JSON.stringify(iniValues));
-        this.#dialogMultStepID.appendChild(searchCriteria);
+        dialogStep.component = document.createElement('b2b-search-criteria');
+        dialogStep.component.setAttribute('ini-values', JSON.stringify(iniValues));
+
+        this.#dialogMultStepID.appendChild(dialogStep.component);
 
         //Instantiate a B2B please wait component and add it to the multi step dialog
-        const plzWait = document.createElement('b2b-plz-wait');
-        plzWait.style.display = 'none';
-        this.#dialogMultStepID.appendChild(plzWait);
+        dialogStep = this.#dialogSteps.get('plzWait');
+        dialogStep.component = document.createElement('b2b-plz-wait');
+        dialogStep.component.style.display = 'none';
 
-        //Add an event listener to close the dialog when clicking outside of it
-        this.#dialogMultStepID.addEventListener('click', this.#dialogClose);
+        this.#dialogMultStepID.appendChild(dialogStep.component);
 
         //Add an event listener to the close icon to close the dialog
         iconClose.addEventListener('click', this.#iconClose);
 
+        //Add an event listener to close the dialog when clicking outside of it
+        this.#dialogMultStepID.addEventListener('click', this.#dialogClose);
+
         //Listen for custom events bubbling up
         this.addEventListener('submitSearchCriteria', evnt => {
             console.log('Caught custom event submitSearchCriteria: ', evnt.detail);
+
+            this.#changeCurrentStepFromTo('searchCriteria', 'plzWait');
         });
     }
 
