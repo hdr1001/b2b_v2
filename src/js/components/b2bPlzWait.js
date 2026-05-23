@@ -28,27 +28,20 @@ export default class B2bPlzWait extends HTMLElement {
 
         //Create the component's shadow DOM tree 
         this.attachShadow({ mode: 'open' });
-    }
 
-    //When the component is added to the DOM, render its content
-    connectedCallback() {
         //Create a link to the component's CSS file
         const css = document.createElement('link');
         css.setAttribute('rel', 'stylesheet');
         css.setAttribute('href', cssB2bPlzWait);
 
         this.shadowRoot.appendChild(css);
+    }
 
+    //When the component is added to the DOM, render its content
+    connectedCallback() {
         //The div container for the waiting animation
         const b2bPlzWait = document.createElement('div');
         b2bPlzWait.id = 'top-plz-wait';
-
-        //The wait animation title
-        const plzWaitTitle = document.createElement('div');
-        plzWaitTitle.classList.add('plz-wait-title');
-        plzWaitTitle.innerHTML = 'One moment please ...';
-    
-        b2bPlzWait.appendChild(plzWaitTitle);
 
         //The wait animation container
         const divAnimation = document.createElement('div');

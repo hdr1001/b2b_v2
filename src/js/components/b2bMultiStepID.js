@@ -30,6 +30,15 @@ const iniValues = {
     isoAlpha2: 'NL' //Please specify the country code in uppercase
 };
 
+//Get a reference to the first text node
+const getFirstTextNode = elem => {
+    const arrTextNodes = [...elem.childNodes] // has childNodes inside, including text ones
+        .filter(child => child.nodeType === 3) // get only text nodes
+        .filter(child => child.textContent.trim()); // eliminate empty text
+
+    return arrTextNodes?.[0] || null; // return the first text node or null if there are none
+};
+
 //A HTML5 B2B multi-step identification custom component class
 export default class B2bMultiStepID extends HTMLElement {
     #dialogMultStepID;
@@ -45,15 +54,22 @@ export default class B2bMultiStepID extends HTMLElement {
     //Event handling functions
     #dialogClose = evnt => { if(evnt.target === this.#dialogMultStepID) this.close() }
     #iconClose = () => this.close();
+    #dialogOnClose = () => console.log('Dialog just closed');
 
     //Change the active step in the multi-step dialog
     #changeCurrentStepFromTo = (fromStep, toStep) => {
+        //Diplay the component of the new step and hide the component of the previous step
         this.#dialogSteps.forEach((step, key) => {
             if(step.component) step.component.style.display = key === toStep ? 'block' : 'none';
         });
 
-        this.#dialogTitle.textContent = this.#dialogSteps.get(toStep).dialogTitle;
+        //Change the dialog title to the title of the new step
+        const elemTextTitle = getFirstTextNode(this.#dialogTitle);
+        if(elemTextTitle) {
+            elemTextTitle.textContent = this.#dialogSteps.get(toStep).dialogTitle;
+        }
 
+        //Set the new step as the current step
         this.#currentStep = toStep;
     }
 
@@ -118,6 +134,9 @@ export default class B2bMultiStepID extends HTMLElement {
         //Add an event listener to close the dialog when clicking outside of it
         this.#dialogMultStepID.addEventListener('click', this.#dialogClose);
 
+        //Add an event listener to log when the dialog is closed
+        this.#dialogMultStepID.addEventListener('close', this.#dialogOnClose);
+
         //Listen for custom events bubbling up
         this.addEventListener('submitSearchCriteria', evnt => {
             console.log('Caught custom event submitSearchCriteria: ', evnt.detail);
@@ -129,6 +148,7 @@ export default class B2bMultiStepID extends HTMLElement {
     disconnectedCallback() {
         //Remove the event listeners
         this.#dialogMultStepID.removeEventListener('click', this.#dialogClose);
+        this.#dialogMultStepID.removeEventListener('close', this.#dialogOnClose);
 
         const iconClose = this.#dialogMultStepID.querySelector('.icon-close');
         if(iconClose) iconClose.removeEventListener('click', this.#iconClose);

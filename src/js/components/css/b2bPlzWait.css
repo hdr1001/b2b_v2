@@ -32,18 +32,6 @@
 	--box-border-radius: 15%;
 }
 
-.dialog-plz-wait {
-    width: var(--container-size);
-
-    margin: 1.5em 1em 1em;
-    padding: 1em 1em 1em 1.5em;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-}
-
 #top-plz-wait {
     margin: 20px;
 
@@ -53,92 +41,81 @@
 
     color: var(--color-darkest);
     background-color: var(--color-bg-color);
+
+    div.plz-wait-animation {
+        display: flex;
+        flex-direction: row;
+
+        padding: 1.5em 1em 1em 1.5em;
+
+        justify-content: space-between;
+        gap: 0.5em;
+        align-items: center;
+        
+        div.plz-wait-box {
+            width: var(--box-size);
+            height: var(--box-size);
+            position: relative;
+            display: block;
+            transform-origin: -50% center;
+            border-radius: var(--box-border-radius);
+
+            &:after
+            {
+                content: '';
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                right: 0;
+                border-radius: var(--box-border-radius);
+            }
+            
+            &:nth-child(1)
+            {
+                animation: slide var(--duration) ease-in-out infinite alternate;
+                &:after{ animation: color-change var(--duration) ease-in-out infinite alternate; }
+            }
+            
+            &:nth-child(2)
+            {	
+                animation: flip-1 var(--duration) ease-in-out infinite alternate;
+                &:after{ animation: squidge-1 var(--duration) ease-in-out infinite alternate; }
+            }
+            
+            &:nth-child(3)
+            {	
+                animation: flip-2 var(--duration) ease-in-out infinite alternate;
+                &:after{ animation: squidge-2 var(--duration) ease-in-out infinite alternate; }
+            }
+            
+            &:nth-child(4)
+            {	
+                animation: flip-3 var(--duration) ease-in-out infinite alternate;
+                &:after{ animation: squidge-3 var(--duration) ease-in-out infinite alternate; }
+            }
+            
+            &:nth-child(5)
+            {	
+                animation: flip-4 var(--duration) ease-in-out infinite alternate;
+                &:after{ animation: squidge-4 var(--duration) ease-in-out infinite alternate; }
+            }
+            
+            &:nth-child(6)
+            {	
+                animation: flip-5 var(--duration) ease-in-out infinite alternate;
+                &:after{ animation: squidge-5 var(--duration) ease-in-out infinite alternate; }
+            }
+            
+            &:nth-child(2):after{ background-color: #eb5e28; }
+            &:nth-child(3):after{ background-color: #ef7e52; }	
+            &:nth-child(4):after{ background-color: #f39e7e; }
+            &:nth-child(5):after{ background-color: #f7bea9; }
+        }
+    }
 }
 
-div#top-plz-wait .plz-wait-title {
-    padding: 0.25em 0.5em;
-
-    font-size: 1.5em;
-    text-align: center;
-
-    color: var(--color-lively);
-    background-color: var(--color-dark);
-}
-
-div#top-plz-wait .plz-wait-animation {
-    display: flex;
-    flex-direction: row;
-
-    padding: 1.5em 1em 1em 1.5em;
-
-    justify-content: space-between;
-    gap: 0.5em;
-    align-items: center;
-}
-
-div#top-plz-wait .plz-wait-box {
-    width: var(--box-size);
-    height: var(--box-size);
-    position: relative;
-    display: block;
-    transform-origin: -50% center;
-    border-radius: var(--box-border-radius);
-
-    &:after
-    {
-        content: '';
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        right: 0;
-        border-radius: var(--box-border-radius);
-    }
-	
-    &:nth-child(1)
-    {
-        animation: slide var(--duration) ease-in-out infinite alternate;
-        &:after{ animation: color-change var(--duration) ease-in-out infinite alternate; }
-    }
-	
-    &:nth-child(2)
-    {	
-        animation: flip-1 var(--duration) ease-in-out infinite alternate;
-        &:after{ animation: squidge-1 var(--duration) ease-in-out infinite alternate; }
-    }
-	
-    &:nth-child(3)
-    {	
-        animation: flip-2 var(--duration) ease-in-out infinite alternate;
-        &:after{ animation: squidge-2 var(--duration) ease-in-out infinite alternate; }
-    }
-	
-    &:nth-child(4)
-    {	
-        animation: flip-3 var(--duration) ease-in-out infinite alternate;
-        &:after{ animation: squidge-3 var(--duration) ease-in-out infinite alternate; }
-    }
-	
-    &:nth-child(5)
-    {	
-        animation: flip-4 var(--duration) ease-in-out infinite alternate;
-        &:after{ animation: squidge-4 var(--duration) ease-in-out infinite alternate; }
-    }
-	
-    &:nth-child(6)
-    {	
-        animation: flip-5 var(--duration) ease-in-out infinite alternate;
-        &:after{ animation: squidge-5 var(--duration) ease-in-out infinite alternate; }
-    }
-	
-    &:nth-child(2):after{ background-color: #eb5e28; }
-    &:nth-child(3):after{ background-color: #ef7e52; }	
-    &:nth-child(4):after{ background-color: #f39e7e; }
-    &:nth-child(5):after{ background-color: #f7bea9; }
-}
-
-@keyframes slide
-{
+@keyframes slide {
     0% { background-color: #bc4b20; transform: translatex(0vw); }
     100% { background-color: #fbded4; transform: translatex(calc(var(--container-size) - (var(--box-size) * 1.25))); }
 }
