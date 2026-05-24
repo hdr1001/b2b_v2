@@ -32,6 +32,10 @@
 	--box-border-radius: 15%;
 }
 
+*:focus { 
+  outline: none
+}
+
 #top-plz-wait {
     margin: 20px;
 

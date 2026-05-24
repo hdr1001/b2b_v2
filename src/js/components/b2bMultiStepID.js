@@ -54,10 +54,22 @@ export default class B2bMultiStepID extends HTMLElement {
     //Event handling functions
     #dialogClose = evnt => { if(evnt.target === this.#dialogMultStepID) this.close() }
     #iconClose = () => this.close();
-    #dialogOnClose = () => console.log('Dialog just closed');
+    #dialogOnToggle = () => { //Handler will be invoked on dialog open and close
+        if(this.#dialogMultStepID.open) {
+            if(this.#currentStep === 'searchCriteria') {
+                this.#dialogSteps.get('searchCriteria')?.component?.setFocusOnName();
+            }
+        }
+        else { //Dialog was closed
+            this.#changeCurrentStepFromTo(this.#currentStep, 'searchCriteria');
+            this.#dialogSteps.get('searchCriteria').component.extReset();
+        }
+    }
 
     //Change the active step in the multi-step dialog
     #changeCurrentStepFromTo = (fromStep, toStep) => {
+        if(fromStep === toStep) return;
+
         //Diplay the component of the new step and hide the component of the previous step
         this.#dialogSteps.forEach((step, key) => {
             if(step.component) step.component.style.display = key === toStep ? 'block' : 'none';
@@ -134,8 +146,8 @@ export default class B2bMultiStepID extends HTMLElement {
         //Add an event listener to close the dialog when clicking outside of it
         this.#dialogMultStepID.addEventListener('click', this.#dialogClose);
 
-        //Add an event listener to log when the dialog is closed
-        this.#dialogMultStepID.addEventListener('close', this.#dialogOnClose);
+        //Add an event listeners to dialog open/close events
+        this.#dialogMultStepID.addEventListener('toggle', this.#dialogOnToggle);
 
         //Listen for custom events bubbling up
         this.addEventListener('submitSearchCriteria', evnt => {
@@ -148,7 +160,8 @@ export default class B2bMultiStepID extends HTMLElement {
     disconnectedCallback() {
         //Remove the event listeners
         this.#dialogMultStepID.removeEventListener('click', this.#dialogClose);
-        this.#dialogMultStepID.removeEventListener('close', this.#dialogOnClose);
+
+        this.#dialogMultStepID.removeEventListener('toggle', this.#dialogOnToggle);
 
         const iconClose = this.#dialogMultStepID.querySelector('.icon-close');
         if(iconClose) iconClose.removeEventListener('click', this.#iconClose);

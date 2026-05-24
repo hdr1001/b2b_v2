@@ -32,6 +32,10 @@
 	--box-border-radius: 15%;
 }
 
+*:focus { 
+  outline: none
+}
+
 #top-search-criteria form {
   /* 
   // The form is made up of multiple rows.
