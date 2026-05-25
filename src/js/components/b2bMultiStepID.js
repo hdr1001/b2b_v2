@@ -27,7 +27,7 @@ import B2bPlzWait from './b2bPlzWait.js';
 const cssB2bMultiStepID = new URL('./css/b2bMultiStepID.css', import.meta.url).href;
 
 const iniValues = {
-    isoAlpha2: 'NL' //Please specify the country code in uppercase
+    isoAlpha2: 'US' //Please specify the country code in uppercase
 };
 
 //Get a reference to the first text node
@@ -57,7 +57,13 @@ export default class B2bMultiStepID extends HTMLElement {
     #dialogOnToggle = () => { //Handler will be invoked on dialog open and close
         if(this.#dialogMultStepID.open) {
             if(this.#currentStep === 'searchCriteria') {
-                this.#dialogSteps.get('searchCriteria')?.component?.setFocusOnName();
+                const criteriaComponent = this.#dialogSteps.get('searchCriteria').component;
+
+                if(criteriaComponent) {
+                    if(criteriaComponent.validCountrySelected()) {
+                        criteriaComponent.setFocusOnName()
+                    }
+                }
             }
         }
         else { //Dialog was closed

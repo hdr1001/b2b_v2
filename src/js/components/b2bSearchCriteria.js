@@ -71,6 +71,7 @@ export default class B2bSearchCriteria extends HTMLElement {
     #inpCountryChange = evnt => {
         let opt = null, newIsoAlpha2 = '';
 
+        //Get a reference to the selected option
         for(let i = 0; i < this.#dataList.children.length; i++) {
             if(this.#dataList.children[i].value === evnt.target.value) {
                 opt = this.#dataList.children[i];
@@ -78,10 +79,12 @@ export default class B2bSearchCriteria extends HTMLElement {
             }
         }
 
+        //Get the ISO alpha-2 code from the selected option, if any
         if(opt) {
             newIsoAlpha2 = opt.getAttribute(CTRY_ISO_ALPHA2);
         }
 
+        //Check if the user has entered a valid ISO alpha-2 code
         if(!newIsoAlpha2 && this.#inpCountry.value.length === 2) {
             const oCountry = isoCountries.get(this.#inpCountry.value.toUpperCase());
 
@@ -91,6 +94,7 @@ export default class B2bSearchCriteria extends HTMLElement {
             }
         }
 
+        //Check if the user has entered a valid, full country name
         if(!newIsoAlpha2 && this.#inpCountry.value.length > 2) {
             const oCountry = [...isoCountries.values()].find(elem => elem.name?.toUpperCase() === this.#inpCountry.value.toUpperCase());
 
@@ -100,11 +104,12 @@ export default class B2bSearchCriteria extends HTMLElement {
             }
         }
 
+        //Update the country input element and the flag div
         if(newIsoAlpha2) {
             this.#inpCountry.setAttribute(CTRY_ISO_ALPHA2, newIsoAlpha2)
             this.#divFlag.innerHTML = flagSpan(newIsoAlpha2);
         }
-        else { //Invalid input
+        else { //Invalid input, reset country input element and flag div
             this.#inpCountry.setAttribute(CTRY_ISO_ALPHA2, '')
             this.#divFlag.innerHTML = flagSpan('');
         }
@@ -415,6 +420,14 @@ export default class B2bSearchCriteria extends HTMLElement {
 
     setFocusOnName() {
         if(this.#inpName) this.#inpName.focus();
+    }
+
+    validCountrySelected() {
+        if(this.#inpCountry.getAttribute(CTRY_ISO_ALPHA2)) {
+            return true;
+        }
+
+        return false;
     }
 }
 
