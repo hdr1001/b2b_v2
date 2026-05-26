@@ -23,7 +23,6 @@ import { createElement, X, Plus, Minus } from 'lucide';
 import { isoCountries } from '../../assets/codes/isoCountries.js';
 
 const cssB2bSearchCriteria = new URL('./css/b2bSearchCriteria.css', import.meta.url).href;
-//const cssFlagIcons = new URL('/node_modules/flag-icons/css/flag-icons.min.css', import.meta.url).href;
 
 //Form related string constants
 const CTRY_DATA_LIST       = 'countries-data-list';

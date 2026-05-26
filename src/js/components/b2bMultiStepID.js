@@ -23,11 +23,12 @@ import { createElement, X } from 'lucide';
 
 import B2bSearchCriteria from './b2bSearchCriteria.js';
 import B2bPlzWait from './b2bPlzWait.js';
+import B2bSelectCand from './b2bSelectCand.js';
 
 const cssB2bMultiStepID = new URL('./css/b2bMultiStepID.css', import.meta.url).href;
 
 const iniValues = {
-    isoAlpha2: 'US' //Please specify the country code in uppercase
+    isoAlpha2: 'NL' //Please specify the country code in uppercase
 };
 
 //Get a reference to the first text node
@@ -89,6 +90,12 @@ export default class B2bMultiStepID extends HTMLElement {
 
         //Set the new step as the current step
         this.#currentStep = toStep;
+
+        if(this.#currentStep === 'plzWait') {
+            setTimeout(() => {
+                this.#changeCurrentStepFromTo('plzWait', 'selectCandidate')
+            }, 5000);
+        }
     }
 
     constructor() {
@@ -142,6 +149,13 @@ export default class B2bMultiStepID extends HTMLElement {
         //Instantiate a B2B please wait component and add it to the multi step dialog
         dialogStep = this.#dialogSteps.get('plzWait');
         dialogStep.component = document.createElement('b2b-plz-wait');
+        dialogStep.component.style.display = 'none';
+
+        this.#dialogMultStepID.appendChild(dialogStep.component);
+
+        //Instantiate a B2B select candidate component and add it to the dialog
+        dialogStep = this.#dialogSteps.get('selectCandidate');
+        dialogStep.component = document.createElement('b2b-select-candidate');
         dialogStep.component.style.display = 'none';
 
         this.#dialogMultStepID.appendChild(dialogStep.component);
