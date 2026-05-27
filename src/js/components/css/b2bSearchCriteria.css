@@ -25,78 +25,36 @@
   --color-dark:     #403d39;
   --color-middle:   #ccc5b9;
   --color-lively:   #eb5e28;
-
-  --duration: 1.5s;
-	--container-size: 250px;
-	--box-size: 33px;
-	--box-border-radius: 15%;
 }
 
 *:focus { 
   outline: none
 }
 
-#top-search-criteria form {
-  /* 
-  // The form is made up of multiple rows.
-  */
-  padding: 0 15px 15px 15px;
-
-  div.form-row {
-    /*
-    // A row can contain one or more input elements.
-    // If there are multiple input elements, they are 
-    // spaced out evenly.
+#top-search-criteria {
+  form {
+    /* 
+    // The form is made up of multiple rows.
     */
-    display: flex;
-    flex-direction: row;
+    padding: 0 15px 15px 15px;
 
-    justify-content: space-between;
-    gap: 0.5em;
-
-    margin-top: 15px;
-
-    div.flag-icon {
-      margin: 0 auto;
-      padding: 0.35em 0.75em;
-
-      border: 1px solid var(--color-middle);
-      border-radius: 8px;
-
-      background-color: transparent;
-    }
-
-    div.input-text {
+    div.form-row {
       /*
-      // An input element is made up of an input field, a label and
-      // optionally a button.
+      // A row can contain one or more input elements.
+      // If there are multiple input elements, they are 
+      // spaced out evenly.
       */
       display: flex;
-      flex: 1;
+      flex-direction: row;
 
-      position: relative;
+      justify-content: space-between;
+      gap: 0.5em;
 
-      font-style: italic;
-      color: var(--color-lively);
+      margin-top: 15px;
 
-      label {
-        position: absolute;
-
-        padding-top: 0.3em;
-        pointer-events: none;
-
-        background-color: transparent;
-
-        left: 0.8em;
-
-        transition: all 0.3s ease;
-      }
-
-      input {
-        box-sizing: border-box;
-        width: 100%;
-
-        padding: 0.75em;
+      div.flag-icon {
+        margin: 0 auto;
+        padding: 0.35em 0.75em;
 
         border: 1px solid var(--color-middle);
         border-radius: 8px;
@@ -104,78 +62,117 @@
         background-color: transparent;
       }
 
-      input:focus {
-        border: 1px solid var(--color-lively);
-        outline: var(--color-lively);
-      }
+      div.input-text {
+        /*
+        // An input element is made up of an input field, a label and
+        // optionally a button.
+        */
+        display: flex;
+        flex: 1;
 
-      input:focus~label,
-      input.has-none-empty-value~label {
-        transform: translateY(-58%);
+        position: relative;
 
         font-style: italic;
-        font-size: 0.8em;
-
-        padding: 3px;
-
-        background-color: var(--color-bg-color);
         color: var(--color-lively);
-        border-radius: 8px;
-      }
 
-      button {
-        position: absolute;
-        right: 4px;
+        label {
+          position: absolute;
 
-        align-self: center;
+          padding-top: 0.3em;
+          pointer-events: none;
 
-        padding: 3px 0 0 0;
+          background-color: transparent;
 
-        border: 1px solid var(--color-middle);
-        border-radius: 14px;
+          left: 0.8em;
 
-        color: var(--color-lively);
-        background-color: var(--color-middle);
+          transition: all 0.3s ease;
+        }
 
-        svg {
-          width: 70%;
-          height: auto;
+        input {
+          box-sizing: border-box;
+          width: 100%;
+
+          padding: 0.75em;
+
+          border: 1px solid var(--color-middle);
+          border-radius: 8px;
+
+          background-color: transparent;
+        }
+
+        input:focus {
+          border: 1px solid var(--color-lively);
+          outline: var(--color-lively);
+        }
+
+        input:focus~label,
+        input.has-none-empty-value~label {
+          transform: translateY(-58%);
+
+          font-style: italic;
+          font-size: 0.8em;
+
+          padding: 3px;
+
+          background-color: var(--color-bg-color);
+          color: var(--color-lively);
+          border-radius: 8px;
+        }
+
+        button {
+          position: absolute;
+          right: 4px;
+
+          align-self: center;
+
+          padding: 3px 0 0 0;
+
+          border: 1px solid var(--color-middle);
+          border-radius: 14px;
+
+          color: var(--color-lively);
+          background-color: var(--color-middle);
+
+          svg {
+            width: 70%;
+            height: auto;
+          }
+        }
+
+        button:focus {
+          align-self: center;
+
+          color: var(--color-dark);
+          border-color: var(--color-lively);
+
+          outline: var(--color-lively)
         }
       }
 
-      button:focus {
-        align-self: center;
+      &.submit-reset {
+        justify-content: space-evenly;
 
-        color: var(--color-dark);
-        border-color: var(--color-lively);
+        button {
+          padding: 0.75em 0;
 
-        outline: var(--color-lively)
+          border: 1px solid var(--color-middle);
+          border-radius: 8px;
+
+          font-weight: bolder;
+
+          color: var(--color-lively);
+          background-color: transparent;
+
+          width: 33%;
+
+          &:focus {
+            border: 1px solid var(--color-lively);
+            outline: var(--color-lively);
+
+            font-style: italic;
+          }
+        }
       }
-    }
-  }
-
-  div.submit-reset {
-    justify-content: space-evenly;
-
-    button {
-      padding: 0.75em 0;
-
-      border: 1px solid var(--color-middle);
-      border-radius: 8px;
-
-      font-weight: bolder;
-
-      color: var(--color-lively);
-      background-color: transparent;
-
-      width: 33%;
-    }
-
-    button:focus {
-      border: 1px solid var(--color-lively);
-      outline: var(--color-lively);
-
-      font-style: italic;
     }
   }
 }

@@ -52,6 +52,8 @@ export default class B2bMultiStepID extends HTMLElement {
     ]);
     #currentStep = 'searchCriteria';
 
+    #searchCriteria = null;
+
     //Event handling functions
     #dialogClose = evnt => { if(evnt.target === this.#dialogMultStepID) this.close() }
     #iconClose = () => this.close();
@@ -92,9 +94,15 @@ export default class B2bMultiStepID extends HTMLElement {
         this.#currentStep = toStep;
 
         if(this.#currentStep === 'plzWait') {
-            setTimeout(() => {
-                this.#changeCurrentStepFromTo('plzWait', 'selectCandidate')
-            }, 5000);
+            const urlGleif = `https://api.gleif.org/api/v1/lei-records?filter[entity.registeredAs]=${this.#searchCriteria?.regNumber}&filter[entity.legalAddress.country]=${this.#searchCriteria?.isoAlpha2}`;
+        
+            return fetch(urlGleif)
+                .then(resp => resp.json())
+                .then(data => { 
+                    console.log(data);
+                    this.#changeCurrentStepFromTo('plzWait', 'selectCandidate')
+                })
+                .catch(err => console.error('Error fetching Gleif data: ', err));            
         }
     }
 
@@ -171,7 +179,7 @@ export default class B2bMultiStepID extends HTMLElement {
 
         //Listen for custom events bubbling up
         this.addEventListener('submitSearchCriteria', evnt => {
-            console.log('Caught custom event submitSearchCriteria: ', evnt.detail);
+            this.#searchCriteria = evnt.detail;
 
             this.#changeCurrentStepFromTo('searchCriteria', 'plzWait');
         });
