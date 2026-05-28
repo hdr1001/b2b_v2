@@ -19,6 +19,8 @@
 //
 // ***************************************************************** */
 
+import B2bMatchCand from "./b2bMatchCand.js";
+
 const cssB2bSelectCand = new URL('./css/b2bSelectCand.css', import.meta.url).href;
 
 //Form related string constants
@@ -74,8 +76,16 @@ export default class B2bSelectCand extends HTMLElement {
         const formRow = document.createElement('div');
         formRow.classList.add(FORM_ROW);
         
-        //Create a form row for the buttons
+        //Create custom component for displaying the match candidates
         let divFormRow = formRow.cloneNode();
+
+        this.leiMC = document.createElement('b2b-match-candidate');  
+
+        divFormRow.appendChild(this.leiMC);
+        this.#selectCandForm.appendChild(divFormRow);
+
+        //Create a form row for the buttons
+        divFormRow = formRow.cloneNode();
         divFormRow.classList.add('select-back');
 
         let button = getButtonElement(BTN_SELECT, 'select', 'Select');

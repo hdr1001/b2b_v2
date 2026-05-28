@@ -97,9 +97,9 @@ export default class B2bMultiStepID extends HTMLElement {
             const urlGleif = `https://api.gleif.org/api/v1/lei-records?filter[entity.registeredAs]=${this.#searchCriteria?.regNumber}&filter[entity.legalAddress.country]=${this.#searchCriteria?.isoAlpha2}`;
         
             return fetch(urlGleif)
-                .then(resp => resp.json())
-                .then(data => { 
-                    console.log(data);
+                .then(resp => resp.text())
+                .then(json => {
+                    this.#dialogSteps.get('selectCandidate').component.leiMC.setAttribute('b2b-json-cands', json);
                     this.#changeCurrentStepFromTo('plzWait', 'selectCandidate')
                 })
                 .catch(err => console.error('Error fetching Gleif data: ', err));            

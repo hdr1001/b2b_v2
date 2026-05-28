@@ -1,7 +1,7 @@
 /* ********************************************************************
 //
 // Business-to-business (B2B) application v2
-// HTML custom component for displaying B2B reports
+// HTML custom component for displaying GLEIF match candidates
 //
 // Copyright 2026 Hans de Rooij 
 //
@@ -22,10 +22,14 @@
 import { LEIs } from '../../assets/data/LEIs.js';
 import LeiRec from '../gleif/leiRec.js';
 import { getLeiSections } from '../gleif/leiLavs.js';
+
 const cssB2bReport = new URL('./css/b2bReport.css', import.meta.url).href;
 
-//A HTML5 B2B report custom component class
-export default class B2bReport extends HTMLElement {
+//A HTML5 GLEIF match candidate custom component class
+export default class B2bMatchCand extends HTMLElement {
+    #leiMatchCands;
+    #leiMatchCand;
+
     constructor() {
         super();
 
@@ -41,12 +45,13 @@ export default class B2bReport extends HTMLElement {
     }
 
     //Observe the 'b2bKey' attribute for changes
-    static observedAttributes = ['b2b-key'];
+    static observedAttributes = ['b2b-json-cands'];
 
-    //In case the 'id' attribute changes, update the component's content
+    //In case the 'b2b-json-cands' attribute changes, update the component's content
     attributeChangedCallback(name, oldValue, newValue) {
-        if(name === 'b2b-key' && oldValue !== newValue) {
-            this.b2bKey = newValue;
+        if(name === 'b2b-json-cands' && oldValue !== newValue) {
+            console.log(newValue)
+            this.#leiMatchCands = JSON.parse(newValue);
 
             if(this.isConnected) this.renderComponentUpdate();
         }
@@ -55,24 +60,25 @@ export default class B2bReport extends HTMLElement {
     //When the component is added to the DOM, render its content
     connectedCallback() {
         //The b2bKey property contains B2B key value
-        if(!this.b2bKey) {
-            this.b2bKey = this.getAttribute('b2b-key') || '0';
+        if(!this.#leiMatchCands) {
+            this.leiMatchCands = JSON.parse(this.getAttribute('b2b-json-cands')) || null;
         }
 
         //Create an B2B object wrapper
-        this.b2bRec = new LeiRec(LEIs[this.b2bKey]);
-
+        this.#leiMatchCand = new LeiRec(this.#leiMatchCands.data?.[0]);
+console.log(this.#leiMatchCand)
+/*
         //Array of report sections
-        this.sections = getLeiSections(this.b2bRec);
+        this.sections = getLeiSections(this.#leiMatchCand);
 
         const b2bRptDiv = document.createElement('div');
         b2bRptDiv.classList.add('b2b-report');
 
         this.shadowRoot.appendChild(b2bRptDiv);
 
-        this.sections.forEach(section => b2bRptDiv.appendChild(section.domElems));
+        this.sections.forEach(section => b2bRptDiv.appendChild(section.domElems)); */
     }
-
+/*
     //When the component is removed from the DOM, clean up references
     disconnectedCallback() {
         this.b2bKey = '';
@@ -95,4 +101,7 @@ export default class B2bReport extends HTMLElement {
         //Append a table with label/value pairs for the current LEI record
         this.sections.forEach(section => b2bRptDiv.appendChild(section.domElems));
     }
+*/
 }
+
+customElements.define('lei-match-candidate', B2bMatchCand);
