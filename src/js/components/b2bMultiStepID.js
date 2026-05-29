@@ -99,7 +99,7 @@ export default class B2bMultiStepID extends HTMLElement {
             return fetch(urlGleif)
                 .then(resp => resp.text())
                 .then(json => {
-                    this.#dialogSteps.get('selectCandidate').component.leiMC.setAttribute('b2b-json-cands', json);
+                    this.#dialogSteps.get('selectCandidate').component.setAttribute('json-lei-cands', json);
                     this.#changeCurrentStepFromTo('plzWait', 'selectCandidate')
                 })
                 .catch(err => console.error('Error fetching Gleif data: ', err));            

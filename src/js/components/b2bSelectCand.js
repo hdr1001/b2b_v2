@@ -19,12 +19,13 @@
 //
 // ***************************************************************** */
 
-import B2bMatchCand from "./b2bMatchCand.js";
+//import B2bMatchCand from "./b2bLeiMatchCands.js";
 
 const cssB2bSelectCand = new URL('./css/b2bSelectCand.css', import.meta.url).href;
 
 //Form related string constants
 const FORM_ROW   = 'form-row';
+const MATCH_CAND = 'match-cand'
 const BTN_SELECT = 'select-cand';
 const BTN_BACK   = 'select-back';
 
@@ -33,6 +34,8 @@ const BTN_BACK   = 'select-back';
 export default class B2bSelectCand extends HTMLElement {
     #b2bSelectCand;  //Reference to the outermost div
     #selectCandForm; //Reference to the form element
+
+    #leiMatchCands; //Reference to an object containing the LEI match candidates
 
     constructor() {
         super();
@@ -47,6 +50,18 @@ export default class B2bSelectCand extends HTMLElement {
 
         //Add link to the css file to the shadow DOM
         this.shadowRoot.appendChild(css);               
+    }
+
+    //Observe the 'json-lei-cands' attribute for changes
+    static observedAttributes = ['json-lei-cands'];
+
+    //In case the 'json-lei-cands' attribute changes, update the component's content
+    attributeChangedCallback(name, oldValue, newValue) {
+        if(name === 'json-lei-cands' && oldValue !== newValue) {
+            this.#leiMatchCands = JSON.parse(newValue);
+
+            if(this.isConnected) this.renderComponentUpdate();
+        }
     }
 
     //When the component is added to the DOM, render its content
@@ -78,10 +93,8 @@ export default class B2bSelectCand extends HTMLElement {
         
         //Create custom component for displaying the match candidates
         let divFormRow = formRow.cloneNode();
+        divFormRow.classList.add(MATCH_CAND)
 
-        this.leiMC = document.createElement('b2b-match-candidate');  
-
-        divFormRow.appendChild(this.leiMC);
         this.#selectCandForm.appendChild(divFormRow);
 
         //Create a form row for the buttons
@@ -104,6 +117,30 @@ export default class B2bSelectCand extends HTMLElement {
 
         //Add the top most div to the shadow root
         this.shadowRoot.appendChild(this.#b2bSelectCand);
+    }
+
+    //When the component is removed from the DOM, clean up references
+    disconnectedCallback() {
+    }
+
+    //Render the component's content based on the current 'id' attribute
+    renderComponentUpdate() {
+        //Remove any existing match candidates
+        this.#selectCandForm.querySelectorAll(`.${MATCH_CAND}`).forEach(formRowMC => formRowMC.remove());
+
+        //All input elements are laid out in rows
+        const formRow = document.createElement('div');
+        formRow.classList.add(FORM_ROW);
+
+        for(let i = this.#leiMatchCands.data.length - 1; i >= 0; i--) {
+            //Create a form row for a match candidate
+            const divFormRow = formRow.cloneNode();
+            divFormRow.classList.add(MATCH_CAND);
+
+            divFormRow.textContent = this.#leiMatchCands?.data?.[i]?.attributes?.entity?.legalName?.name;
+
+            this.#selectCandForm.prepend(divFormRow);
+        }
     }
 }
 
