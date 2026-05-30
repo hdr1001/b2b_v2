@@ -19,7 +19,9 @@
 //
 // ***************************************************************** */
 
-//import B2bMatchCand from "./b2bLeiMatchCands.js";
+import LeiRec from '../gleif/leiRec.js';
+import LabelArrValues from '../ui/lvsLabelArrValues.js';
+import RptSection from '../ui/rptSection.js';
 
 const cssB2bSelectCand = new URL('./css/b2bSelectCand.css', import.meta.url).href;
 
@@ -29,13 +31,12 @@ const MATCH_CAND = 'match-cand'
 const BTN_SELECT = 'select-cand';
 const BTN_BACK   = 'select-back';
 
-
 //A HTML5 B2B search criteria custom component class
 export default class B2bSelectCand extends HTMLElement {
     #b2bSelectCand;  //Reference to the outermost div
     #selectCandForm; //Reference to the form element
 
-    #leiMatchCands; //Reference to an object containing the LEI match candidates
+    #leiMatchCands;  //Reference to an object containing the LEI match candidates
 
     constructor() {
         super();
@@ -52,16 +53,24 @@ export default class B2bSelectCand extends HTMLElement {
         this.shadowRoot.appendChild(css);               
     }
 
+    set jsonMatchCands(jsonMCs) {
+        this.#leiMatchCands = JSON.parse(jsonMCs);
+
+        this.renderComponentUpdate();
+    }
+
     //Observe the 'json-lei-cands' attribute for changes
-    static observedAttributes = ['json-lei-cands'];
+    //static observedAttributes = ['json-lei-cands'];
 
     //In case the 'json-lei-cands' attribute changes, update the component's content
     attributeChangedCallback(name, oldValue, newValue) {
+/*      
         if(name === 'json-lei-cands' && oldValue !== newValue) {
             this.#leiMatchCands = JSON.parse(newValue);
 
             if(this.isConnected) this.renderComponentUpdate();
         }
+*/
     }
 
     //When the component is added to the DOM, render its content
@@ -125,19 +134,41 @@ export default class B2bSelectCand extends HTMLElement {
 
     //Render the component's content based on the current 'id' attribute
     renderComponentUpdate() {
-        //Remove any existing match candidates
+        //Establish the number of candidates
+        const numCands = this.#leiMatchCands?.data?.length;
+
+        if(!numCands) {
+            const divMatchCand = this.#selectCandForm.querySelector(`.${MATCH_CAND}`);
+
+            if(divMatchCand) divMatchCand.textContent = 'No candidates available';
+
+            return;
+        }
+
+        //New candidates available, 1st remove any existing match candidates
         this.#selectCandForm.querySelectorAll(`.${MATCH_CAND}`).forEach(formRowMC => formRowMC.remove());
 
         //All input elements are laid out in rows
         const formRow = document.createElement('div');
         formRow.classList.add(FORM_ROW);
 
+        //Iterate from last to first & prepend
         for(let i = this.#leiMatchCands.data.length - 1; i >= 0; i--) {
+            const leiRec = new LeiRec(this.#leiMatchCands, i);
+
+            const rptSection = new RptSection( 'Names', 
+                [
+                    new LabelArrValues( 'Name', leiRec.entity.legalName.name ),
+                    new LabelArrValues( 'Other name(s)', leiRec.entity.otherNames.map(elem => elem.name) ),
+                    new LabelArrValues( 'Transliterated name(s)', leiRec.entity.transliteratedOtherNames.map(elem => elem.name) )
+                ]
+            )
+
             //Create a form row for a match candidate
             const divFormRow = formRow.cloneNode();
             divFormRow.classList.add(MATCH_CAND);
 
-            divFormRow.textContent = this.#leiMatchCands?.data?.[i]?.attributes?.entity?.legalName?.name;
+            divFormRow.appendChild(rptSection.domElems);
 
             this.#selectCandForm.prepend(divFormRow);
         }

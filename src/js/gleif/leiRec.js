@@ -196,11 +196,15 @@ function addrSameValueAs(otherAddr) {
 }
 
 //Constructor function for level 1 LEI data
-function LeiRec(objLEI) {
+function LeiRec(objLEI, dataArrIdx = 0) {
     this.root = objLEI; //Safe a reference to the root of the object
 
     //Data shortcuts
     ({ meta: this.meta, data: this.data } = objLEI);
+
+    if(Array.isArray(this.data)) {
+        this.data = this.data[dataArrIdx];
+    }
 
     if(this.data) ({ attributes: this.attribs, relationships: this.relationships } = this.data);
 
