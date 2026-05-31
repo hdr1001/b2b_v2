@@ -27,7 +27,8 @@ const cssB2bSelectCand = new URL('./css/b2bSelectCand.css', import.meta.url).hre
 
 //Form related string constants
 const FORM_ROW   = 'form-row';
-const MATCH_CAND = 'match-cand'
+const MATCH_CAND = 'match-cand';
+const LEI_KEY    = 'lei-key';
 const BTN_SELECT = 'select-cand';
 const BTN_BACK   = 'select-back';
 
@@ -156,21 +157,28 @@ export default class B2bSelectCand extends HTMLElement {
         for(let i = this.#leiMatchCands.data.length - 1; i >= 0; i--) {
             const leiRec = new LeiRec(this.#leiMatchCands, i);
 
-            const rptSection = new RptSection( 'Names', 
-                [
-                    new LabelArrValues( 'Name', leiRec.entity.legalName.name ),
-                    new LabelArrValues( 'Other name(s)', leiRec.entity.otherNames.map(elem => elem.name) ),
-                    new LabelArrValues( 'Transliterated name(s)', leiRec.entity.transliteratedOtherNames.map(elem => elem.name) )
-                ]
-            )
+            const rptSection = new RptSection( 'Name(s)', 
+                    [
+                        new LabelArrValues( 'Name', leiRec.entity.legalName.name ),
+                        new LabelArrValues( 'Other name(s)', leiRec.entity.otherNames.map(elem => elem.name) ),
+                        new LabelArrValues( 'Transliterated name(s)', leiRec.entity.transliteratedOtherNames.map(elem => elem.name) )
+                    ]
+                );
 
             //Create a form row for a match candidate
             const divFormRow = formRow.cloneNode();
             divFormRow.classList.add(MATCH_CAND);
 
-            divFormRow.appendChild(rptSection.domElems);
-
+            //Add the row as the 1st sibling
             this.#selectCandForm.prepend(divFormRow);
+
+            const inpRadioBtn = document.createElement('input');
+            inpRadioBtn.type = 'radio';
+            inpRadioBtn.name = LEI_KEY;
+            inpRadioBtn.value = leiRec.attribs?.lei;
+
+            divFormRow.appendChild(inpRadioBtn);
+            divFormRow.appendChild(rptSection.domElems);
         }
     }
 }

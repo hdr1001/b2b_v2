@@ -36,7 +36,7 @@
         /* 
         // The form is made up of multiple rows.
         */
-        padding: 0 15px 15px 15px;
+        padding: 0 10px 15px 10px;
 
         div.form-row {
             /*
@@ -48,9 +48,99 @@
             flex-direction: row;
 
             justify-content: space-between;
-            gap: 0.5em;
+            gap: 0.25em;
 
             margin-top: 15px;
+
+            &.match-cand {
+                margin: 1em 0;
+                padding: 0.25em;
+
+                border: 2px solid var(--color-middle);
+                border-radius: 8px;
+
+                input[type='radio'] {
+                    vertical-align: middle;
+                    margin: 1em 0;
+                    height: 16px;
+
+                    color: var(--color-dark);
+                    accent-color: var(--color-dark);
+                }
+
+                div.rpt-section-wrapper {
+                    display: inline-block;
+
+                    box-sizing: border-box;
+                    width: 100%;
+
+                    margin: 0.25em 0;
+
+                    border: 2px solid var(--color-middle);
+                    border-radius: 8px;
+
+                    overflow: hidden;
+
+                    table.rpt-section {
+                        width: 100%;
+
+                        border-collapse: collapse;
+                        border: none;
+
+                        caption {
+                            padding: 0.1em 0 0.2em 0;
+
+                            color: var(--color-lively);
+                            background-color: var(--color-dark);
+
+                            font-weight: bolder;
+                        }
+
+                        tbody {
+                            th { display: none; }
+
+                            th.label {
+                                padding-left: 0.5em;
+                                padding-right: 0.25em;
+
+                                color: var(--color-darkest);
+                                text-align: right;
+
+                                font-weight: normal;
+                                font-style: italic;
+                            }
+
+                            th.label::after {
+                                content: ':';
+                            }
+
+                            td.value {
+                                padding-left: 0.25em;
+                                padding-right: 0.5em;
+
+                                color: var(--color-darkest);
+                                text-align: left;
+                            }
+
+                            tr.first-row td.value {
+                                padding-top: 0.25em;
+                            }
+
+                            tr.last-row td.value {
+                                padding-bottom: 0.25em;
+                            }
+
+                            tr.last-row {
+                                border-bottom: 2px solid var(--color-middle);
+                            }
+
+                            tr:last-child {
+                                border-bottom: none;    
+                            }
+                        }
+                    }
+                }
+            }
 
             &.select-back {
                 justify-content: space-evenly;
@@ -81,5 +171,5 @@
 }
 
 .display-none {
-  display: none !important;
+    display: none !important;
 }
