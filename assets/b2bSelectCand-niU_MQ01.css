@@ -97,45 +97,49 @@
                         }
 
                         tbody {
-                            th { display: none; }
+                            tr {
+                                &.last-row {
+                                    border-bottom: 1px solid var(--color-middle);
+                                }
 
-                            th.label {
-                                padding-left: 0.5em;
-                                padding-right: 0.25em;
+                                &:last-child {
+                                    border-bottom: none !important;    
+                                }
 
-                                color: var(--color-darkest);
-                                text-align: right;
+                                &.first-row td.value {
+                                    padding-top: 0.25em;
+                                }
 
-                                font-weight: normal;
-                                font-style: italic;
-                            }
+                                &.last-row td.value {
+                                    padding-bottom: 0.25em;
+                                }
 
-                            th.label::after {
-                                content: ':';
-                            }
+                                th {
+                                    display: none;
 
-                            td.value {
-                                padding-left: 0.25em;
-                                padding-right: 0.5em;
+                                    &.label {
+                                        padding-left: 0.5em;
+                                        padding-right: 0.25em;
 
-                                color: var(--color-darkest);
-                                text-align: left;
-                            }
+                                        color: var(--color-darkest);
+                                        text-align: right;
 
-                            tr.first-row td.value {
-                                padding-top: 0.25em;
-                            }
+                                        font-weight: normal;
+                                        font-style: italic;
+                                    }
 
-                            tr.last-row td.value {
-                                padding-bottom: 0.25em;
-                            }
+                                    &.label::after {
+                                        content: ':';
+                                    }
+                                }
 
-                            tr.last-row {
-                                border-bottom: 2px solid var(--color-middle);
-                            }
+                                td.value {
+                                    padding-left: 0.25em;
+                                    padding-right: 0.5em;
 
-                            tr:last-child {
-                                border-bottom: none;    
+                                    color: var(--color-darkest);
+                                    text-align: left;
+                                }
                             }
                         }
                     }
