@@ -26,11 +26,12 @@ import RptSection from '../ui/rptSection.js';
 const cssB2bSelectCand = new URL('./css/b2bSelectCand.css', import.meta.url).href;
 
 //Form related string constants
-const FORM_ROW   = 'form-row';
-const MATCH_CAND = 'match-cand';
-const LEI_KEY    = 'lei-key';
-const BTN_SELECT = 'select-cand';
-const BTN_BACK   = 'select-back';
+const FORM_ROW             = 'form-row';
+const MATCH_CAND           = 'match-cand';
+const RPT_SECTIONS_WRAPPER = 'rpt-sections-wrapper';
+const LEI_KEY              = 'lei-key';
+const BTN_SELECT           = 'select-cand';
+const BTN_BACK             = 'select-back';
 
 //A HTML5 B2B search criteria custom component class
 export default class B2bSelectCand extends HTMLElement {
@@ -157,11 +158,19 @@ export default class B2bSelectCand extends HTMLElement {
         for(let i = this.#leiMatchCands.data.length - 1; i >= 0; i--) {
             const leiRec = new LeiRec(this.#leiMatchCands, i);
 
-            const rptSection = new RptSection( 'Name(s)', 
+            const rptSectionNames = new RptSection( 'Name(s)', 
                     [
                         new LabelArrValues( 'Name', leiRec.entity.legalName.name ),
                         new LabelArrValues( 'Other name(s)', leiRec.entity.otherNames.map(elem => elem.name) ),
                         new LabelArrValues( 'Transliterated name(s)', leiRec.entity.transliteratedOtherNames.map(elem => elem.name) )
+                    ]
+                );
+
+            const rptSectionAddrs = new RptSection( 'Address', 
+                    [
+                        new LabelArrValues( 'Legal address', leiRec.entity.legalAddr.toArr() ),
+//                        new LabelArrValues( 'HQ address', leiRec.entity.hqAddr.toArr() ),
+//                        new LabelArrValues( 'Other address(es)', leiRec.entity.otherAddresses.map(elem => elem.toArr()) )
                     ]
                 );
 
@@ -178,7 +187,13 @@ export default class B2bSelectCand extends HTMLElement {
             inpRadioBtn.value = leiRec.attribs?.lei;
 
             divFormRow.appendChild(inpRadioBtn);
-            divFormRow.appendChild(rptSection.domElems);
+
+            const rptSectionsWrapper = document.createElement('div');
+            rptSectionsWrapper.classList.add(RPT_SECTIONS_WRAPPER);
+            divFormRow.appendChild(rptSectionsWrapper);
+
+            rptSectionsWrapper.appendChild(rptSectionNames.domElems);
+            rptSectionsWrapper.appendChild(rptSectionAddrs.domElems);
         }
     }
 }

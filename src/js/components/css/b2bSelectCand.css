@@ -61,89 +61,97 @@
 
                 input[type='radio'] {
                     vertical-align: middle;
-                    margin: 1em 0;
+                    margin: 0.8em 0;
                     height: 16px;
 
                     color: var(--color-dark);
                     accent-color: var(--color-dark);
                 }
 
-                div.rpt-section-wrapper {
-                    display: inline-block;
+                div.rpt-sections-wrapper {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: row;
+                    gap: 0.25em;
 
-                    box-sizing: border-box;
-                    width: 100%;
+                    div.rpt-section-wrapper {
+                        display: inline-block;
 
-                    margin: 0.25em 0;
-
-                    border: 2px solid var(--color-middle);
-                    border-radius: 8px;
-
-                    overflow: hidden;
-
-                    table.rpt-section {
+                        box-sizing: border-box;
                         width: 100%;
 
-                        border-collapse: collapse;
-                        border: none;
+                        margin: 0.1em 0;
 
-                        caption {
-                            padding: 0.1em 0 0.2em 0;
+                        border: 2px solid var(--color-middle);
+                        border-radius: 8px;
 
-                            color: var(--color-lively);
-                            background-color: var(--color-dark);
+                        overflow: hidden;
 
-                            font-weight: bolder;
-                        }
+                        table.rpt-section {
+                            width: 100%;
 
-                        tbody {
-                            tr {
-                                &.last-row {
-                                    border-bottom: 1px solid var(--color-middle);
-                                }
+                            border-collapse: collapse;
+                            border: none;
 
-                                &:last-child {
-                                    border-bottom: none !important;    
-                                }
+                            caption {
+                                padding: 0.1em 0 0.2em 0;
 
-                                &.first-row td.value {
-                                    padding-top: 0.25em;
-                                }
+                                color: var(--color-lively);
+                                background-color: var(--color-dark);
 
-                                &.last-row td.value {
-                                    padding-bottom: 0.25em;
-                                }
+                                font-weight: bolder;
+                            }
 
-                                th {
-                                    display: none;
+                            tbody {
+                                tr {
+                                    &.last-row {
+                                        border-bottom: 1px solid var(--color-middle);
+                                    }
 
-                                    &.label {
-                                        padding-left: 0.5em;
-                                        padding-right: 0.25em;
+                                    &:last-child {
+                                        border-bottom: none !important;    
+                                    }
+
+                                    &.first-row td.value {
+                                        padding-top: 0.25em;
+                                    }
+
+                                    &.last-row td.value {
+                                        padding-bottom: 0.25em;
+                                    }
+
+                                    th {
+                                        display: none;
+
+                                        &.label {
+                                            padding-left: 0.5em;
+                                            padding-right: 0.25em;
+
+                                            color: var(--color-darkest);
+                                            text-align: right;
+
+                                            font-weight: normal;
+                                            font-style: italic;
+                                        }
+
+                                        &.label::after {
+                                            content: ':';
+                                        }
+                                    }
+
+                                    td.value {
+                                        padding-left: 0.25em;
+                                        padding-right: 0.5em;
 
                                         color: var(--color-darkest);
-                                        text-align: right;
-
-                                        font-weight: normal;
-                                        font-style: italic;
+                                        text-align: left;
                                     }
-
-                                    &.label::after {
-                                        content: ':';
-                                    }
-                                }
-
-                                td.value {
-                                    padding-left: 0.25em;
-                                    padding-right: 0.5em;
-
-                                    color: var(--color-darkest);
-                                    text-align: left;
                                 }
                             }
                         }
                     }
                 }
+
             }
 
             &.select-back {
