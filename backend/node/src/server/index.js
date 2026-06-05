@@ -21,15 +21,17 @@
 // *********************************************************************
 
 import express from 'express';
+import { B2bApiErr } from './b2bApiErr.js';
 
-const app = express();
-app.use( express.json() );
+const app = express(); app.use( express.json() );
 
-const port = process.env.API_SERVER_PORT || 8081; //Server port
+const port = process.env.API_SERVER_PORT || 8088; //Server port
 
 //An HTTP request catch-all
 app.use((req, resp) => {
-    resp.status(404).json( { desc: 'Unable to locate the requested resource' }  );
+    const err = new B2bApiErr('unableToLocate', `Requested: ${req.path}`);
+
+    resp.status(err.httpStatus).json( err );
 });
 
 //Start the Express server

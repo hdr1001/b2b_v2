@@ -22,6 +22,9 @@
 //Convert null or undefined to an empty string
 const nullUndefToEmptyStr = elem => elem == null ? '' : elem;
 
+//Test if a variable is an object ➡️ null doesn't qualify!
+const isObject = obj => typeof obj === 'object' && obj !== null;
+
 //ISO 8601 UTC Z date/time string to YYYYMMDD or YYMMDD
 function sDateIsoToYYYYMMDD (sDateIso, length = 8) {
     return typeof sDateIso === 'string'
@@ -31,5 +34,6 @@ function sDateIsoToYYYYMMDD (sDateIso, length = 8) {
 
 export {
     nullUndefToEmptyStr,
+    isObject,
     sDateIsoToYYYYMMDD
 };
