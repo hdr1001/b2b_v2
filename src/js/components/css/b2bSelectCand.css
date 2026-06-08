@@ -71,7 +71,7 @@
                 div.rpt-sections-wrapper {
                     flex: 1;
                     display: flex;
-                    flex-direction: row;
+                    flex-direction: column;
                     gap: 0.25em;
 
                     div.rpt-section-wrapper {

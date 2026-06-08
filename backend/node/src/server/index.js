@@ -23,9 +23,17 @@
 import express from 'express';
 import { B2bApiErr } from './b2bApiErr.js';
 
-const app = express(); app.use( express.json() );
+//Import the API routes
+import aboutRoutes from './routes/about.js';
+
+//Initialize the Express server
+const app = express();
+app.use( express.json() ); //Middleware to parse JSON requests
 
 const port = process.env.API_SERVER_PORT || 8088; //Server port
+
+//Implement the API routes
+app.use('/b2b', aboutRoutes);
 
 //An HTTP request catch-all
 app.use((req, resp) => {
