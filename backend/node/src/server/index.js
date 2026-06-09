@@ -25,6 +25,7 @@ import { B2bApiErr } from './b2bApiErr.js';
 
 //Import the API routes
 import aboutRoutes from './routes/about.js';
+import { router as providersRoutes } from './routes/providers.js';
 
 //Initialize the Express server
 const app = express();
@@ -34,6 +35,7 @@ const port = process.env.API_SERVER_PORT || 8088; //Server port
 
 //Implement the API routes
 app.use('/b2b', aboutRoutes);
+app.use('/b2b', providersRoutes);
 
 //An HTTP request catch-all
 app.use((req, resp) => {
@@ -42,7 +44,7 @@ app.use((req, resp) => {
     resp.status(err.httpStatus).json( err );
 });
 
-//Start the Express server
+//Start the Express server 🚀
 const server = app.listen(port, err => {
     if(err) {
         console.error(`Error occurred initializing Express server, ${err.message}`)
