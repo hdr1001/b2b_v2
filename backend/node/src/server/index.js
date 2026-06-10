@@ -27,6 +27,9 @@ import { B2bApiErr } from './b2bApiErr.js';
 import aboutRoutes from './routes/about.js';
 import { router as providersRoutes } from './routes/providers.js';
 
+//First part of the API path, e.g. http://localhost:8088/b2b/...
+const path0 = 'b2b';
+
 //Initialize the Express server
 const app = express();
 app.use( express.json() ); //Middleware to parse JSON requests
@@ -34,8 +37,8 @@ app.use( express.json() ); //Middleware to parse JSON requests
 const port = process.env.API_SERVER_PORT || 8088; //Server port
 
 //Implement the API routes
-app.use('/b2b', aboutRoutes);
-app.use('/b2b', providersRoutes);
+app.use('/' + path0, aboutRoutes);
+app.use('/' + path0, providersRoutes);
 
 //An HTTP request catch-all
 app.use((req, resp) => {

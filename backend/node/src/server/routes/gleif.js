@@ -1,7 +1,7 @@
 // *********************************************************************
 //
 // Business-to-business application backend (v2)
-// The API server /providers route
+// The API server /gleif routes
 // 
 // Copyright 2026 Hans de Rooij
 //
@@ -22,20 +22,12 @@
 
 import express from 'express';
 
-import gleifRoutes from './gleif.js';
-
-const providers = [ 'gleif' ];
-const path0 = 'providers';
-
 const router = express.Router();
 
-router.get('/' + path0, (req, resp) => {
-    resp.json( providers );
+const path0 = 'gleif';
+
+router.get(`/${path0}/lei/:lei`, (req, resp) => {
+    resp.json( { lei: req.params.lei } );
 });
 
-router.use('/' + path0, gleifRoutes);
-
-export {
-    providers,
-    router
-};
+export default router;
