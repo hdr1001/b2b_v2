@@ -24,7 +24,7 @@ import express from 'express';
 
 const router = express.Router();
 
-router.get('/about', (req, resp) => {
+router.get('/', (req, resp) => {
     resp.json({
         Application: 'Business-to-business API',
         Version:     '2.0.0',

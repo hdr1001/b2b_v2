@@ -24,10 +24,14 @@ import express from 'express';
 
 const router = express.Router();
 
-const path0 = 'gleif';
+const urlLei = new URL('https://api.gleif.org/api/v1/lei-records/');
 
-router.get(`/${path0}/lei/:lei`, (req, resp) => {
-    resp.json( { lei: req.params.lei } );
+router.get(`/lei/:lei`, (req, resp) => {
+    console.log(`${urlLei}${req.params.lei}`);
+
+    fetch(`${urlLei}${req.params.lei}`)
+        .then( res => res.text() )
+        .then( leiRec => {typeof leiRec === 'string' ? resp.set('Content-Type', 'application/json').send(leiRec) : resp.json(leiRec)} );
 });
 
 export default router;

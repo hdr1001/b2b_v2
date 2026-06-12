@@ -18,7 +18,8 @@
     "dev": "nodemon --env-file=../.env.dev src/server/index.js"
   },
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "pg": "^8.21.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

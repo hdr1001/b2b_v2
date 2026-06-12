@@ -27,6 +27,9 @@ import { B2bApiErr } from './b2bApiErr.js';
 import aboutRoutes from './routes/about.js';
 import { router as providersRoutes } from './routes/providers.js';
 
+//Import the Postgres pool object
+import pg from './share/pg.js';
+
 //First part of the API path, e.g. http://localhost:8088/b2b/...
 const path0 = 'b2b';
 
@@ -37,8 +40,8 @@ app.use( express.json() ); //Middleware to parse JSON requests
 const port = process.env.API_SERVER_PORT || 8088; //Server port
 
 //Implement the API routes
-app.use('/' + path0, aboutRoutes);
-app.use('/' + path0, providersRoutes);
+app.use(`/${path0}/about`, aboutRoutes);
+app.use(`/${path0}/providers`, providersRoutes);
 
 //An HTTP request catch-all
 app.use((req, resp) => {

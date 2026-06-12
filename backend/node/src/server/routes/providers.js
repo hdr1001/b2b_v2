@@ -25,15 +25,14 @@ import express from 'express';
 import gleifRoutes from './gleif.js';
 
 const providers = [ 'gleif' ];
-const path0 = 'providers';
 
 const router = express.Router();
 
-router.get('/' + path0, (req, resp) => {
+router.get('/', (req, resp) => {
     resp.json( providers );
 });
 
-router.use('/' + path0, gleifRoutes);
+router.use('/gleif', gleifRoutes);
 
 export {
     providers,
