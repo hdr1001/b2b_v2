@@ -1,7 +1,7 @@
 // *********************************************************************
 //
 // Business-to-business application backend (v2)
-// The API server /gleif routes
+// The API server middleware for error handling
 // 
 // Copyright 2026 Hans de Rooij
 //
@@ -20,22 +20,13 @@
 //
 // *********************************************************************
 
-import express from 'express';
-import { LeiRec } from '../../share/apiDefs.js';
-import { B2bApiErr } from '../b2bApiErr.js';
+const errHandler = (err, req, resp, next) => {
+    let msg = err.message ? err.message : 'Error occurred processing a request';
+    if(err.addtlMessage) msg += ` (${err.addtlMessage})`;
 
-const router = express.Router();
+    console.error(msg);
 
-router.get(`/lei/:lei`, (req, resp, next) => {
-    const leiRec = new LeiRec(req.params.lei);
+    resp.status(err.httpStatus || 500).json( err );
+};
 
-    fetch(leiRec.getReq())
-        .then( res => res.text() )
-        .then( leiRec => {typeof leiRec === 'string' ? resp.set('Content-Type', 'application/json').send(leiRec) : resp.json(leiRec)} )
-        .catch( err => {
-            console.error(`Error occurred fetching LEI record from GLEIF API, ${err.message}`);
-            next( new B2bApiErr('unableToLocate', `Requested: ${req.path}`))
-        });
-});
-
-export default router;
+export default errHandler;
