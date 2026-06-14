@@ -46,12 +46,25 @@ const apiReqs = {
     }
 };
 
-class LeiRec { //Get LEI record by ID 
+class LeiRec { //Get LEI record by ID
+    #resp = null;
+ 
     constructor(resource) {
-        this.resource = resource
+        this.resource = resource;
+        this.req = apiReqs.gleif.leiRec.getReq.call(this);
     }
 
-    getReq = apiReqs.gleif.leiRec.getReq;
+    get resp() {
+        if(!this.#resp) {
+            return new Promise( (resolve, reject) => {
+                fetch(this.req)
+                    .then( resp => resolve( this.#resp = resp ) )
+                    .catch( err => reject(err) )
+            });
+        }
+
+        return Promise.resolve(this.#resp);
+    }
 }
 
 export { 

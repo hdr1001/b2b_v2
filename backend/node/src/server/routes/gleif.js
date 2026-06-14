@@ -21,6 +21,7 @@
 // *********************************************************************
 
 import express from 'express';
+import { dcdrUtf8 } from '../../share/utils.js';
 import { LeiRec } from '../../share/apiDefs.js';
 import { B2bApiErr } from '../b2bApiErr.js';
 
@@ -29,9 +30,9 @@ const router = express.Router();
 router.get(`/lei/:lei`, (req, resp, next) => {
     const leiRec = new LeiRec(req.params.lei);
 
-    fetch(leiRec.getReq())
-        .then( res => res.text() )
-        .then( leiRec => {typeof leiRec === 'string' ? resp.set('Content-Type', 'application/json').send(leiRec) : resp.json(leiRec)} )
+    leiRec.resp
+        .then( fetchResp => fetchResp.arrayBuffer() )
+        .then( buffBody => resp.set('Content-Type', 'application/json').send(dcdrUtf8.decode(buffBody)) )
         .catch( err => {
             console.error(`Error occurred fetching LEI record from GLEIF API, ${err.message}`);
             next( new B2bApiErr('unableToLocate', `Requested: ${req.path}`))
