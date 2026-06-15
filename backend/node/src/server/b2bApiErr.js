@@ -35,7 +35,7 @@ const httpStatus = {
 const b2bErrCode = new Map([
     [ 'generic', { code: 0, desc: 'Error occurred in API HUB', httpStatus: httpStatus.genericErr } ],
     [ 'unableToLocate', { code: 1, desc: 'Unable to locate the requested resource', httpStatus: httpStatus.notFound } ],
-    [ 'invalidParameter', { code: 2, desc: 'Invalid parameter', httpStatus: httpStatus.notFound } ],
+    [ 'invalidParameter', { code: 2, desc: 'Invalid parameter', httpStatus: httpStatus.unprocessableEntity } ],
     [ 'extnlApiErr', { code: 3, desc: 'External API returned an error', httpStatus: httpStatus.genericErr } ],
     [ 'httpErrReturn', { code: 4, desc: 'External API returned an HTTP error status', httpStatus: httpStatus.genericErr } ],
     [ 'semanticError', { code: 5, desc: 'Semantically erroneous request', httpStatus: httpStatus.unprocessableEntity } ],

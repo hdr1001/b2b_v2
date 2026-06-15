@@ -20,8 +20,11 @@
 //
 // *********************************************************************
 
-const apiReqs = {
+import { B2bApiErr } from '../server/b2bApiErr.js';
+
+const apiReqs = Object.freeze({
     gleif: {
+        name: 'gleif',
         base: 'https://api.gleif.org',
 
         headers: {
@@ -29,6 +32,7 @@ const apiReqs = {
         },
 
         leiRec: { //LEI record (https://bit.ly/45mRwbt)
+            key: 'lei',
             path: '/api/v1/lei-records',
 
             getReq: function() {
@@ -44,23 +48,42 @@ const apiReqs = {
             }
         }
     }
-};
+});
 
 class LeiRec { //Get LEI record by ID
-    #resp = null;
+    #resp = null; //Fetch response object, cached after request
  
     constructor(resource) {
+        //API
+        this.api = apiReqs.gleif.name;
+        this.key = apiReqs.gleif.leiRec.key;
+
+        //resource is the LEI code, e.g. '724500K5PTPSST86UQ23'
         this.resource = resource;
+
+        //Construct the request object for this API call
         this.req = apiReqs.gleif.leiRec.getReq.call(this);
     }
 
+    //Execute the API request and cache the response
+    async execReq() {
+        return new Promise( (resolve, reject) => 
+            fetch(this.req)
+                .then( resp => {
+                    if(resp.status < 200 || parseInt(resp.status) > 299) {
+                        throw new B2bApiErr('extnlApiErr', `Fetch response not okay, HTTP status: ${resp.status}`, resp.status, resp.body);
+                    }
+
+                    resolve( this.#resp = resp );
+                })
+                .catch( err => reject(err) )
+        )
+    }
+
+    //Get the response, executing the request if not already done
     get resp() {
         if(!this.#resp) {
-            return new Promise( (resolve, reject) => {
-                fetch(this.req)
-                    .then( resp => resolve( this.#resp = resp ) )
-                    .catch( err => reject(err) )
-            });
+            return this.execReq();
         }
 
         return Promise.resolve(this.#resp);

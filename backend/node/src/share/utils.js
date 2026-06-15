@@ -23,6 +23,29 @@
 //A decoder takes a stream of bytes as input & emits a stream of code points
 const dcdrUtf8 = new TextDecoder('utf-8');
 
+//Check if LEI (as issued by GLEIF) is valid
+function isValidLei(sKey) {
+    let m = 0, charCode;
+
+    for(let i = 0; i < sKey.length; i++) {
+        charCode = sKey.charCodeAt(i);
+
+        if(charCode >= 48 && charCode <= 57) {
+            m = (m * 10 + charCode - 48) % 97 
+        }
+        else if(charCode >= 65 && charCode <= 90) {
+            m = (m * 100 + charCode - 55) % 97 
+        }
+        else {
+            console.log(`Unexpected character at ${i}`);
+            return false;
+        }
+    }
+
+    return m === 1;
+} 
+
 export {
-    dcdrUtf8
+    dcdrUtf8,
+    isValidLei
 };
