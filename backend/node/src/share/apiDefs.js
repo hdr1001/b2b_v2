@@ -22,60 +22,56 @@
 
 import { B2bApiErr } from '../server/b2bApiErr.js';
 
-const apiReqs = Object.freeze({
-    gleif: {
-        name: 'gleif',
-        base: 'https://api.gleif.org',
+const apiReqs = Object.freeze(
+    new Map([
+        [ 'gleif', {
+            name: 'gleif',
+            base: 'https://api.gleif.org',
 
-        headers: {
-            Accept: 'application/vnd.api+json'
-        },
+            headers: {
+                Accept: 'application/vnd.api+json'
+            },
 
-        leiRec: { //LEI record (https://bit.ly/45mRwbt)
-            key: 'lei',
-            path: '/api/v1/lei-records',
+            leiRec: { //LEI record (https://bit.ly/45mRwbt)
+                key: 'lei',
+                path: '/api/v1/lei-records',
 
-            getReq: function() {
-                const reqUrl = new URL(apiReqs.gleif.leiRec.path, apiReqs.gleif.base);
+                getReq: function() {
+                    const reqUrl = new URL(apiReqs.get('gleif').leiRec.path, apiReqs.get('gleif').base);
 
-                return new Request(
-                    reqUrl.href + (this.resource ? `/${this.resource}` : ''),
-                    {
-                        method: 'GET',
-                        headers: apiReqs.gleif.headers
-                    }
-                );
+                    return new Request(
+                        reqUrl.href + (this.resource ? `/${this.resource}` : ''),
+                        {
+                            method: 'GET',
+                            headers: apiReqs.get('gleif').headers
+                        }
+                    );
+                }
             }
-        }
-    }
-});
+        }]
+    ])
+);
 
 class LeiRec { //Get LEI record by ID
     #resp = null; //Fetch response object, cached after request
  
     constructor(resource) {
         //API
-        this.api = apiReqs.gleif.name;
-        this.key = apiReqs.gleif.leiRec.key;
+        this.api = apiReqs.get('gleif').name;
+        this.key = apiReqs.get('gleif').leiRec.key;
 
         //resource is the LEI code, e.g. '724500K5PTPSST86UQ23'
         this.resource = resource;
 
         //Construct the request object for this API call
-        this.req = apiReqs.gleif.leiRec.getReq.call(this);
+        this.req = apiReqs.get('gleif').leiRec.getReq.call(this);
     }
 
     //Execute the API request and cache the response
     async execReq() {
         return new Promise( (resolve, reject) => 
             fetch(this.req)
-                .then( resp => {
-                    if(resp.status < 200 || parseInt(resp.status) > 299) {
-                        throw new B2bApiErr('extnlApiErr', `Fetch response not okay, HTTP status: ${resp.status}`, resp.status, resp.body);
-                    }
-
-                    resolve( this.#resp = resp );
-                })
+                .then( resp => resolve( this.#resp = resp ) )
                 .catch( err => reject(err) )
         )
     }
@@ -91,5 +87,6 @@ class LeiRec { //Get LEI record by ID
 }
 
 export { 
+    apiReqs,
     LeiRec
 };

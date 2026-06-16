@@ -21,12 +21,13 @@
 // *********************************************************************
 
 const errHandler = (err, req, resp, next) => {
-    let msg = err.message ? err.message : 'Error occurred processing a request';
-    if(err.addtlMessage) msg += ` (${err.addtlMessage})`;
+    let errMsg = 'Error occurred processing a request';
+    errMsg = err.message || errMsg;
+    if(err.addtlMessage) errMsg += ` (${err.addtlMessage})`;
 
-    console.error(msg);
+    console.error(errMsg);
 
-    resp.status(err.httpStatus || 500).json( err );
+    resp.status(err.b2bErr.httpStatus?.code || 500).json( err );
 };
 
 export default errHandler;

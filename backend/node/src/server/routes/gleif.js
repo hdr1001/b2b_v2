@@ -27,7 +27,7 @@ import { B2bApiErr } from '../b2bApiErr.js';
 
 const router = express.Router();
 
-router.get(`/lei/:key`, (req, resp, next) => {
+router.get(`/lei/:key`, async(req, resp, next) => {
     //Parse out the LEI specified
     const lei = req.params.key;
 
@@ -40,13 +40,19 @@ router.get(`/lei/:key`, (req, resp, next) => {
     const leiRec = new LeiRec(lei);
 
     //Execute the GLEIF API request
-    leiRec.resp
-        .then( fetchResp => fetchResp.arrayBuffer() )
-        .then( buffBody => resp.set('Content-Type', 'application/json').send(dcdrUtf8.decode(buffBody)) )
-        .catch( err => {
-            console.error(`Error occurred fetching LEI record from GLEIF API, ${err.message}`);
-            next( err instanceof B2bApiErr ? err : new B2bApiErr('extnlApiErr', `Error occurred fetching LEI record from GLEIF API, ${err.message}`) );
-        });
+    const lrResp = await leiRec.resp;
+    const lrArrBuffBody = await lrResp.arrayBuffer();
+
+    //Handle an HTTP error status returned by the GLEIF API
+    if(lrResp.status < 200 || lrResp.status > 299) {
+        const errMsg = `External API responded with an HTTP error status: ${lrResp.status}`;
+        console.error( errMsg );
+
+        return next( new B2bApiErr('extnlApiErr', errMsg, lrResp.status, dcdrUtf8.decode(lrArrBuffBody)) );
+    }
+
+    //Return the GLEIF API response body to the client
+    resp.set('Content-Type', 'application/json').send(dcdrUtf8.decode(lrArrBuffBody));
 });
 
 export default router;
