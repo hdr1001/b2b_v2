@@ -20,14 +20,19 @@
 //
 // *********************************************************************
 
+import { B2bApiErr } from '../../share/b2bApiErr.js';
+
 const errHandler = (err, req, resp, next) => {
     let errMsg = 'Error occurred processing a request';
     errMsg = err.message || errMsg;
-    if(err.addtlMessage) errMsg += ` (${err.addtlMessage})`;
+
+    if(err instanceof B2bApiErr) {
+        if(err.addtlMessage) errMsg += ` (${err.addtlMessage})`;
+    }
 
     console.error(errMsg);
 
-    resp.status(err.b2bErr.httpStatus?.code || 500).json( err );
+    resp.status(err.b2bErr?.httpStatus?.code || 500).json( err );
 };
 
 export default errHandler;

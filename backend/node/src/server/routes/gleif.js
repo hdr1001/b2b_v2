@@ -23,7 +23,7 @@
 import express from 'express';
 import { dcdrUtf8, isValidLei } from '../../share/utils.js';
 import { LeiRec } from '../../share/apiDefs.js';
-import { B2bApiErr } from '../b2bApiErr.js';
+import { B2bApiErr } from '../../share/b2bApiErr.js';
 
 const router = express.Router();
 
@@ -39,8 +39,16 @@ router.get(`/lei/:key`, async(req, resp, next) => {
     //Instantiate a new LEI record object 
     const leiRec = new LeiRec(lei);
 
-    //Execute the GLEIF API request
-    const lrResp = await leiRec.resp;
+    //Execute the GLEIF API request, handle any errors that may occur
+    let lrResp = null;
+
+    try {
+        lrResp = await leiRec.resp;
+    }
+    catch(err) {
+        return next( new B2bApiErr('extnlApiErr', err.message || 'Error occurred while fetching LEI data') );
+    }
+
     const lrArrBuffBody = await lrResp.arrayBuffer();
 
     //Handle an HTTP error status returned by the GLEIF API

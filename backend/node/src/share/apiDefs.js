@@ -20,7 +20,7 @@
 //
 // *********************************************************************
 
-import { B2bApiErr } from '../server/b2bApiErr.js';
+import { B2bApiErr } from './b2bApiErr.js';
 
 const apiReqs = Object.freeze(
     new Map([

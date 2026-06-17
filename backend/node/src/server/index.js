@@ -21,7 +21,7 @@
 // *********************************************************************
 
 import express from 'express';
-import { B2bApiErr } from './b2bApiErr.js';
+import { B2bApiErr } from '../share/b2bApiErr.js';
 
 //Import the API routes
 import aboutRoutes from './routes/about.js';
