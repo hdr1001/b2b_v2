@@ -72,7 +72,7 @@ class LeiRec { //Get LEI record by ID
         return new Promise( (resolve, reject) => 
             fetch(this.req)
                 .then( resp => resolve( this.#resp = resp ) )
-                .catch( err => reject(err) )
+                .catch( err => reject( new B2bApiErr('extnlApiErr', err.message + ', ' + err.cause || 'Error occurred while fetching LEI data') ) )
         )
     }
 

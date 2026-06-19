@@ -28,25 +28,25 @@ const httpStatus = {
     accepted: { description: 'Accepted', code: 202 },
     notFound: { description: 'Unable to locate', code: 404 },
     unprocessableEntity: { description: 'Unprocessable entity', code: 422 },
-    genericErr: { description: 'Server Error', code: 500 }
+    serverErr: { description: 'Server Error', code: 500 }
 };
  
 //API Hub errors
 const b2bErrCode = new Map([
-    [ 'generic', { code: 0, desc: 'Error occurred in API HUB', httpStatus: httpStatus.genericErr } ],
+    [ 'unexpected', { code: 0, desc: 'Unexpected error occurred in API HUB', httpStatus: httpStatus.serverErr } ],
     [ 'unableToLocate', { code: 1, desc: 'Unable to locate the requested resource', httpStatus: httpStatus.notFound } ],
     [ 'invalidParameter', { code: 2, desc: 'Invalid parameter', httpStatus: httpStatus.unprocessableEntity } ],
-    [ 'extnlApiErr', { code: 3, desc: 'External API returned an error', httpStatus: httpStatus.genericErr } ],
-    [ 'httpErrReturn', { code: 4, desc: 'External API returned an HTTP error status', httpStatus: httpStatus.genericErr } ],
+    [ 'extnlApiErr', { code: 3, desc: 'External API returned an error', httpStatus: httpStatus.serverErr } ],
+    [ 'httpErrReturn', { code: 4, desc: 'External API returned an HTTP error status', httpStatus: httpStatus.serverErr } ],
     [ 'semanticError', { code: 5, desc: 'Semantically erroneous request', httpStatus: httpStatus.unprocessableEntity } ],
-    [ 'serverError', { code: 6, desc: 'Server error', httpStatus: httpStatus.genericErr } ],
+    [ 'serverError', { code: 6, desc: 'Server error', httpStatus: httpStatus.serverErr } ],
     [ 'unprocessableEntity', { code: 7, desc: 'Unprocessable entity', httpStatus: httpStatus.unprocessableEntity } ]
 ]);
 
 //API Hub custom error class
 class B2bApiErr extends Error {
     constructor(errKey, addtlErrMsg, extnlApiHttpStatus, extnlApiBody) {
-        const b2bErr = b2bErrCode.get(errKey) || b2bErrCode.get('generic');
+        const b2bErr = b2bErrCode.get(errKey) || b2bErrCode.get('unexpected');
 
         //Call the parent constructor with the error description as message
         super(b2bErr.desc);

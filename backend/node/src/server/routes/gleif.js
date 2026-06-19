@@ -28,39 +28,40 @@ import { B2bApiErr } from '../../share/b2bApiErr.js';
 const router = express.Router();
 
 router.get(`/lei/:key`, async(req, resp, next) => {
-    //Parse out the LEI specified
-    const lei = req.params.key;
+    try{
+        //Parse out the LEI specified
+        const lei = req.params.key;
 
-    //Validate the input LEI
-    if(!isValidLei(lei)) {
-        return next( new B2bApiErr('invalidParameter', `Invalid LEI: ${lei}`) );
-    }
+        //Validate the input LEI
+        if(!isValidLei(lei)) throw new B2bApiErr('invalidParameter', `Invalid LEI: ${lei}`);
 
-    //Instantiate a new LEI record object 
-    const leiRec = new LeiRec(lei);
+        //Instantiate a new LEI record object 
+        const leiRec = new LeiRec(lei);
 
-    //Execute the GLEIF API request, handle any errors that may occur
-    let lrResp = null;
+        //Execute the GLEIF API request
+        const lrResp = await leiRec.resp;
 
-    try {
-        lrResp = await leiRec.resp;
+        //Have the arrayBuffer of the GLEIF API response body ready for use
+        const lrArrBuffBody = await lrResp.arrayBuffer();
+
+        //Handle an HTTP error status returned by the GLEIF API
+        if(lrResp.status < 200 || lrResp.status > 299) {
+            const errMsg = `External API responded with an HTTP error status: ${lrResp.status}`;
+            console.error( errMsg );
+
+            throw new B2bApiErr('extnlApiErr', errMsg, lrResp.status, dcdrUtf8.decode(lrArrBuffBody));
+        }
+
+        //Return the GLEIF API response body to the client
+        resp.set('Content-Type', 'application/json').send(dcdrUtf8.decode(lrArrBuffBody));
     }
     catch(err) {
-        return next( new B2bApiErr('extnlApiErr', err.message || 'Error occurred while fetching LEI data') );
+        if(err instanceof B2bApiErr) return next(err);
+
+        console.error( `Unexpected error in /gleif/lei/${req.params.key} route:`, err );
+
+        next( new B2bApiErr('unexpected') );
     }
-
-    const lrArrBuffBody = await lrResp.arrayBuffer();
-
-    //Handle an HTTP error status returned by the GLEIF API
-    if(lrResp.status < 200 || lrResp.status > 299) {
-        const errMsg = `External API responded with an HTTP error status: ${lrResp.status}`;
-        console.error( errMsg );
-
-        return next( new B2bApiErr('extnlApiErr', errMsg, lrResp.status, dcdrUtf8.decode(lrArrBuffBody)) );
-    }
-
-    //Return the GLEIF API response body to the client
-    resp.set('Content-Type', 'application/json').send(dcdrUtf8.decode(lrArrBuffBody));
 });
 
 export default router;
