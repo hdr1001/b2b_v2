@@ -67,6 +67,28 @@ class LeiRec { //Get LEI record by ID
         this.req = apiReqs.get('gleif').leiRec.getReq.call(this);
     }
 
+    //Check the LEI passed in
+    validKey() {
+        let m = 0, charCode;
+
+        for(let i = 0; i < this.resource.length; i++) {
+            charCode = this.resource.charCodeAt(i);
+
+            if(charCode >= 48 && charCode <= 57) {
+                m = (m * 10 + charCode - 48) % 97 
+            }
+            else if(charCode >= 65 && charCode <= 90) {
+                m = (m * 100 + charCode - 55) % 97 
+            }
+            else {
+                console.log(`Unexpected character at ${i}`);
+                return false;
+            }
+        }
+
+        return m === 1;
+    }
+
     //Execute the API request and cache the response
     async execReq() {
         return new Promise( (resolve, reject) => 

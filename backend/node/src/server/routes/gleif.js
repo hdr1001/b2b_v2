@@ -21,39 +21,14 @@
 // *********************************************************************
 
 import express from 'express';
-import { dcdrUtf8, isValidLei } from '../../share/utils.js';
-import { LeiRec } from '../../share/apiDefs.js';
+import apiKeyReq from '../../share/apiReq.js';
 import { B2bApiErr } from '../../share/b2bApiErr.js';
 
 const router = express.Router();
 
 router.get(`/lei/:key`, async(req, resp, next) => {
     try{
-        //Parse out the LEI specified
-        const lei = req.params.key;
-
-        //Validate the input LEI
-        if(!isValidLei(lei)) throw new B2bApiErr('invalidParameter', `Invalid LEI: ${lei}`);
-
-        //Instantiate a new LEI record object 
-        const leiRec = new LeiRec(lei);
-
-        //Execute the GLEIF API request
-        const lrResp = await leiRec.resp;
-
-        //Have the arrayBuffer of the GLEIF API response body ready for use
-        const lrArrBuffBody = await lrResp.arrayBuffer();
-
-        //Handle an HTTP error status returned by the GLEIF API
-        if(lrResp.status < 200 || lrResp.status > 299) {
-            const errMsg = `External API responded with an HTTP error status: ${lrResp.status}`;
-            console.error( errMsg );
-
-            throw new B2bApiErr('extnlApiErr', errMsg, lrResp.status, dcdrUtf8.decode(lrArrBuffBody));
-        }
-
-        //Return the GLEIF API response body to the client
-        resp.set('Content-Type', 'application/json').send(dcdrUtf8.decode(lrArrBuffBody));
+        await apiKeyReq(req, resp, next);
     }
     catch(err) {
         if(err instanceof B2bApiErr) return next(err);
