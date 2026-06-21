@@ -20,7 +20,7 @@
 //
 // *********************************************************************
 
-import { isObject } from "../../../../src/js/utils.js";
+import { isObject } from "./utils.js";
 
 //HTTP status codes
 const httpStatus = {

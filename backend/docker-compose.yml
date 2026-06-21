@@ -3,18 +3,22 @@ version: '3.4'
 services:
   b2bapiv2:
     image: b2bapiv2
+
     build:
       context: node/src
       dockerfile: ../Dockerfile
       args:
         NODE_ENV: ${NODE_ENV}
+
     environment:
-      APP_PORT: ${APP_PORT}
-      PGUSER: ${PGUSER}
-      PGPASSWORD: ${PGPASSWORD}
-      PGHOST: ${PGHOST}
-      PGDATABASE: ${PGUSER}
-      PGPORT: ${PGPORT}
+      API_SERVER_PORT: ${API_SERVER_PORT}
+
+      PG_USER: ${PG_USER}
+      PG_PASSWORD: ${PG_PASSWORD}
+
+      PG_HOST: ${PG_HOST}
+      PG_DATABASE: ${PG_DATABASE}
+      PG_PORT: ${PG_PORT}
+
     ports:
-      - ${APP_PORT}:${APP_PORT}
-    command: npm start
+      - ${API_SERVER_PORT}:${API_SERVER_PORT}

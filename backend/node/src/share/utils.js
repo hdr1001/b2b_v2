@@ -23,6 +23,22 @@
 //A decoder takes a stream of bytes as input & emits a stream of code points
 const dcdrUtf8 = new TextDecoder('utf-8');
 
+//Convert null or undefined to an empty string
+const nullUndefToEmptyStr = elem => elem == null ? '' : elem;
+
+//Test if a variable is an object ➡️ null doesn't qualify!
+const isObject = obj => typeof obj === 'object' && obj !== null;
+
+//ISO 8601 UTC Z date/time string to YYYYMMDD or YYMMDD
+function sDateIsoToYYYYMMDD (sDateIso, length = 8) {
+    return typeof sDateIso === 'string'
+        ? sDateIso.split('T')[0].replace(/-/g,'').slice(length * -1)
+        : '';
+}
+
 export {
-    dcdrUtf8
+    dcdrUtf8,
+    nullUndefToEmptyStr,
+    isObject,
+    sDateIsoToYYYYMMDD
 };
