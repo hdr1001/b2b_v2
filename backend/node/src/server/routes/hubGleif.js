@@ -1,7 +1,7 @@
 // *********************************************************************
 //
 // Business-to-business application backend (v2)
-// The API server /gleif routes
+// The API server /hub/gleif routes
 // 
 // Copyright 2026 Hans de Rooij
 //

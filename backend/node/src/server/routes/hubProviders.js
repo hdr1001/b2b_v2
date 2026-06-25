@@ -1,7 +1,7 @@
 // *********************************************************************
 //
 // Business-to-business application backend (v2)
-// The API server /gleif routes
+// The API server /providers route
 // 
 // Copyright 2026 Hans de Rooij
 //
@@ -22,26 +22,20 @@
 
 import express from 'express';
 import { apiReqs } from '../../share/apiDefs.js';
-import apiKeyReq from '../../share/apiReq.js';
-import { B2bApiErr } from '../../share/b2bApiErr.js';
+
+import hubGleifRoutes from './hubGleif.js';
+
+const providers = [ ...apiReqs.keys() ];
 
 const router = express.Router();
 
 router.get('/', (req, resp) => {
-    resp.json( apiReqs.get('gleif') );
+    resp.json( providers );
 });
 
-router.get(`/lei/:key`, async(req, resp, next) => {
-    try{
-        await apiKeyReq(req, resp, next);
-    }
-    catch(err) {
-        if(err instanceof B2bApiErr) return next(err);
+router.use('/gleif', hubGleifRoutes);
 
-        console.error( `Unexpected error in /gleif/lei/${req.params.key} route:`, err );
-
-        next( new B2bApiErr('unexpected', `Requested: ${req.path}`) );
-    }
-});
-
-export default router;
+export {
+    providers,
+    router
+};

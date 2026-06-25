@@ -1,4 +1,4 @@
-FROM node:24-alpine
+FROM node:24-alpine3.24
 
 ARG NODE_ENV
 ENV NODE_ENV ${NODE_ENV}
@@ -13,6 +13,8 @@ RUN npm ci
 
 # Deliver source code
 COPY . .
+
+EXPOSE ${8088}
 
 # Start application
 CMD [ "npm", "run", "dkrprod" ]

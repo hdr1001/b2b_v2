@@ -26,6 +26,7 @@ import { B2bApiErr } from '../share/b2bApiErr.js';
 //Import the API routes
 import aboutRoutes from './routes/about.js';
 import { router as providersRoutes } from './routes/providers.js';
+import { router as hubProvidersRoutes } from './routes/hubProviders.js';
 
 //Import the API error handling middleware
 import errHandler from './middleware/err.js';
@@ -45,6 +46,7 @@ app.use( express.json() ); //Middleware to parse JSON requests
 //Implement the API routes
 app.use(`/${path0}/about`, aboutRoutes);
 app.use(`/${path0}/providers`, providersRoutes);
+app.use(`/${path0}/hub/providers`, hubProvidersRoutes);
 
 //An HTTP request catch-all
 app.use((req, resp, next) => {
