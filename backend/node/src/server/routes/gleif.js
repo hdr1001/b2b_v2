@@ -21,19 +21,28 @@
 // *********************************************************************
 
 import express from 'express';
-import { apiReqs } from '../../share/apiDefs.js';
+import { LeiRec } from '../../share/apiDefs.js';
 import apiKeyReq from '../../share/apiReq.js';
 import { B2bApiErr } from '../../share/b2bApiErr.js';
 
 const router = express.Router();
 
 router.get('/', (req, resp) => {
-    resp.json( apiReqs.get('gleif') );
+    resp.json( { provider: 'gleif' } );
 });
 
 router.get(`/lei/:key`, async(req, resp, next) => {
     try{
+        req.b2b = {
+            rec: new LeiRec(req.params.key),
+        };
+
+        if(!req.b2b.rec.validKey()) throw new B2bApiErr('invalidParameter', `Invalid LEI: ${lei}`);
+
         await apiKeyReq(req, resp, next);
+
+        //Return the GLEIF API response body to the client
+        resp.set('Content-Type', 'application/json').send(dcdrUtf8.decode(await resp.arrBuff));
     }
     catch(err) {
         if(err instanceof B2bApiErr) return next(err);

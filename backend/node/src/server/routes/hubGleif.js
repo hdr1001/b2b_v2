@@ -21,19 +21,18 @@
 // *********************************************************************
 
 import express from 'express';
-import { apiReqs } from '../../share/apiDefs.js';
 import apiKeyReq from '../../share/apiReq.js';
 import { B2bApiErr } from '../../share/b2bApiErr.js';
 
 const router = express.Router();
 
 router.get('/', (req, resp) => {
-    resp.json( apiReqs.get('gleif') );
+    resp.json( { provider: 'gleif' } );
 });
 
 router.get(`/lei/:key`, async(req, resp, next) => {
     try{
-        await apiKeyReq(req, resp, next);
+        await apiKeyReq();
     }
     catch(err) {
         if(err instanceof B2bApiErr) return next(err);

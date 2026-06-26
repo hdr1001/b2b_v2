@@ -21,11 +21,10 @@
 // *********************************************************************
 
 import express from 'express';
-import { apiReqs } from '../../share/apiDefs.js';
 
 import gleifRoutes from './gleif.js';
 
-const providers = [ ...apiReqs.keys() ];
+const providers = { providers: [ 'gleif' ] };
 
 const router = express.Router();
 

@@ -1,7 +1,7 @@
 // *********************************************************************
 //
-// API Hub server Postgres objects
-// JavaScript code file: pg.js
+// Data persistence code for the B2B API server
+// Postgres is the database of choice (excellent JSONB support)
 //
 // Copyright 2026 Hans de Rooij
 //

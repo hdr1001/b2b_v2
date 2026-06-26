@@ -20,59 +20,88 @@
 //
 // *********************************************************************
 
+import qry from './pg.js';
 import { B2bApiErr } from './b2bApiErr.js';
 
-const apiReqs = Object.freeze(
-    new Map([
-        [ 'gleif', {
-            name: 'gleif',
-            base: 'https://api.gleif.org',
+const gleif = {
+    name: 'gleif',
+    key: 'lei',
+    base: 'https://api.gleif.org',
 
-            headers: {
-                Accept: 'application/vnd.api+json'
-            },
+    headers: {
+        Accept: 'application/vnd.api+json'
+    }
+};
 
-            leiRec: { //LEI record (https://bit.ly/45mRwbt)
-                key: 'lei',
-                path: '/api/v1/lei-records',
+const gleifProduct00 = {
+    provider: gleif,
+    product: 'product00',
+    path: '/api/v1/lei-records',
 
-                getReq: function() {
-                    const reqUrl = new URL(apiReqs.get('gleif').leiRec.path, apiReqs.get('gleif').base);
+    getFetchReqObj: function() {
+        const reqUrl = new URL(gleifProduct00.path, gleif.base);
 
-                    return new Request(
-                        reqUrl.href + (this.resource ? `/${this.resource}` : ''),
-                        {
-                            method: 'GET',
-                            headers: apiReqs.get('gleif').headers
-                        }
-                    );
-                }
+        return new Request(
+            reqUrl.href + (this.key ? `/${this.key}` : '/'),
+            {
+                method: 'GET',
+                headers: gleif.headers
             }
-        }]
-    ])
-);
+        );
+    },
+
+    sqlSelect: function() {
+        return `SELECT ${gleifProduct00.provider.key}, ${gleifProduct00.product}, http_status_00, tsz_00 FROM products_${gleifProduct00.provider.name} WHERE ${gleifProduct00.provider.key} = `;
+    }
+};
 
 class LeiRec { //Get LEI record by ID
-    #resp = null; //Fetch response object, cached after request
+    #arrBuff = null; //Array buffer fetched
  
     constructor(resource) {
-        //API
-        this.api = apiReqs.get('gleif').name;
-        this.key = apiReqs.get('gleif').leiRec.key;
+        //Product reference
+        this.product = gleifProduct00;
 
-        //resource is the LEI code, e.g. '724500K5PTPSST86UQ23'
         this.resource = resource;
+        this.key = resource.trim();
 
         //Construct the request object for this API call
-        this.req = apiReqs.get('gleif').leiRec.getReq.call(this);
+        this.req = this.product.getFetchReqObj.call(this);
     }
 
+    //Execute the API request and cache the response
+    async execReq() {
+        return new Promise( (resolve, reject) => 
+            fetch(this.req)
+                .then( resp => resp.arrayBuffer() ) )
+                .then( arrBuff => this.#arrBuff = arrBuff)
+                .catch( err => reject( new B2bApiErr('extnlApiErr', err.message + ', ' + err.cause || 'Error occurred while fetching LEI data') )
+        )
+    }
+
+    //Execute a SQL SELECT to (try to) retrieve the product from the database
+/*    async execSelect() {
+        return new Promise( (resolve, reject) => {
+            qry(this.execSelect + this.key)
+                .then( db => {
+                    if(db.rows?.length) {
+                        this.#resp = db.rows[0].product_00
+                    }
+
+                    resolve( this.#resp );
+                })
+                .catch( err => reject( new B2bApiErr('extnlApiErr', err.message + ', ' + err.cause || 'Error occurred while selecting LEI data') ) )
+        })
+    }
+*/
+
     //Check the LEI passed in
-    validKey() {
+    validateKey() {
         let m = 0, charCode;
 
-        for(let i = 0; i < this.resource.length; i++) {
-            charCode = this.resource.charCodeAt(i);
+        //Check the internal consistency of the LEI
+        for(let i = 0; i < this.key.length; i++) {
+            charCode = this.key.charCodeAt(i);
 
             if(charCode >= 48 && charCode <= 57) {
                 m = (m * 10 + charCode - 48) % 97 
@@ -89,26 +118,16 @@ class LeiRec { //Get LEI record by ID
         return m === 1;
     }
 
-    //Execute the API request and cache the response
-    async execReq() {
-        return new Promise( (resolve, reject) => 
-            fetch(this.req)
-                .then( resp => resolve( this.#resp = resp ) )
-                .catch( err => reject( new B2bApiErr('extnlApiErr', err.message + ', ' + err.cause || 'Error occurred while fetching LEI data') ) )
-        )
-    }
-
     //Get the response, executing the request if not already done
-    get resp() {
-        if(!this.#resp) {
+    get arrBuff() {
+        if(!this.#arrBuff) {
             return this.execReq();
         }
 
-        return Promise.resolve(this.#resp);
+        return Promise.resolve(this.#arrBuff);
     }
 }
 
 export { 
-    apiReqs,
     LeiRec
 };

@@ -21,24 +21,15 @@
 // *********************************************************************
 
 import { dcdrUtf8 } from './utils.js';
-import { LeiRec } from './apiDefs.js';
 import { B2bApiErr } from './b2bApiErr.js';
 
 const apiKeyReq = async (req, resp, next) => {
-    //Parse out the LEI specified
-    const lei = req.params.key;
-
-    //Instantiate a new LEI record object 
-    const leiRec = new LeiRec(lei);
-
-    //Validate the input LEI
-    if(!leiRec.validKey()) throw new B2bApiErr('invalidParameter', `Invalid LEI: ${lei}`);
-
     //Execute the GLEIF API request
-    const lrResp = await leiRec.resp;
+    resp.b2b = {
+        rec = await req.b2b.rec.execReq();
 
     //Have the arrayBuffer of the GLEIF API response body ready for use
-    const lrArrBuffBody = await lrResp.arrayBuffer();
+    resp.b2b = await lrResp.arrayBuffer();
 
     //Handle an HTTP error status returned by the GLEIF API
     if(lrResp.status < 200 || lrResp.status > 299) {
@@ -47,9 +38,6 @@ const apiKeyReq = async (req, resp, next) => {
 
         throw new B2bApiErr('extnlApiErr', errMsg, lrResp.status, dcdrUtf8.decode(lrArrBuffBody));
     }
-
-    //Return the GLEIF API response body to the client
-    resp.set('Content-Type', 'application/json').send(dcdrUtf8.decode(lrArrBuffBody));
 }
 
 export default apiKeyReq;

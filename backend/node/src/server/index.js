@@ -30,9 +30,6 @@ import { router as hubProvidersRoutes } from './routes/hubProviders.js';
 
 //Import the API error handling middleware
 import errHandler from './middleware/err.js';
-    
-//Import the Postgres pool object
-import pg from './pg.js';
 
 const port = process.env.API_SERVER_PORT || 8088; //Server port
 
