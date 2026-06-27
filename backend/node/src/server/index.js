@@ -25,7 +25,7 @@ import { B2bApiErr } from '../share/b2bApiErr.js';
 
 //Import the API routes
 import aboutRoutes from './routes/about.js';
-import { router as providersRoutes } from './routes/providers.js';
+import providersRoutes from './routes/providers.js';
 import { router as hubProvidersRoutes } from './routes/hubProviders.js';
 
 //Import the API error handling middleware

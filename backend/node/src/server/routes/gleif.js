@@ -21,6 +21,8 @@
 // *********************************************************************
 
 import express from 'express';
+import { dcdrUtf8 } from '../../share/utils.js';
+import appConsts from '../../share/appConsts.js';
 import { LeiRec } from '../../share/apiDefs.js';
 import apiKeyReq from '../../share/apiReq.js';
 import { B2bApiErr } from '../../share/b2bApiErr.js';
@@ -28,21 +30,21 @@ import { B2bApiErr } from '../../share/b2bApiErr.js';
 const router = express.Router();
 
 router.get('/', (req, resp) => {
-    resp.json( { provider: 'gleif' } );
+    resp.json( appConsts.providers.gleif );
 });
 
 router.get(`/lei/:key`, async(req, resp, next) => {
     try{
         req.b2b = {
-            rec: new LeiRec(req.params.key),
+            rec: new LeiRec(req.params.key)
         };
 
-        if(!req.b2b.rec.validKey()) throw new B2bApiErr('invalidParameter', `Invalid LEI: ${lei}`);
+        if(!req.b2b.rec.validateKey()) throw new B2bApiErr('invalidParameter', `Invalid LEI: ${req.b2b.rec.key}`);
 
-        await apiKeyReq(req, resp, next);
-
-        //Return the GLEIF API response body to the client
-        resp.set('Content-Type', 'application/json').send(dcdrUtf8.decode(await resp.arrBuff));
+        apiKeyReq(req, resp, next)
+            //Return the GLEIF API response body to the client
+            .then(arrBuff => resp.set('Content-Type', 'application/json').send(dcdrUtf8.decode(arrBuff)))
+            .catch(err => { throw new B2bApiErr('extnlApiErr', err.message + ', ' + err.cause || 'Error occurred while fetching LEI data') })
     }
     catch(err) {
         if(err instanceof B2bApiErr) return next(err);

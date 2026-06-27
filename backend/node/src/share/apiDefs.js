@@ -21,63 +21,23 @@
 // *********************************************************************
 
 import qry from './pg.js';
+import appConsts from './appConsts.js';
 import { B2bApiErr } from './b2bApiErr.js';
 
-const gleif = {
-    name: 'gleif',
-    key: 'lei',
-    base: 'https://api.gleif.org',
-
-    headers: {
-        Accept: 'application/vnd.api+json'
-    }
-};
-
-const gleifProduct00 = {
-    provider: gleif,
-    product: 'product00',
-    path: '/api/v1/lei-records',
-
-    getFetchReqObj: function() {
-        const reqUrl = new URL(gleifProduct00.path, gleif.base);
-
-        return new Request(
-            reqUrl.href + (this.key ? `/${this.key}` : '/'),
-            {
-                method: 'GET',
-                headers: gleif.headers
-            }
-        );
-    },
-
-    sqlSelect: function() {
-        return `SELECT ${gleifProduct00.provider.key}, ${gleifProduct00.product}, http_status_00, tsz_00 FROM products_${gleifProduct00.provider.name} WHERE ${gleifProduct00.provider.key} = `;
-    }
-};
-
-class LeiRec { //Get LEI record by ID
-    #arrBuff = null; //Array buffer fetched
- 
+export class LeiRec { //Get LEI record by ID
     constructor(resource) {
         //Product reference
-        this.product = gleifProduct00;
+        this.product = appConsts.gleifProduct_00;
 
         this.resource = resource;
         this.key = resource.trim();
 
         //Construct the request object for this API call
-        this.req = this.product.getFetchReqObj.call(this);
+        this.fetchReqObj = this.product.getFetchReqObj.call(this);
     }
 
     //Execute the API request and cache the response
-    async execReq() {
-        return new Promise( (resolve, reject) => 
-            fetch(this.req)
-                .then( resp => resp.arrayBuffer() ) )
-                .then( arrBuff => this.#arrBuff = arrBuff)
-                .catch( err => reject( new B2bApiErr('extnlApiErr', err.message + ', ' + err.cause || 'Error occurred while fetching LEI data') )
-        )
-    }
+    execFetchReq() { return fetch(this.fetchReqObj) }
 
     //Execute a SQL SELECT to (try to) retrieve the product from the database
 /*    async execSelect() {
@@ -117,17 +77,4 @@ class LeiRec { //Get LEI record by ID
 
         return m === 1;
     }
-
-    //Get the response, executing the request if not already done
-    get arrBuff() {
-        if(!this.#arrBuff) {
-            return this.execReq();
-        }
-
-        return Promise.resolve(this.#arrBuff);
-    }
 }
-
-export { 
-    LeiRec
-};

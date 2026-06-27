@@ -21,20 +21,15 @@
 // *********************************************************************
 
 import express from 'express';
-
+import appConsts from '../../share/appConsts.js';
 import gleifRoutes from './gleif.js';
-
-const providers = { providers: [ 'gleif' ] };
 
 const router = express.Router();
 
 router.get('/', (req, resp) => {
-    resp.json( providers );
+    resp.json( Object.keys(appConsts.providers) );
 });
 
 router.use('/gleif', gleifRoutes);
 
-export {
-    providers,
-    router
-};
+export default router;
