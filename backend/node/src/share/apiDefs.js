@@ -36,9 +36,6 @@ export class LeiRec { //Get LEI record by ID
         this.fetchReqObj = this.product.getFetchReqObj.call(this);
     }
 
-    //Execute the API request and cache the response
-    execFetchReq() { return fetch(this.fetchReqObj) }
-
     //Execute a SQL SELECT to (try to) retrieve the product from the database
 /*    async execSelect() {
         return new Promise( (resolve, reject) => {

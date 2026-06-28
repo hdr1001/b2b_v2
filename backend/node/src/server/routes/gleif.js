@@ -41,10 +41,9 @@ router.get(`/lei/:key`, async(req, resp, next) => {
 
         if(!req.b2b.rec.validateKey()) throw new B2bApiErr('invalidParameter', `Invalid LEI: ${req.b2b.rec.key}`);
 
-        apiKeyReq(req, resp, next)
-            //Return the GLEIF API response body to the client
-            .then(arrBuff => resp.set('Content-Type', 'application/json').send(dcdrUtf8.decode(arrBuff)))
-            .catch(err => { throw new B2bApiErr('extnlApiErr', err.message + ', ' + err.cause || 'Error occurred while fetching LEI data') })
+        await apiKeyReq(req, resp, next);
+
+        resp.set('Content-Type', 'application/json').send(dcdrUtf8.decode(resp.b2b.arrBuff));
     }
     catch(err) {
         if(err instanceof B2bApiErr) return next(err);

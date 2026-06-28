@@ -21,30 +21,22 @@
 // *********************************************************************
 
 import { dcdrUtf8 } from './utils.js';
-import appConsts from './appConsts.js';
 import { B2bApiErr } from './b2bApiErr.js';
 
-const apiKeyReq = (req, resp, next) => {
-    //Execute the GLEIF API request
-    return req.b2b.rec.execFetchReq()
-        .then(fetchResp => {
-            resp.b2b = { resp: fetchResp }
+const apiKeyReq = async (req, resp, next) => {
+    //Execute the API request
+    resp.b2b = {};
 
-            return fetchResp.arrayBuffer();
-        })
-        .then(fetchArrBuff => {
-            resp.b2b.arrBuff = fetchArrBuff;
+    resp.b2b.fetchResp = await fetch(req.b2b.rec.fetchReqObj);
 
-            //Handle an HTTP error status returned by the GLEIF API
-            if(resp.b2b.resp.status < 200 || resp.b2b.resp.status > 299) {
-                const errMsg = `External API responded with an HTTP error status: ${resp.b2b.resp.status}`;
-                console.error( errMsg );
+    resp.b2b.arrBuff = await resp.b2b.fetchResp.arrayBuffer();
 
-                throw new B2bApiErr('extnlApiErr', errMsg, resp.b2b.resp.status, dcdrUtf8.decode(resp.b2b.arrBuff));
-            }
+    if(!resp.b2b.fetchResp.ok) {
+        const errMsg = `External API responded with an HTTP error status: ${resp.b2b.fetchResp.status}`;
+        console.error( errMsg );
 
-            return fetchArrBuff;
-        })
+        throw new B2bApiErr('extnlApiErr', errMsg, resp.b2b.fetchResp.status, dcdrUtf8.decode(resp.b2b.arrBuff));
+    }
 }
 
 export default apiKeyReq;
