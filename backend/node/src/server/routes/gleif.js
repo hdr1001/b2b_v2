@@ -48,9 +48,7 @@ router.get(`/lei/:key`, async(req, resp, next) => {
     catch(err) {
         if(err instanceof B2bApiErr) return next(err);
 
-        console.error( `Unexpected error in /gleif/lei/${req.params.key} route:`, err );
-
-        next( new B2bApiErr('unexpected', `Requested: ${req.path}`) );
+        next( new B2bApiErr('unexpected', `Unexpected error in /gleif/lei/${req.params.key}, ${err.message} (${err.cause})`) );
     }
 });
 
