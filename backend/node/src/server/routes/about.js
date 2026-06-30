@@ -21,16 +21,31 @@
 // *********************************************************************
 
 import express from 'express';
+import db from '../../share/pg.js';
 
 const router = express.Router();
 
-router.get('/', (req, resp) => {
-    resp.json({
+router.get('/', async (req, resp) => {
+    //Basic about return object
+    const ret = {
         Application: 'Business-to-business API',
         Version:     '2.0.0',
         Copyright:   '© 2026 Hans de Rooij',
         License:     'Apache 2.0',
-    });
+    };
+
+    //Get the PostgreSQL data
+    const dbQryRslt = await db.query('SELECT current_database(), version()');
+
+    //Add the PostgreSQL data if available
+    if(dbQryRslt && dbQryRslt.rows && dbQryRslt.rows[0]) {
+        ret.PostgreSQL = {
+            database: dbQryRslt.rows[0].current_database,
+            version: dbQryRslt.rows[0].version
+        }
+    }
+
+    resp.json( ret );
 });
 
 export default router;
