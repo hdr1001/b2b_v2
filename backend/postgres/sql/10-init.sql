@@ -6,6 +6,10 @@
 -- Run a PostgreSQL container based on the image
 -- docker run --name postgres-18 -e POSTGRES_PASSWORD=[pwd] -p 5432:5432 -d postgres:18-alpine3.24
 --
+--
+-- Drop the table for storing GLEIF data products if it exists
+DROP TABLE IF EXISTS public.products_gleif;
+
 -- Create table for storing GLEIF data products
 CREATE TABLE public.products_gleif (
    lei character varying(32) NOT NULL COLLATE pg_catalog."default",

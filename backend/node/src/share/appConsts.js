@@ -34,7 +34,8 @@ const providers = {
 
 const gleifProduct_00 = {
     provider: providers.gleif,
-    product: 'product_00',
+    productNum: '00',
+    get product() { return `product_${this.productNum}` },
     path: '/api/v1/lei-records',
 
     getFetchReqObj: function() {
@@ -49,8 +50,8 @@ const gleifProduct_00 = {
         );
     },
 
-    sqlSelect: function() {
-        return `SELECT ${gleifProduct00.provider.key}, ${gleifProduct00.product}, http_status_00, tsz_00 FROM products_${gleifProduct00.provider.name} WHERE ${gleifProduct00.provider.key} = `;
+    get sqlSelect() {
+        return `SELECT ${this.provider.key}, ${this.product}, http_status_${this.productNum}, tsz_${this.productNum} FROM products_${this.provider.name} WHERE ${this.provider.key} = $1;`;
     }
 };
 

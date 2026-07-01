@@ -26,6 +26,7 @@ import appConsts from '../../share/appConsts.js';
 import { LeiRec } from '../../share/apiDefs.js';
 import apiKeyReq from '../../share/apiReq.js';
 import { B2bApiErr } from '../../share/b2bApiErr.js';
+import db from '../../share/pg.js';
 
 const router = express.Router();
 
@@ -41,9 +42,16 @@ router.get(`/lei/:key`, async(req, resp, next) => {
 
         if(!req.b2b.rec.validateKey()) throw new B2bApiErr('invalidParameter', `Invalid LEI: ${req.b2b.rec.key}`);
 
-        await apiKeyReq(req, resp, next);
+        const dbQryRslt = await db.query( appConsts.gleifProduct_00.sqlSelect, [req.b2b.rec.key] );
 
-        resp.set('Content-Type', 'application/json').send(dcdrUtf8.decode(resp.b2b.arrBuff));
+        if(dbQryRslt && dbQryRslt.rows.length) {
+            console.log(`Found LEI ${req.b2b.rec.key} in database, returning cached result`);            
+        }
+        else {
+            await apiKeyReq(req, resp, next);
+
+            resp.set('Content-Type', 'application/json').send(dcdrUtf8.decode(resp.b2b.arrBuff));
+        }
     }
     catch(err) {
         if(err instanceof B2bApiErr) return next(err);
