@@ -51,7 +51,16 @@ const gleifProduct_00 = {
     },
 
     get sqlSelect() {
-        return `SELECT ${this.provider.key}, ${this.product}, http_status_${this.productNum}, tsz_${this.productNum} FROM products_${this.provider.name} WHERE ${this.provider.key} = $1;`;
+        return `SELECT ${this.provider.key}, ${this.product}, http_status_${this.productNum}, tsz_${this.productNum} FROM products_${this.provider.name} WHERE ${this.provider.key} = $1;`
+    },
+
+    get sqlUpsert() {
+        return `
+            INSERT INTO products_${this.provider.name} 
+                (${this.provider.key}, ${this.product}, http_status_${this.productNum}, tsz_${this.productNum}) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) 
+            ON CONFLICT ( ${this.provider.key} )
+                DO UPDATE SET ${this.product} = $2, http_status_${this.productNum} = $3, tsz_${this.productNum} = CURRENT_TIMESTAMP;
+        `
     }
 };
 
