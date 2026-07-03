@@ -42,7 +42,7 @@ app.use( express.json() ); //Middleware to parse JSON requests
 
 //Implement the API routes
 app.use(`/${path0}/about`, aboutRoutes);
-app.use(`/${path0}/providers`, providersRoutes);
+//app.use(`/${path0}/providers`, providersRoutes);
 app.use(`/${path0}/hub/providers`, hubProvidersRoutes);
 
 //An HTTP request catch-all

@@ -23,7 +23,7 @@
 import express from 'express';
 import { dcdrUtf8 } from '../../share/utils.js';
 import appConsts from '../../share/appConsts.js';
-import { LeiRec } from '../../share/apiDefs.js';
+import { createLeiRec } from '../../share/apiDefs.js';
 import apiKeyReq from '../../share/apiReq.js';
 import { B2bApiErr } from '../../share/b2bApiErr.js';
 

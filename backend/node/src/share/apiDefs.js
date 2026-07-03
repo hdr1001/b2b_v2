@@ -24,10 +24,47 @@ import qry from './pg.js';
 import appConsts from './appConsts.js';
 import { B2bApiErr } from './b2bApiErr.js';
 
+export function createLeiRec(resource, product = 0) {
+    //Validate the LEI key
+    const lei = resource.trim();
+
+    if(!appConsts.providers.gleif.validateKey(lei)) throw new B2bApiErr('invalidParameter', `Invalid LEI: ${lei}`);
+
+    //Validate the product number
+    const iProduct = parseInt(product, 10);
+
+    if(isNaN(iProduct) || iProduct < 0 || iProduct >= appConsts.gleifProducts.length) {
+        throw new B2bApiErr('invalidParameter', `Invalid product number ${product} for LEI record`);
+    }
+
+    //Return a new object inheriting from the specified product
+    return Object.create(
+        appConsts.gleifProducts[iProduct],
+        {
+            //Set resource as specified in the URL 
+            resource: { value: resource },
+            key: { value: lei },
+
+            //Set product number
+            product: { value: iProduct }
+        }
+    );
+}
+
+/*
 export class LeiRec { //Get LEI record by ID
-    constructor(resource) {
-        //Product reference
-        this.product = appConsts.gleifProduct_00;
+    constructor(resource, productNum = 0) {
+        //Set product reference property
+        switch(productNum) {
+            case 0:
+                this.product = appConsts.gleifProducts[0];
+                break;
+            case 1:
+                this.product = appConsts.gleifProducts[1];
+                break;
+            default:
+                throw new B2bApiErr('invalidParameter', `Invalid product number ${productNum} for LEI record`);
+        }
 
         this.resource = resource;
         this.key = resource.trim();
@@ -36,42 +73,9 @@ export class LeiRec { //Get LEI record by ID
         this.fetchReqObj = this.product.getFetchReqObj.call(this);
     }
 
-    //Execute a SQL SELECT to (try to) retrieve the product from the database
-/*    async execSelect() {
-        return new Promise( (resolve, reject) => {
-            qry(this.execSelect + this.key)
-                .then( db => {
-                    if(db.rows?.length) {
-                        this.#resp = db.rows[0].product_00
-                    }
+    //SQL statements for this LEI record
+    get sqlSelect() { return this.product.sqlSelect }
+    get sqlUpsert() { return this.product.sqlUpsert }
 
-                    resolve( this.#resp );
-                })
-                .catch( err => reject( new B2bApiErr('extnlApiErr', err.message + ', ' + err.cause || 'Error occurred while selecting LEI data') ) )
-        })
-    }
-*/
-
-    //Check the LEI passed in
-    validateKey() {
-        let m = 0, charCode;
-
-        //Check the internal consistency of the LEI
-        for(let i = 0; i < this.key.length; i++) {
-            charCode = this.key.charCodeAt(i);
-
-            if(charCode >= 48 && charCode <= 57) {
-                m = (m * 10 + charCode - 48) % 97 
-            }
-            else if(charCode >= 65 && charCode <= 90) {
-                m = (m * 100 + charCode - 55) % 97 
-            }
-            else {
-                console.log(`Unexpected character at ${i}`);
-                return false;
-            }
-        }
-
-        return m === 1;
-    }
 }
+*/

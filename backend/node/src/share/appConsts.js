@@ -20,6 +20,19 @@
 //
 // *********************************************************************
 
+function sqlSelect() {
+    return `SELECT ${this.provider.key}, ${this.productCol}, http_status_${this.productNum}, tsz_${this.productNum} FROM products_${this.provider.name} WHERE ${this.provider.key} = $1;`
+}
+
+function sqlUpsert() {
+    return `
+        INSERT INTO products_${this.provider.name} 
+            (${this.provider.key}, ${this.productCol}, http_status_${this.productNum}, tsz_${this.productNum}) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) 
+        ON CONFLICT ( ${this.provider.key} )
+            DO UPDATE SET ${this.productCol} = $2, http_status_${this.productNum} = $3, tsz_${this.productNum} = CURRENT_TIMESTAMP;
+    `
+}
+
 const providers = {
     gleif: {
         name: 'gleif',
@@ -28,43 +41,89 @@ const providers = {
 
         headers: {
             Accept: 'application/vnd.api+json'
+        },
+
+        //Get the fetch request object for this provider
+        getFetchReqObj: function() {
+            const reqUrl = new URL(this.path, this.provider.base);
+
+            return new Request(
+                reqUrl.href + (this.key ? `/${this.key}` : '/'),
+                {
+                    method: 'GET',
+                    headers: this.provider.headers
+                }
+            );
+        },
+
+        //Check the LEI passed in
+        validateKey: function(lei) {
+            let m = 0, charCode;
+
+            //Check the internal consistency of the LEI
+            for(let i = 0; i < lei.length; i++) {
+                charCode = lei.charCodeAt(i);
+
+                if(charCode >= 48 && charCode <= 57) {
+                    m = (m * 10 + charCode - 48) % 97 
+                }
+                else if(charCode >= 65 && charCode <= 90) {
+                    m = (m * 100 + charCode - 55) % 97 
+                }
+                else {
+                    console.log(`Unexpected character at ${i}`);
+                    return false;
+                }
+            }
+
+            return m === 1;
         }
     }
 };
 
-const gleifProduct_00 = {
-    provider: providers.gleif,
-    productNum: '00',
-    get product() { return `product_${this.productNum}` },
-    path: '/api/v1/lei-records',
+const gleifProducts = [
+    {
+        //Provider reference
+        provider: providers.gleif,
 
-    getFetchReqObj: function() {
-        const reqUrl = new URL(gleifProduct_00.path, providers.gleif.base);
+        //Product reference
+        idx: 0, productNum: '00', productCol: 'product_00',
 
-        return new Request(
-            reqUrl.href + (this.key ? `/${this.key}` : '/'),
-            {
-                method: 'GET',
-                headers: providers.gleif.headers
-            }
-        );
+        //API path for this product
+        path: '/api/v1/lei-records',
+
+        //Get the fetch request object for the LEI record
+        getFetchReqObj: function() { return this.provider.getFetchReqObj.call(this) },
+
+        //SQL statements for this product
+        get sqlSelect() { return sqlSelect.call(this) },
+        get sqlUpsert() { return sqlUpsert.call(this) },
+
+        //Check the LEI passed in
+        validateKey: function() { return this.provider.validateKey.apply(this) },
     },
+    {
+        provider: providers.gleif,
+        idx: 1,
+        productNum: '01',
+        get product() { return `product_${this.productNum}` },
+        path: '/api/v1/lei-records',
 
-    get sqlSelect() {
-        return `SELECT ${this.provider.key}, ${this.product}, http_status_${this.productNum}, tsz_${this.productNum} FROM products_${this.provider.name} WHERE ${this.provider.key} = $1;`
-    },
+        getFetchReqObj: function() {
+            const reqUrl = new URL(this.path, this.provider.base);
 
-    get sqlUpsert() {
-        return `
-            INSERT INTO products_${this.provider.name} 
-                (${this.provider.key}, ${this.product}, http_status_${this.productNum}, tsz_${this.productNum}) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) 
-            ON CONFLICT ( ${this.provider.key} )
-                DO UPDATE SET ${this.product} = $2, http_status_${this.productNum} = $3, tsz_${this.productNum} = CURRENT_TIMESTAMP;
-        `
+            return new Request(
+                reqUrl.href + (this.key ? `/${this.key}` : '/'),
+                {
+                    method: 'GET',
+                    headers: providers.gleif.headers
+                }
+            );
+        }
     }
-};
+];
 
 export default {
     providers,
-    gleifProduct_00
+    gleifProducts
 };

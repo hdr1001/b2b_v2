@@ -7,8 +7,15 @@
 -- docker run --name postgres-18 -e POSTGRES_PASSWORD=[pwd] -p 5432:5432 -d postgres:18-alpine3.24
 --
 --
+
+-- Drop the database if it exists
+DROP DATABASE IF EXISTS b2b_v2;
+
 -- Drop the table for storing GLEIF data products if it exists
 DROP TABLE IF EXISTS public.products_gleif;
+
+-- Create the database
+CREATE DATABASE b2b_v2;
 
 -- Create table for storing GLEIF data products
 CREATE TABLE public.products_gleif (

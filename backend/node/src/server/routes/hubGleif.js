@@ -23,7 +23,7 @@
 import express from 'express';
 import { dcdrUtf8 } from '../../share/utils.js';
 import appConsts from '../../share/appConsts.js';
-import { LeiRec } from '../../share/apiDefs.js';
+import { createLeiRec } from '../../share/apiDefs.js';
 import apiKeyReq from '../../share/apiReq.js';
 import { B2bApiErr } from '../../share/b2bApiErr.js';
 import db from '../../share/pg.js';
@@ -38,15 +38,12 @@ router.get(`/lei/:key`, async(req, resp, next) => {
     try{
         //Instantiate a new LeiRec object with the LEI key from the request parameters
         req.b2b = {
-            rec: new LeiRec(req.params.key)
+            rec: createLeiRec(req.params.key, req.query.product)
         };
-
-        //Validate the LEI key
-        if(!req.b2b.rec.validateKey()) throw new B2bApiErr('invalidParameter', `Invalid LEI: ${req.b2b.rec.key}`);
 
         //Check if the LEI record is already in the database
         resp.b2b = {
-            sqlSelect: await db.query( appConsts.gleifProduct_00.sqlSelect, [req.b2b.rec.key] )
+            sqlSelect: await db.query( req.b2b.rec.sqlSelect, [req.b2b.rec.key] )
         };
 
         //If the LEI record is found in the database, return it; otherwise, fetch it from the external API
@@ -63,10 +60,12 @@ router.get(`/lei/:key`, async(req, resp, next) => {
         //Return the response body to the client and upsert it into the database
         resp.set('Content-Type', 'application/json').send(sRespBody);
 
-        const sqlUpsert = await db.query( appConsts.gleifProduct_00.sqlUpsert, [ req.b2b.rec.key, sRespBody, resp.b2b.fetchResp.status ] );
+        const sqlUpsert = await db.query( req.b2b.rec.sqlUpsert, [ req.b2b.rec.key, sRespBody, resp.b2b.fetchResp.status ] );
     }
     catch(err) {
         if(err instanceof B2bApiErr) return next(err);
+
+        console.error(err.stack || err);
 
         next( new B2bApiErr('unexpected', `Unexpected error in /gleif/lei/${req.params.key}, ${err.message} (${err.cause})`) );
     }

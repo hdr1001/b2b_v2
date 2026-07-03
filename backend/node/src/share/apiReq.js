@@ -27,13 +27,12 @@ const apiKeyReq = async (req, resp, next) => {
     //Execute the API request
     resp.b2b = {};
 
-    resp.b2b.fetchResp = await fetch(req.b2b.rec.fetchReqObj);
+    resp.b2b.fetchResp = await fetch(req.b2b.rec.getFetchReqObj());
 
     resp.b2b.arrBuff = await resp.b2b.fetchResp.arrayBuffer();
 
     if(!resp.b2b.fetchResp.ok) {
         const errMsg = `External API responded with an HTTP error status: ${resp.b2b.fetchResp.status}`;
-        console.error( errMsg );
 
         throw new B2bApiErr('extnlApiErr', errMsg, resp.b2b.fetchResp.status, dcdrUtf8.decode(resp.b2b.arrBuff));
     }
