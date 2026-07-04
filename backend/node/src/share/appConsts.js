@@ -20,19 +20,7 @@
 //
 // *********************************************************************
 
-function sqlSelect() {
-    return `SELECT ${this.provider.key}, ${this.productCol}, http_status_${this.productNum}, tsz_${this.productNum} FROM products_${this.provider.name} WHERE ${this.provider.key} = $1;`
-}
-
-function sqlUpsert() {
-    return `
-        INSERT INTO products_${this.provider.name} 
-            (${this.provider.key}, ${this.productCol}, http_status_${this.productNum}, tsz_${this.productNum}) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) 
-        ON CONFLICT ( ${this.provider.key} )
-            DO UPDATE SET ${this.productCol} = $2, http_status_${this.productNum} = $3, tsz_${this.productNum} = CURRENT_TIMESTAMP;
-    `
-}
-
+//Common attributes as they relate to providers of B2B APIs
 const providers = {
     gleif: {
         name: 'gleif',
@@ -81,26 +69,23 @@ const providers = {
     }
 };
 
+//Products made available by GLEIF
 const gleifProducts = [
     {
         //Provider reference
         provider: providers.gleif,
 
         //Product reference
-        idx: 0, productNum: '00', productCol: 'product_00',
+        idx: 0, productNum: '00',
 
         //API path for this product
         path: '/api/v1/lei-records',
 
-        //Get the fetch request object for the LEI record
+        //Get the fetch request object for a LEI record
         getFetchReqObj: function() { return this.provider.getFetchReqObj.call(this) },
 
-        //SQL statements for this product
-        get sqlSelect() { return sqlSelect.call(this) },
-        get sqlUpsert() { return sqlUpsert.call(this) },
-
         //Check the LEI passed in
-        validateKey: function() { return this.provider.validateKey.apply(this) },
+        validateKey: function() { return this.provider.validateKey(this.key) }
     },
     {
         provider: providers.gleif,
@@ -122,6 +107,24 @@ const gleifProducts = [
         }
     }
 ];
+
+// SQL statements for the products
+function sqlSelect() {
+    return `SELECT ${this.provider.key}, product_${this.productNum}, http_status_${this.productNum}, tsz_${this.productNum} FROM products_${this.provider.name} WHERE ${this.provider.key} = $1;`
+}
+
+function sqlUpsert() {
+    return `
+        INSERT INTO products_${this.provider.name} 
+            (${this.provider.key}, product_${this.productNum}, http_status_${this.productNum}, tsz_${this.productNum}) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) 
+        ON CONFLICT ( ${this.provider.key} )
+            DO UPDATE SET product_${this.productNum} = $2, http_status_${this.productNum} = $3, tsz_${this.productNum} = CURRENT_TIMESTAMP;
+    `
+}
+
+//Add the SQL statements to the product prototype
+gleifProducts[0].sqlSelect = sqlSelect.call(gleifProducts[0]);
+gleifProducts[0].sqlUpsert = sqlUpsert.call(gleifProducts[0]);
 
 export default {
     providers,

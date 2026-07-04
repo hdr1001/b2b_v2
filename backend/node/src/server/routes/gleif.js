@@ -19,6 +19,7 @@
 // License.
 //
 // *********************************************************************
+/*
 
 import express from 'express';
 import { dcdrUtf8 } from '../../share/utils.js';
@@ -26,7 +27,6 @@ import appConsts from '../../share/appConsts.js';
 import { createLeiRec } from '../../share/apiDefs.js';
 import apiKeyReq from '../../share/apiReq.js';
 import { B2bApiErr } from '../../share/b2bApiErr.js';
-
 const router = express.Router();
 
 router.get('/', (req, resp) => {
@@ -53,3 +53,4 @@ router.get(`/lei/:key`, async(req, resp, next) => {
 });
 
 export default router;
+*/

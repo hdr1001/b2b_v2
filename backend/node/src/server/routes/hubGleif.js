@@ -24,7 +24,6 @@ import express from 'express';
 import { dcdrUtf8 } from '../../share/utils.js';
 import appConsts from '../../share/appConsts.js';
 import { createLeiRec } from '../../share/apiDefs.js';
-import apiKeyReq from '../../share/apiReq.js';
 import { B2bApiErr } from '../../share/b2bApiErr.js';
 import db from '../../share/pg.js';
 
@@ -48,10 +47,23 @@ router.get(`/lei/:key`, async(req, resp, next) => {
 
         //If the LEI record is found in the database, return it; otherwise, fetch it from the external API
         if(resp.b2b.sqlSelect && resp.b2b.sqlSelect.rows.length) {
-            return resp.set('Content-Type', 'application/json').send(resp.b2b.sqlSelect.rows[0].product_00);
+            return resp.set('Content-Type', 'application/json').send(resp.b2b.sqlSelect.rows[0][`product_${req.b2b.rec.productNum}`]);
         }
-        else {
-            await apiKeyReq(req, resp, next);
+
+        //If the LEI record is not found in the database, fetch it from the external API
+        resp.b2b.fetchResp = await fetch(req.b2b.rec.getFetchReqObj());
+
+        //Read the response body as an ArrayBuffer
+        resp.b2b.arrBuff = await resp.b2b.fetchResp.arrayBuffer();
+
+        //Check if the external API responded with an HTTP error status
+        if(!resp.b2b.fetchResp.ok) {
+            throw new B2bApiErr(
+                'extnlApiErr',
+                `External API responded with an HTTP error status: ${resp.b2b.fetchResp.status}`,
+                resp.b2b.fetchResp.status,
+                dcdrUtf8.decode(resp.b2b.arrBuff)
+            )
         }
 
         //Decode the response body from the external API
@@ -60,7 +72,13 @@ router.get(`/lei/:key`, async(req, resp, next) => {
         //Return the response body to the client and upsert it into the database
         resp.set('Content-Type', 'application/json').send(sRespBody);
 
+        //Update the database with the LEI record, using an upsert operation
         const sqlUpsert = await db.query( req.b2b.rec.sqlUpsert, [ req.b2b.rec.key, sRespBody, resp.b2b.fetchResp.status ] );
+
+        //Check if the upsert operation affected exactly one row in the database
+        if(sqlUpsert.rowCount !== 1) {
+            console.error(`Unexpected rowCount from SQL upsert. Expected 1, got ${sqlUpsert.rowCount}`);
+        };
     }
     catch(err) {
         if(err instanceof B2bApiErr) return next(err);

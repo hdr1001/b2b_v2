@@ -22,7 +22,7 @@
 
 import express from 'express';
 import appConsts from '../../share/appConsts.js';
-import gleifRoutes from './gleif.js';
+//import gleifRoutes from './gleif.js';
 
 const router = express.Router();
 
@@ -30,6 +30,6 @@ router.get('/', (req, resp) => {
     resp.json( Object.keys(appConsts.providers) );
 });
 
-router.use('/gleif', gleifRoutes);
+//router.use('/gleif', gleifRoutes);
 
 export default router;
