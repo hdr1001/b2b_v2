@@ -40,18 +40,36 @@ router.get(`/lei/:key`, async(req, resp, next) => {
             rec: createLeiRec(req.params.key, req.query.product)
         };
 
-        //Check if the LEI record is already in the database
-        resp.b2b = {
-            sqlSelect: await db.query( req.b2b.rec.sqlSelect, [req.b2b.rec.key] )
+        resp.b2b = {};
+
+        //If the forceNew query parameter is not set, check the database for an existing record
+        if(!req.query.forceNew) {
+            resp.b2b.sqlSelect = await db.query( req.b2b.rec.sqlSelect, [req.b2b.rec.key] )
         };
 
         //If the LEI record is found in the database, return it; otherwise, fetch it from the external API
         if(resp.b2b.sqlSelect && resp.b2b.sqlSelect.rows.length) {
-            return resp.set('Content-Type', 'application/json').send(resp.b2b.sqlSelect.rows[0][`product_${req.b2b.rec.productNum}`]);
+            //Set response headers
+            resp.set({
+                'Content-Type': 'application/json',
+                'X-B2BV2-Cache': true,
+                'X-B2BV2-Obtained-At': new Date(resp.b2b.sqlSelect.rows[0][`tsz_${req.b2b.rec.productNum}`]).toISOString()
+            });
+
+            return resp.send(resp.b2b.sqlSelect.rows[0][`product_${req.b2b.rec.productNum}`]);
         }
+
+        //Timestamp the request
+        req.b2b.tsz = Date.now();
 
         //If the LEI record is not found in the database, fetch it from the external API
         resp.b2b.fetchResp = await fetch(req.b2b.rec.getFetchReqObj());
+
+        //Timestamp the resonse
+        resp.b2b.tsz = Date.now();
+
+        //Log the response status time it took to get the response from the external API
+        //console.log(`External API responded with status ${resp.b2b.fetchResp.status} for key ${req.b2b.rec.key} in ${resp.b2b.tsz - req.b2b.tsz} ms`);
 
         //Read the response body as an ArrayBuffer
         resp.b2b.arrBuff = await resp.b2b.fetchResp.arrayBuffer();
@@ -69,8 +87,16 @@ router.get(`/lei/:key`, async(req, resp, next) => {
         //Decode the response body from the external API
         const sRespBody = dcdrUtf8.decode(resp.b2b.arrBuff);
 
+        //Set response headers
+        resp.set({
+            'Content-Type': 'application/json',
+            'X-B2BV2-Cache': false,
+            'X-B2BV2-Obtained-At': new Date(resp.b2b.tsz).toISOString(),
+            'X-B2BV2-Extnl-API-Status': resp.b2b.fetchResp.status          
+        });
+
         //Return the response body to the client and upsert it into the database
-        resp.set('Content-Type', 'application/json').send(sRespBody);
+        resp.send(sRespBody);
 
         //Update the database with the LEI record, using an upsert operation
         const sqlUpsert = await db.query( req.b2b.rec.sqlUpsert, [ req.b2b.rec.key, sRespBody, resp.b2b.fetchResp.status ] );
