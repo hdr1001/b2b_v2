@@ -42,13 +42,19 @@ router.get(`/lei/:key`, async(req, resp, next) => {
 
         resp.b2b = {};
 
-        //If the forceNew query parameter is not set, check the database for an existing record
-        if(!req.query.forceNew) {
+        //If the forceNew query parameter is set (either as an empty string or the value 'true')
+        //do not check the database for an existing record
+        if(!(typeof req.query.forceNew !== 'undefined' && 
+                (req.query.forceNew.length === 0 || req.query.forceNew.toLowerCase() === 'true'))) {
             resp.b2b.sqlSelect = await db.query( req.b2b.rec.sqlSelect, [req.b2b.rec.key] )
         };
 
         //If the LEI record is found in the database, return it; otherwise, fetch it from the external API
-        if(resp.b2b.sqlSelect && resp.b2b.sqlSelect.rows.length) {
+        if( resp.b2b.sqlSelect && resp.b2b.sqlSelect.rows.length &&
+            resp.b2b.sqlSelect.rows[0][`product_${req.b2b.rec.productNum}`] &&
+            resp.b2b.sqlSelect.rows[0][`http_status_${req.b2b.rec.productNum}`] >= 200 &&
+            resp.b2b.sqlSelect.rows[0][`http_status_${req.b2b.rec.productNum}`] < 300 )
+        {
             //Set response headers
             resp.set({
                 'Content-Type': 'application/json',

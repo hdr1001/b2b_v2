@@ -1,7 +1,7 @@
 // *********************************************************************
 //
-// Custom error class for the B2B API server
-// JavaScript code defining API requests
+// Function returns a new object inheriting from the specified product,
+// with the resource and key properties set
 //
 // Copyright 2026 Hans de Rooij
 //

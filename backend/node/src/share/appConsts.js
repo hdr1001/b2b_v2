@@ -20,6 +20,8 @@
 //
 // *********************************************************************
 
+import path from 'path';
+
 //Common attributes as they relate to providers of B2B APIs
 const providers = {
     gleif: {
@@ -33,10 +35,15 @@ const providers = {
 
         //Get the fetch request object for this provider
         getFetchReqObj: function() {
-            const reqUrl = new URL(this.path, this.provider.base);
+            let urlPath = this.path;
+
+            if(this.key) urlPath = path.join(urlPath, this.key);
+            if(this.singleton) urlPath = path.join(urlPath, this.singleton);
+
+            const reqUrl = new URL(urlPath, this.provider.base);
 
             return new Request(
-                reqUrl.href + (this.key ? `/${this.key}` : '/'),
+                reqUrl.href,
                 {
                     method: 'GET',
                     headers: this.provider.headers
@@ -88,23 +95,23 @@ const gleifProducts = [
         validateKey: function() { return this.provider.validateKey(this.key) }
     },
     {
+        //Provider reference
         provider: providers.gleif,
-        idx: 1,
-        productNum: '01',
-        get product() { return `product_${this.productNum}` },
+
+        //Product reference
+        idx: 1, productNum: '01',
+
+        //API path for this product
         path: '/api/v1/lei-records',
 
-        getFetchReqObj: function() {
-            const reqUrl = new URL(this.path, this.provider.base);
+        //Singleton
+        singleton: 'direct-parent',
 
-            return new Request(
-                reqUrl.href + (this.key ? `/${this.key}` : '/'),
-                {
-                    method: 'GET',
-                    headers: providers.gleif.headers
-                }
-            );
-        }
+        //Get the fetch request object for a LEI record
+        getFetchReqObj: function() { return this.provider.getFetchReqObj.call(this) },
+
+        //Check the LEI passed in
+        validateKey: function() { return this.provider.validateKey(this.key) }
     }
 ];
 
@@ -125,6 +132,8 @@ function sqlUpsert() {
 //Add the SQL statements to the product prototype
 gleifProducts[0].sqlSelect = sqlSelect.call(gleifProducts[0]);
 gleifProducts[0].sqlUpsert = sqlUpsert.call(gleifProducts[0]);
+gleifProducts[1].sqlSelect = sqlSelect.call(gleifProducts[1]);
+gleifProducts[1].sqlUpsert = sqlUpsert.call(gleifProducts[1]);
 
 export default {
     providers,
