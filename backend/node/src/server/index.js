@@ -47,7 +47,7 @@ app.use(`/${path0}/hub/providers`, hubProvidersRoutes);
 
 //An HTTP request catch-all
 app.use((req, resp, next) => {
-    next( new B2bApiErr('unableToLocate', `Requested: ${req.path}`) );
+    next( new B2bApiErr('unableToLocate', `Requested: ${req.path}`), req, resp );
 });
 
 //Implement the error handling middleware

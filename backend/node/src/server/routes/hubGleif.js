@@ -113,7 +113,7 @@ router.get(`/lei/:key`, async(req, resp, next) => {
         };
     }
     catch(err) {
-        if(err instanceof B2bApiErr) return next(err);
+        if(err instanceof B2bApiErr) return next(err, req, resp);
 
         console.error(err.stack || err);
 

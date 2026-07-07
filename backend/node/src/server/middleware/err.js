@@ -21,8 +21,9 @@
 // *********************************************************************
 
 import { B2bApiErr } from '../../share/b2bApiErr.js';
+import db from '../../share/pg.js';
 
-const errHandler = (err, req, resp, next) => {
+const errHandler = async (err, req, resp, next) => {
     let errMsg = 'Error occurred processing a request';
     errMsg = err.message || errMsg;
 
@@ -32,7 +33,23 @@ const errHandler = (err, req, resp, next) => {
 
     console.error(errMsg);
 
-    resp.status(err.b2bErr?.httpStatus?.code || 500).json( err );
+    const reportedHttpStatus = err.extnlApi?.httpStatus || err.b2bErr?.httpStatus?.code || 500;
+
+    resp.status( reportedHttpStatus ).json( err );
+
+    // Log the error to the database
+    const sSql = `INSERT INTO public.b2bv2_errs (err_msg, req_rec, b2b_err, extnl_http_status, reported_http_status) VALUES ($1, $2, $3, $4, $5)`;
+
+    await db.query(
+        sSql,
+        [
+            errMsg,
+            req.b2b?.rec || { path: req.path },
+            err,
+            resp.b2b.fetchResp.status,
+            reportedHttpStatus
+        ]
+    );
 };
 
 export default errHandler;

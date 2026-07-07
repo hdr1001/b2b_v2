@@ -25,11 +25,6 @@ import appConsts from './appConsts.js';
 import { B2bApiErr } from './b2bApiErr.js';
 
 export function createLeiRec(resource, product = 0) {
-    //Validate the LEI key
-    const lei = resource.trim();
-
-    if(!appConsts.providers.gleif.validateKey(lei)) throw new B2bApiErr('invalidParameter', `Invalid LEI: ${lei}`);
-
     //Validate the product number
     const iProduct = parseInt(product, 10);
 
@@ -37,45 +32,18 @@ export function createLeiRec(resource, product = 0) {
         throw new B2bApiErr('invalidParameter', `Invalid product number ${product} for LEI record`);
     }
 
-    //Return a new object inheriting from the specified product
-    return Object.create(
-        appConsts.gleifProducts[iProduct],
-        {
-            //Set resource as specified in the URL 
-            resource: { value: resource },
-            key: { value: lei },
+    //Create a new object inheriting from the specified product
+    const leiRec = Object.create(appConsts.gleifProducts[iProduct]);
 
-            //Set product number
-            product: { value: iProduct }
-        }
-    );
+    //Set product number property
+    leiRec.product = iProduct;
+
+    //Validate the LEI key
+    leiRec.resource = resource;
+    leiRec.key = resource.trim();
+
+    if(!appConsts.providers.gleif.validateKey(leiRec.key)) throw new B2bApiErr('invalidParameter', `Invalid LEI: ${leiRec.key}`);
+
+    //Returna new object inheriting from the specified product
+    return leiRec;
 }
-
-/*
-export class LeiRec { //Get LEI record by ID
-    constructor(resource, productNum = 0) {
-        //Set product reference property
-        switch(productNum) {
-            case 0:
-                this.product = appConsts.gleifProducts[0];
-                break;
-            case 1:
-                this.product = appConsts.gleifProducts[1];
-                break;
-            default:
-                throw new B2bApiErr('invalidParameter', `Invalid product number ${productNum} for LEI record`);
-        }
-
-        this.resource = resource;
-        this.key = resource.trim();
-
-        //Construct the request object for this API call
-        this.fetchReqObj = this.product.getFetchReqObj.call(this);
-    }
-
-    //SQL statements for this LEI record
-    get sqlSelect() { return this.product.sqlSelect }
-    get sqlUpsert() { return this.product.sqlUpsert }
-
-}
-*/
