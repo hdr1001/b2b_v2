@@ -26,7 +26,6 @@ import { B2bApiErr } from '../share/b2bApiErr.js';
 //Import the API routes
 import aboutRoutes from './routes/about.js';
 import providersRoutes from './routes/providers.js';
-import hubProvidersRoutes from './routes/hubProviders.js';
 
 //Import the API error handling middleware
 import errHandler from './middleware/err.js';
@@ -34,7 +33,7 @@ import errHandler from './middleware/err.js';
 const port = process.env.API_SERVER_PORT || 8088; //Server port
 
 //First part of the API path, e.g. http://localhost:8088/b2b/...
-const path0 = 'b2b';
+const path0 = 'b2b/api';
 
 //Initialize the Express server
 const app = express();
@@ -42,8 +41,7 @@ app.use( express.json() ); //Middleware to parse JSON requests
 
 //Implement the API routes
 app.use(`/${path0}/about`, aboutRoutes);
-//app.use(`/${path0}/providers`, providersRoutes);
-app.use(`/${path0}/hub/providers`, hubProvidersRoutes);
+app.use(`/${path0}/providers`, providersRoutes);
 
 //An HTTP request catch-all
 app.use((req, resp, next) => {

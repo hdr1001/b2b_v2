@@ -46,7 +46,7 @@ const errHandler = async (err, req, resp, next) => {
             errMsg,
             req.b2b?.rec || { path: req.path },
             err,
-            resp.b2b.fetchResp.status,
+            resp.b2b?.fetchResp?.status,
             reportedHttpStatus
         ]
     );

@@ -36,9 +36,27 @@ function sDateIsoToYYYYMMDD (sDateIso, length = 8) {
         : '';
 }
 
+//Get the value of a boolean query parameter
+function getBoolQryParam(param) {
+    //Query parameters are always strings
+    if(typeof param !== 'string') return false;
+
+    //Only true if empty or the string is 'true'
+    if(param.length === 0 || param.toLowerCase() === 'true') return true;
+
+    return false;
+}
+
+//Test if an HTTP status code is in the 2xx range
+function httpStatusOk(status) {
+    return status >= 200 && status < 300;
+}
+
 export {
     dcdrUtf8,
     nullUndefToEmptyStr,
     isObject,
-    sDateIsoToYYYYMMDD
+    sDateIsoToYYYYMMDD,
+    getBoolQryParam,
+    httpStatusOk
 };
