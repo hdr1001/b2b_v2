@@ -25,9 +25,12 @@ import path from 'path';
 //Common attributes as they relate to providers of B2B APIs
 const providers = {
     gleif: {
+        //API details for the GLEIF API
         name: 'gleif',
         key: 'lei',
         base: 'https://api.gleif.org',
+
+        path: '/api/v1/lei-records',
 
         headers: {
             Accept: 'application/vnd.api+json'
@@ -40,13 +43,13 @@ const providers = {
             if(this.key) urlPath = path.join(urlPath, this.key);
             if(this.singleton) urlPath = path.join(urlPath, this.singleton);
 
-            const reqUrl = new URL(urlPath, this.provider.base);
+            const reqUrl = new URL(urlPath, this.base);
 
             return new Request(
                 reqUrl.href,
                 {
                     method: 'GET',
-                    headers: this.provider.headers
+                    headers: this.headers
                 }
             );
         },
@@ -76,55 +79,33 @@ const providers = {
     }
 };
 
+//GLEIF level 1 product (the LEI record itself)
+const gleifProduct0 = Object.create(providers.gleif); //Prototypal inheritance from the provider
+gleifProduct0.idx = 0;
+gleifProduct0.productNum = '00';
+
+//GLEIF level 2 product (the direct parent of the LEI record)
+const gleifProduct1 = Object.create(providers.gleif); //Prototypal inheritance from the provider
+gleifProduct1.idx = 1;
+gleifProduct1.productNum = '01';
+gleifProduct1.singleton = 'direct-parent';
+
 //Products made available by GLEIF
 const gleifProducts = [
-    {
-        //Provider reference
-        provider: providers.gleif,
-
-        //Product reference
-        idx: 0, productNum: '00',
-
-        //API path for this product
-        path: '/api/v1/lei-records',
-
-        //Get the fetch request object for a LEI record
-        getFetchReqObj: function() { return this.provider.getFetchReqObj.call(this) },
-
-        //Check the LEI passed in
-        validateKey: function() { return this.provider.validateKey(this.key) }
-    },
-    {
-        //Provider reference
-        provider: providers.gleif,
-
-        //Product reference
-        idx: 1, productNum: '01',
-
-        //API path for this product
-        path: '/api/v1/lei-records',
-
-        //Singleton
-        singleton: 'direct-parent',
-
-        //Get the fetch request object for a LEI record
-        getFetchReqObj: function() { return this.provider.getFetchReqObj.call(this) },
-
-        //Check the LEI passed in
-        validateKey: function() { return this.provider.validateKey(this.key) }
-    }
+    gleifProduct0,
+    gleifProduct1
 ];
 
 // SQL statements for the products
 function sqlSelect() {
-    return `SELECT ${this.provider.key}, product_${this.productNum}, http_status_${this.productNum}, tsz_${this.productNum} FROM products_${this.provider.name} WHERE ${this.provider.key} = $1;`
+    return `SELECT ${this.key}, product_${this.productNum}, http_status_${this.productNum}, tsz_${this.productNum} FROM products_${this.name} WHERE ${this.key} = $1;`
 }
 
 function sqlUpsert() {
     return `
-        INSERT INTO products_${this.provider.name} 
-            (${this.provider.key}, product_${this.productNum}, http_status_${this.productNum}, tsz_${this.productNum}) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) 
-        ON CONFLICT ( ${this.provider.key} )
+        INSERT INTO products_${this.name} 
+            (${this.key}, product_${this.productNum}, http_status_${this.productNum}, tsz_${this.productNum}) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) 
+        ON CONFLICT ( ${this.key} )
             DO UPDATE SET product_${this.productNum} = $2, http_status_${this.productNum} = $3, tsz_${this.productNum} = CURRENT_TIMESTAMP;
     `
 }
