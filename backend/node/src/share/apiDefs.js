@@ -44,6 +44,6 @@ export function createLeiRec(resource, product = 0) {
 
     if(!appConsts.providers.gleif.validateKey(leiRec.key)) throw new B2bApiErr('invalidParameter', `Invalid LEI: ${leiRec.key}`);
 
-    //Returna new object inheriting from the specified product
+    //Return a new object inheriting from the specified product
     return leiRec;
 }
