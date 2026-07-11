@@ -8,14 +8,28 @@
 --
 --
 
+-- Drop the triggers for archiving GLEIF products if they exist
+DROP TRIGGER IF EXISTS trgr_archive_gleif_product_00 ON public.products_gleif;
+DROP TRIGGER IF EXISTS trgr_archive_gleif_product_01 ON public.products_gleif;
+
+-- Drop the functions for archiving GLEIF products if they exists
+DROP FUNCTION IF EXISTS public.f_archive_gleif_product_00();
+DROP FUNCTION IF EXISTS public.f_archive_gleif_product_01();
+
 -- Drop the table for logging errors if it exists
 DROP TABLE IF EXISTS public.b2bv2_errs;
+
+-- Drop the table for archiving GLEIF data products if it exists
+DROP TABLE IF EXISTS public.archive_gleif;
 
 -- Drop the table for storing GLEIF data products if it exists
 DROP TABLE IF EXISTS public.products_gleif;
 
 -- Drop the sequence for the primary key of the errors table if it exists
 DROP SEQUENCE IF EXISTS public.errs_id_seq;
+
+-- Drop the sequence for the primary key of the archive GLEIF table if it exists
+DROP SEQUENCE IF EXISTS public.archive_gleif_id_seq;
 
 -- Drop the database if it exists
 DROP DATABASE IF EXISTS b2b_v2;
