@@ -117,6 +117,15 @@ CREATE TRIGGER trgr_archive_gleif_product_01
    WHEN (OLD.product_01 IS NOT NULL)
    EXECUTE PROCEDURE public.f_archive_gleif_product_01();
 
+-- Create table for storing D&B data products
+CREATE TABLE public.products_dnb (
+   duns character varying(9) NOT NULL COLLATE pg_catalog."default",
+   product_00 JSONB,
+   http_status_00 smallint,
+   tsz_00 timestamptz,
+   CONSTRAINT products_dnb_pkey PRIMARY KEY (duns)
+);
+
 -- Create table for logging errors
 CREATE TABLE public.b2bv2_errs (
    id integer NOT NULL DEFAULT nextval('errs_id_seq'::regclass),

@@ -20,7 +20,7 @@
 //
 // *********************************************************************
 
-import path from 'path';
+import { join as urlJoin } from 'node:path/posix';
 
 //Common attributes as they relate to providers of B2B APIs
 const providers = {
@@ -36,17 +36,17 @@ const providers = {
             Accept: 'application/vnd.api+json'
         },
 
+        getURL: function(){ return new URL(this.path, this.base) },
+
         //Get the fetch request object for this provider
         getFetchReqObj: function() {
-            let urlPath = this.path;
+            const url = this.getURL();
 
-            if(this.key) urlPath = path.join(urlPath, this.key);
-            if(this.singleton) urlPath = path.join(urlPath, this.singleton);
-
-            const reqUrl = new URL(urlPath, this.base);
+            if(this.key) url.pathname = urlJoin(url.pathname, this.key);
+            if(this.singleton) url.pathname = urlJoin(url.pathname, this.singleton);
 
             return new Request(
-                reqUrl.href,
+                url.href,
                 {
                     method: 'GET',
                     headers: this.headers
@@ -76,6 +76,39 @@ const providers = {
 
             return m === 1;
         }
+    },
+
+    dnb: {
+        //API details for the D&B API
+        name: 'dnb', //For D&B, Dun & Bradstreet
+        key: 'duns',
+        base: 'https://plus.dnb.com',
+
+        path: 'v1',
+
+        headers: {
+            'Content-Type': 'application/json'
+        },
+
+        getURL: function(){ return new URL(this.path, this.base) },
+
+        //Get the fetch request object for this provider
+        getFetchReqObj: function() {
+            const url = this.getURL();
+
+            if(this.extPath) url.pathname = urlJoin(url.pathname, this.extPath);
+            if(this.key) url.pathname = urlJoin(url.pathname, this.key);
+            if(this.qryParams) url.search = new URLSearchParams(this.qryParams).toString();
+            this.headers.Authorization = `Bearer ${process.env.DNB_DPL_TOKEN}`;
+
+            return new Request(
+                url.href,
+                {
+                    method: 'GET',
+                    headers: this.headers
+                }
+            );
+        }
     }
 };
 
@@ -90,10 +123,24 @@ gleifProduct1.idx = 1;
 gleifProduct1.productNum = '01';
 gleifProduct1.singleton = 'direct-parent';
 
+//D&B data blocks request
+const dnbProduct0 = Object.create(providers.dnb); //Prototypal inheritance from the provider
+dnbProduct0.idx = 0;
+dnbProduct0.productNum = '00';
+dnbProduct0.extPath = 'data/duns';
+dnbProduct0.qryParams = {
+    blockIDs: 'companyinfo_L2_v1'
+};
+
 //Products made available by GLEIF
 const gleifProducts = [
     gleifProduct0,
     gleifProduct1
+];
+
+//Products made available by D&B
+const dnbProducts = [
+    dnbProduct0
 ];
 
 // SQL statements for the products
@@ -115,8 +162,11 @@ gleifProducts[0].sqlSelect = sqlSelect.call(gleifProducts[0]);
 gleifProducts[0].sqlUpsert = sqlUpsert.call(gleifProducts[0]);
 gleifProducts[1].sqlSelect = sqlSelect.call(gleifProducts[1]);
 gleifProducts[1].sqlUpsert = sqlUpsert.call(gleifProducts[1]);
+dnbProducts[0].sqlSelect = sqlSelect.call(dnbProducts[0]);
+dnbProducts[0].sqlUpsert = sqlUpsert.call(dnbProducts[0]);
 
 export default {
     providers,
-    gleifProducts
+    gleifProducts,
+    dnbProducts
 };
