@@ -47,3 +47,27 @@ export function createLeiRec(resource, product = 0) {
     //Return a new object inheriting from the specified product
     return leiRec;
 }
+
+export function createDunsRec(resource, product = 0) {
+    //Validate the product number
+    const iProduct = parseInt(product, 10);
+
+    if(isNaN(iProduct) || iProduct < 0 || iProduct >= appConsts.gleifProducts.length) {
+        throw new B2bApiErr('invalidParameter', `Invalid product number ${product} for DUNS record`);
+    }
+
+    //Create a new object inheriting from the specified product
+    const dunsRec = Object.create(appConsts.dnbProducts[iProduct]);
+
+    //Set product number property
+    dunsRec.product = iProduct;
+
+    //Validate the DUNS key
+    dunsRec.resource = resource;
+    dunsRec.key = appConsts.providers.dnb.cleanDUNS(resource.trim());
+
+    if(!dunsRec.key) throw new B2bApiErr('invalidParameter', `Invalid DUNS: ${dunsRec.key}`);
+
+    //Return a new object inheriting from the specified product
+    return dunsRec;
+}

@@ -108,6 +108,24 @@ const providers = {
                     headers: this.headers
                 }
             );
+        },
+
+        cleanDUNS: function (inDUNS) {
+            //Return an empty string if input value is not a string or is empty
+            if(typeof inDUNS !== 'string' || inDUNS.length === 0) {
+                return '';
+            }
+
+            //Correct the old school XX-XXX-XXXX DUNS format
+            let outDUNS = inDUNS.length === 11 && inDUNS.slice(2, 3) === '-' && inDUNS.slice(6, 7) === '-'
+                ? inDUNS.slice(0, 2) + inDUNS.slice(3, 6) + inDUNS.slice(7)
+                : inDUNS;
+
+            //Return an empty string if key contains more than nine characters
+            if(outDUNS.length > 9) return '';
+
+            //Return the DUNS with, if needed, 0s prepended
+            return '000000000'.slice(0, 9 - outDUNS.length) + outDUNS;
         }
     }
 };
