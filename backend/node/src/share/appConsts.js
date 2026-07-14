@@ -147,7 +147,15 @@ dnbProduct0.idx = 0;
 dnbProduct0.productNum = '00';
 dnbProduct0.extPath = 'data/duns';
 dnbProduct0.qryParams = {
-    blockIDs: 'companyinfo_L2_v1'
+    blockIDs: 'companyinfo_L2_v1,principalscontacts_L1_v2,hierarchyconnections_L1_v1'
+};
+
+const dnbProduct1 = Object.create(providers.dnb); //Prototypal inheritance from the provider
+dnbProduct1.idx = 1;
+dnbProduct1.productNum = '01';
+dnbProduct1.extPath = 'data/duns';
+dnbProduct1.qryParams = {
+    blockIDs: 'financialstrengthinsight_L2_v1,paymentinsight_L1_v1'
 };
 
 //Products made available by GLEIF
@@ -158,7 +166,8 @@ const gleifProducts = [
 
 //Products made available by D&B
 const dnbProducts = [
-    dnbProduct0
+    dnbProduct0,
+    dnbProduct1
 ];
 
 // SQL statements for the products
@@ -182,6 +191,8 @@ gleifProducts[1].sqlSelect = sqlSelect.call(gleifProducts[1]);
 gleifProducts[1].sqlUpsert = sqlUpsert.call(gleifProducts[1]);
 dnbProducts[0].sqlSelect = sqlSelect.call(dnbProducts[0]);
 dnbProducts[0].sqlUpsert = sqlUpsert.call(dnbProducts[0]);
+dnbProducts[1].sqlSelect = sqlSelect.call(dnbProducts[1]);
+dnbProducts[1].sqlUpsert = sqlUpsert.call(dnbProducts[1]);
 
 export default {
     providers,

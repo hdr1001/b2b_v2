@@ -23,6 +23,7 @@
 import express from 'express';
 import appConsts from '../../share/appConsts.js';
 import gleifRoutes from './gleif.js';
+import dnbRoutes from './dnb.js';
 
 const router = express.Router();
 
@@ -31,5 +32,6 @@ router.get('/', (req, resp) => {
 });
 
 router.use('/gleif', gleifRoutes);
+router.use('/dnb', dnbRoutes);
 
 export default router;
