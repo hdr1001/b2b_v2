@@ -52,7 +52,7 @@ export function createDunsRec(resource, product = 0) {
     //Validate the product number
     const iProduct = parseInt(product, 10);
 
-    if(isNaN(iProduct) || iProduct < 0 || iProduct >= appConsts.gleifProducts.length) {
+    if(isNaN(iProduct) || iProduct < 0 || iProduct >= appConsts.dnbProducts.length) {
         throw new B2bApiErr('invalidParameter', `Invalid product number ${product} for DUNS record`);
     }
 

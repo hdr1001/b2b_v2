@@ -19,10 +19,12 @@ DROP FUNCTION IF EXISTS public.f_archive_gleif_product_01();
 -- Drop the triggers for archiving GLEIF products if they exist
 DROP TRIGGER IF EXISTS trgr_archive_dnb_product_00 ON public.products_dnb;
 DROP TRIGGER IF EXISTS trgr_archive_dnb_product_01 ON public.products_dnb;
+DROP TRIGGER IF EXISTS trgr_archive_dnb_product_02 ON public.products_dnb;
 
 -- Drop the functions for archiving D&B products if they exists
 DROP FUNCTION IF EXISTS public.f_archive_dnb_product_00();
 DROP FUNCTION IF EXISTS public.f_archive_dnb_product_01();
+DROP FUNCTION IF EXISTS public.f_archive_dnb_product_02();
 
 -- Drop the table for logging errors if it exists
 DROP TABLE IF EXISTS public.b2bv2_errs;
@@ -151,6 +153,9 @@ CREATE TABLE public.products_dnb (
    product_01 JSONB,
    http_status_01 smallint,
    tsz_01 timestamptz,
+   product_02 JSONB,
+   http_status_02 smallint,
+   tsz_02 timestamptz,
    CONSTRAINT products_dnb_pkey PRIMARY KEY (duns)
 );
 
@@ -205,6 +210,26 @@ CREATE TRIGGER trgr_archive_dnb_product_01
    FOR EACH ROW
    WHEN (OLD.product_01 IS NOT NULL)
    EXECUTE PROCEDURE public.f_archive_dnb_product_01();
+
+-- Create a function to archive a D&B product
+CREATE FUNCTION public.f_archive_dnb_product_02()
+   RETURNS trigger
+   LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+   INSERT INTO archive_dnb(duns, product, product_key, http_status, tsz_begin)
+   VALUES (OLD.duns, OLD.product_02, '02', OLD.http_status_02, OLD.tsz_02);
+   RETURN NEW;
+END;
+$BODY$;
+
+-- Create a database trigger to archive a D&B info product on update
+CREATE TRIGGER trgr_archive_dnb_product_02
+   AFTER UPDATE OF product_02
+   ON public.products_dnb
+   FOR EACH ROW
+   WHEN (OLD.product_02 IS NOT NULL)
+   EXECUTE PROCEDURE public.f_archive_dnb_product_02();
 
 -- Create table for logging errors
 CREATE TABLE public.b2bv2_errs (

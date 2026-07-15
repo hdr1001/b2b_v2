@@ -78,18 +78,35 @@ router.get(`/duns/:key`, async (req, resp, next) => {
         //Read the response body as an ArrayBuffer
         resp.b2b.arrBuff = await resp.b2b.fetchResp.arrayBuffer();
 
+        //Decode the response body from the external API
+        const sRespBody = dcdrUtf8.decode(resp.b2b.arrBuff);
+
         //Check if the external API responded with an HTTP error status
         if(!resp.b2b.fetchResp.ok) {
             throw new B2bApiErr(
                 'extnlApiErr',
                 `External API responded with an HTTP error status: ${resp.b2b.fetchResp.status}`,
                 resp.b2b.fetchResp.status,
-                dcdrUtf8.decode(resp.b2b.arrBuff)
+                sRespBody
             )
         }
 
-        //Decode the response body from the external API
-        const sRespBody = dcdrUtf8.decode(resp.b2b.arrBuff);
+        //Deal with pagination if necessary
+        let iPageReq = parseInt(req.b2b?.rec?.qryParams?.['page[number]']);
+
+        if(iPageReq) {
+            const oDnb = JSON.parse(sRespBody);
+
+            const urlPageLast = new URL(oDnb?.links?.last);
+
+            if(urlPageLast?.searchParams?.size) {
+                const iPageLast = parseInt(urlPageLast.searchParams.get('page[number]'));
+
+                while(iPageLast > iPageReq++) {
+                    console.log(`fetch page ${iPageReq}`)
+                }
+            }
+        }
 
         //Set response headers
         resp.set({

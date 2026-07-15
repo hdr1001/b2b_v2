@@ -158,6 +158,15 @@ dnbProduct1.qryParams = {
     blockIDs: 'financialstrengthinsight_L2_v1,paymentinsight_L1_v1'
 };
 
+const dnbProduct2 = Object.create(providers.dnb); //Prototypal inheritance from the provider
+dnbProduct2.idx = 2;
+dnbProduct2.productNum = '02';
+dnbProduct2.extPath = 'familyTree';
+dnbProduct2.qryParams = {
+    'page[size]': '1000',
+    'page[number]': '1'
+};
+
 //Products made available by GLEIF
 const gleifProducts = [
     gleifProduct0,
@@ -167,7 +176,8 @@ const gleifProducts = [
 //Products made available by D&B
 const dnbProducts = [
     dnbProduct0,
-    dnbProduct1
+    dnbProduct1,
+    dnbProduct2
 ];
 
 // SQL statements for the products
@@ -185,14 +195,15 @@ function sqlUpsert() {
 }
 
 //Add the SQL statements to the product prototype
-gleifProducts[0].sqlSelect = sqlSelect.call(gleifProducts[0]);
-gleifProducts[0].sqlUpsert = sqlUpsert.call(gleifProducts[0]);
-gleifProducts[1].sqlSelect = sqlSelect.call(gleifProducts[1]);
-gleifProducts[1].sqlUpsert = sqlUpsert.call(gleifProducts[1]);
-dnbProducts[0].sqlSelect = sqlSelect.call(dnbProducts[0]);
-dnbProducts[0].sqlUpsert = sqlUpsert.call(dnbProducts[0]);
-dnbProducts[1].sqlSelect = sqlSelect.call(dnbProducts[1]);
-dnbProducts[1].sqlUpsert = sqlUpsert.call(dnbProducts[1]);
+gleifProducts.forEach(prod => {
+    prod.sqlSelect = sqlSelect.call(prod);
+    prod.sqlUpsert = sqlUpsert.call(prod);
+})
+
+dnbProducts.forEach(prod => {
+    prod.sqlSelect = sqlSelect.call(prod);
+    prod.sqlUpsert = sqlUpsert.call(prod);
+})
 
 export default {
     providers,
