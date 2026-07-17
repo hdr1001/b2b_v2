@@ -92,21 +92,43 @@ const providers = {
 
         getURL: function(){ return new URL(this.path, this.base) },
 
-        //Get the fetch request object for this provider
-        getFetchReqObj: function() {
+        getReqURL: function() {
             const url = this.getURL();
 
             if(this.extPath) url.pathname = urlJoin(url.pathname, this.extPath);
             if(this.key) url.pathname = urlJoin(url.pathname, this.key);
             if(this.qryParams) url.search = new URLSearchParams(this.qryParams).toString();
-            this.headers.Authorization = `Bearer ${process.env.DNB_DPL_TOKEN}`;
+
+            return url;
+        },
+
+        getReqOpts: function() {
+            const oOpts = {
+                method: 'GET',
+                headers: this.headers
+            };
+
+            oOpts.headers.Authorization = `Bearer ${process.env.DNB_DPL_TOKEN}`;
+
+            return oOpts;
+        },
+
+        //Get the fetch request object for this provider
+        getFetchReqObj: function() {
+            return new Request(
+                this.getReqURL(),
+                this.getReqOpts()
+            );
+        },
+
+        getFetchReqObjNextPage: function(iNextPage) {
+            const url = this.getReqURL();
+
+            url.searchParams.set('page[number]', iNextPage);
 
             return new Request(
-                url.href,
-                {
-                    method: 'GET',
-                    headers: this.headers
-                }
+                url,
+                this.getReqOpts()
             );
         },
 

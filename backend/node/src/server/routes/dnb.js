@@ -73,13 +73,13 @@ router.get(`/duns/:key`, async (req, resp, next) => {
         resp.b2b.tsz = Date.now();
 
         //Log the response status time it took to get the response from the external API
-        console.log(`External API responded with status ${resp.b2b.fetchResp.status} for key ${req.b2b.rec.key} in ${resp.b2b.tsz - req.b2b.tsz} ms`);
+        //console.log(`External API responded with status ${resp.b2b.fetchResp.status} for key ${req.b2b.rec.key} in ${resp.b2b.tsz - req.b2b.tsz} ms`);
 
         //Read the response body as an ArrayBuffer
         resp.b2b.arrBuff = await resp.b2b.fetchResp.arrayBuffer();
 
         //Decode the response body from the external API
-        const sRespBody = dcdrUtf8.decode(resp.b2b.arrBuff);
+        let sRespBody = dcdrUtf8.decode(resp.b2b.arrBuff);
 
         //Check if the external API responded with an HTTP error status
         if(!resp.b2b.fetchResp.ok) {
@@ -95,16 +95,27 @@ router.get(`/duns/:key`, async (req, resp, next) => {
         let iPageReq = parseInt(req.b2b?.rec?.qryParams?.['page[number]']);
 
         if(iPageReq) {
-            const oDnb = JSON.parse(sRespBody);
+            resp.b2b.dnbProdObj = JSON.parse(sRespBody);
 
-            const urlPageLast = new URL(oDnb?.links?.last);
+            const urlPageLast = new URL(resp.b2b.dnbProdObj?.links?.last);
 
             if(urlPageLast?.searchParams?.size) {
                 const iPageLast = parseInt(urlPageLast.searchParams.get('page[number]'));
 
+                //console.log(`Fetched page ${iPageReq}, in total ${iPageLast} pages in the product`);
+
                 while(iPageLast > iPageReq++) {
-                    console.log(`fetch page ${iPageReq}`)
+                    //console.log(`Fetching page ${iPageReq}`);
+
+                    const nextFetchResp = await fetch(req.b2b.rec.getFetchReqObjNextPage(iPageReq));
+                    const nextDnbProdObj = await nextFetchResp.json();
+
+                    resp.b2b.dnbProdObj.familyTreeMembers.push( ...nextDnbProdObj.familyTreeMembers );
                 }
+
+                //console.log(`Total number of family members retrieved ${resp.b2b.dnbProdObj.familyTreeMembers.length}`);
+
+                sRespBody = JSON.stringify(resp.b2b.dnbProdObj);
             }
         }
 
@@ -113,7 +124,8 @@ router.get(`/duns/:key`, async (req, resp, next) => {
             'Content-Type': 'application/json',
             'X-B2BV2-Cache': false,
             'X-B2BV2-Obtained-At': new Date(resp.b2b.tsz).toISOString(),
-            'X-B2BV2-Extnl-API-Status': resp.b2b.fetchResp.status          
+            'X-B2BV2-Extnl-API-Status': resp.b2b.fetchResp.status ,
+            'X-B2BV2-Num-Pages': iPageReq && iPageReq > 1 ? iPageReq - 1 : 1
         });
 
         //Return the response body to the client and upsert it into the database
