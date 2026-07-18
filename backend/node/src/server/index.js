@@ -30,6 +30,9 @@ import providersRoutes from './routes/providers.js';
 //Import the API error handling middleware
 import errHandler from './middleware/err.js';
 
+//D&B Direct+ authentication
+import dnbDplAuth from '../share/dnbDplAuth.js';
+
 const port = process.env.API_SERVER_PORT || 8088; //Server port
 
 //First part of the API path, e.g. http://localhost:8088/b2b/...
@@ -71,3 +74,6 @@ process.on('SIGINT', () => {
         process.exit(0);
     });
 });
+
+//Get the first D&B Direct+ access token
+await dnbDplAuth.getToken();

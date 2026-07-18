@@ -21,6 +21,18 @@
 
 import appConsts from './appConsts.js';
 
+function renewAdvised(expiresAt) {
+    if(!expiresAt) return true;
+
+    //Advise renewal if less than 96 minutes left
+    return (expiresAt - Date.now()) < 5760000;
+}
+
+function updateEnvVars(token, expiresAt) {
+    process.env.DNB_DPL_TOKEN = token;
+    process.env.DNB_DPL_TOKEN_EXPIRES_AT = expiresAt;
+}
+
 class DnbDplAuth {
     constructor() {
         const bodyParams = new URLSearchParams();
@@ -37,11 +49,46 @@ class DnbDplAuth {
                 },
                 body: bodyParams.toString()
             }
-        )
+        );
+
+        //Object properties
+        this.access_token = null;
+        this.expiresAt = null;
+
+        //Check whether the access token is still valid
+        this.checkInterval = setInterval(this.getToken.bind(this), 1800000);
     }
 
     getToken = async function() {
-        return fetch(this.fetchReqObj)
+        if(process.env.DNB_DPL_TOKEN) {
+            const expiresAt = this.expiresAt || process.env.DNB_DPL_TOKEN_EXPIRES_AT;
+
+            if(!renewAdvised(expiresAt)) {
+                console.log('No D&B Direct+ token renewal needed 😊');
+
+                return this.access_token || process.env.DNB_DPL_TOKEN;
+            }
+        }
+
+        //Get a new token online
+        try {
+            //Make the D&B Direct+ API call
+            const fetchAuthResp = await fetch(this.fetchReqObj.clone());
+            const oAuth = await fetchAuthResp.json();
+
+            //Update the object's attributes
+            this.access_token = oAuth.access_token;
+            this.expiresAt = new Date(Date.now() + oAuth.expires_in * 1000);
+
+            updateEnvVars(this.access_token, this.expiresAt);
+
+            console.log(`D&B Direct+ token ${this.access_token.substr(0, 3)}...`);
+
+            return this.access_token;
+        }
+        catch(err) {
+            console.error(err.message)
+        }
     }
 }
 
