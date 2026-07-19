@@ -105,7 +105,7 @@ const providers = {
         getReqOpts: function() {
             const oOpts = {
                 method: 'GET',
-                headers: this.headers
+                headers: { ...this.headers }
             };
 
             oOpts.headers.Authorization = `Bearer ${process.env.DNB_DPL_TOKEN}`;
@@ -177,7 +177,8 @@ dnbProduct1.idx = 1;
 dnbProduct1.productNum = '01';
 dnbProduct1.extPath = 'data/duns';
 dnbProduct1.qryParams = {
-    blockIDs: 'financialstrengthinsight_L2_v1,paymentinsight_L1_v1'
+    blockIDs: 'financialstrengthinsight_L2_v1,paymentinsight_L1_v1',
+    tradeUp: 'hq'
 };
 
 const dnbProduct2 = Object.create(providers.dnb); //Prototypal inheritance from the provider

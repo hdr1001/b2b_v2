@@ -32,6 +32,9 @@ DROP TABLE IF EXISTS public.b2bv2_errs;
 -- Drop the table for archiving D&B data products if it exists
 DROP TABLE IF EXISTS public.archive_dnb;
 
+-- Drop the index on product_01 - duns if it exists
+DROP INDEX IF EXISTS products_dnb_01_duns_idx;
+
 -- Drop the table for storing D&B data products if it exists
 DROP TABLE IF EXISTS public.products_dnb;
 
@@ -158,6 +161,9 @@ CREATE TABLE public.products_dnb (
    tsz_02 timestamptz,
    CONSTRAINT products_dnb_pkey PRIMARY KEY (duns)
 );
+
+-- Create an index on duns if product request is traded up
+CREATE INDEX products_dnb_01_duns_idx ON public.products_dnb((product_01->'organization'->>'duns'));
 
 -- Create table for archiving a D&B data product
 CREATE TABLE public.archive_dnb (

@@ -35,11 +35,12 @@ router.get('/', (req, resp) => {
 
 router.get(`/duns/:key`, async (req, resp, next) => {
     try {
-        //Instantiate a new LeiRec object with the LEI key from the request parameters
+        //Instantiate a new Direct+ record with the DUNS key from the request parameters
         req.b2b = {
             rec: createDunsRec(req.params.key, req.query.product)
         };
 
+        //Instantiate a B2B object on the response object
         resp.b2b = {};
 
         //If the forceNew query parameter is set (either as an empty string or the value 'true')
@@ -48,7 +49,7 @@ router.get(`/duns/:key`, async (req, resp, next) => {
             resp.b2b.sqlSelect = await db.query( req.b2b.rec.sqlSelect, [req.b2b.rec.key] )
         };
 
-        //If the LEI record is found in the database, return it; otherwise, fetch it from the external API
+        //If the DUNS record is found in the database, return it; otherwise, fetch it from the external API
         if( resp.b2b.sqlSelect && resp.b2b.sqlSelect.rows.length &&
             resp.b2b.sqlSelect.rows[0][`product_${req.b2b.rec.productNum}`] &&
             httpStatusOk(resp.b2b.sqlSelect.rows[0][`http_status_${req.b2b.rec.productNum}`]) )
@@ -66,7 +67,7 @@ router.get(`/duns/:key`, async (req, resp, next) => {
         //Timestamp the request
         req.b2b.tsz = Date.now();
 
-        //If the LEI record is not found in the database, fetch it from the external API
+        //Fetch the DUNS record from the external API
         resp.b2b.fetchResp = await fetch(req.b2b.rec.getFetchReqObj());
 
         //Timestamp the resonse
@@ -94,7 +95,7 @@ router.get(`/duns/:key`, async (req, resp, next) => {
         //Deal with pagination if necessary
         let iPageReq = parseInt(req.b2b?.rec?.qryParams?.['page[number]']);
 
-        if(iPageReq) {
+        if(iPageReq) { //page[number] query parameter specified and != 0
             resp.b2b.dnbProdObj = JSON.parse(sRespBody);
 
             const urlPageLast = new URL(resp.b2b.dnbProdObj?.links?.last);
