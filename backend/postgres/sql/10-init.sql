@@ -20,11 +20,13 @@ DROP FUNCTION IF EXISTS public.f_archive_gleif_product_01();
 DROP TRIGGER IF EXISTS trgr_archive_dnb_product_00 ON public.products_dnb;
 DROP TRIGGER IF EXISTS trgr_archive_dnb_product_01 ON public.products_dnb;
 DROP TRIGGER IF EXISTS trgr_archive_dnb_product_02 ON public.products_dnb;
+DROP TRIGGER IF EXISTS trgr_archive_dnb_product_03 ON public.products_dnb;
 
 -- Drop the functions for archiving D&B products if they exists
 DROP FUNCTION IF EXISTS public.f_archive_dnb_product_00();
 DROP FUNCTION IF EXISTS public.f_archive_dnb_product_01();
 DROP FUNCTION IF EXISTS public.f_archive_dnb_product_02();
+DROP FUNCTION IF EXISTS public.f_archive_dnb_product_03();
 
 -- Drop the table for logging errors if it exists
 DROP TABLE IF EXISTS public.b2bv2_errs;
@@ -34,6 +36,9 @@ DROP TABLE IF EXISTS public.archive_dnb;
 
 -- Drop the index on product_01 - duns if it exists
 DROP INDEX IF EXISTS products_dnb_01_duns_idx;
+
+-- Drop the index on product_03 - duns if it exists
+DROP INDEX IF EXISTS products_dnb_03_duns_idx;
 
 -- Drop the table for storing D&B data products if it exists
 DROP TABLE IF EXISTS public.products_dnb;
@@ -159,11 +164,15 @@ CREATE TABLE public.products_dnb (
    product_02 JSONB,
    http_status_02 smallint,
    tsz_02 timestamptz,
+   product_03 JSONB,
+   http_status_03 smallint,
+   tsz_03 timestamptz,
    CONSTRAINT products_dnb_pkey PRIMARY KEY (duns)
 );
 
 -- Create an index on duns if product request is traded up
 CREATE INDEX products_dnb_01_duns_idx ON public.products_dnb((product_01->'organization'->>'duns'));
+CREATE INDEX products_dnb_03_duns_idx ON public.products_dnb((product_03->'organization'->>'duns'));
 
 -- Create table for archiving a D&B data product
 CREATE TABLE public.archive_dnb (
@@ -236,6 +245,26 @@ CREATE TRIGGER trgr_archive_dnb_product_02
    FOR EACH ROW
    WHEN (OLD.product_02 IS NOT NULL)
    EXECUTE PROCEDURE public.f_archive_dnb_product_02();
+
+-- Create a function to archive a D&B product
+CREATE FUNCTION public.f_archive_dnb_product_03()
+   RETURNS trigger
+   LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+   INSERT INTO archive_dnb(duns, product, product_key, http_status, tsz_begin)
+   VALUES (OLD.duns, OLD.product_03, '03', OLD.http_status_03, OLD.tsz_03);
+   RETURN NEW;
+END;
+$BODY$;
+
+-- Create a database trigger to archive a D&B info product on update
+CREATE TRIGGER trgr_archive_dnb_product_03
+   AFTER UPDATE OF product_03
+   ON public.products_dnb
+   FOR EACH ROW
+   WHEN (OLD.product_03 IS NOT NULL)
+   EXECUTE PROCEDURE public.f_archive_dnb_product_03();
 
 -- Create table for logging errors
 CREATE TABLE public.b2bv2_errs (

@@ -93,10 +93,23 @@ const providers = {
         getURL: function(){ return new URL(this.path, this.base) },
 
         getReqURL: function() {
+            //url will be https://plus.dnb.com/v1
             const url = this.getURL();
 
+            //url will be https://plus.dnb.com/v1/data/duns, https://plus.dnb.com/v1/familyTree, ...
             if(this.extPath) url.pathname = urlJoin(url.pathname, this.extPath);
-            if(this.key) url.pathname = urlJoin(url.pathname, this.key);
+
+            //Ownership Insights endpoints do not end in a resource 🙁
+            if(this.extPath === 'beneficialowner') {
+                //url will be https://plus.dnb.com/v1/beneficialowner?duns=...
+                if(this.key) this.qryParams.duns = this.key;
+            }
+            else {
+                //https://plus.dnb.com/v1/data/duns/123456789
+                if(this.key) url.pathname = urlJoin(url.pathname, this.key);
+            }
+
+            //https://plus.dnb.com/v1/data/duns/123456789?orderReason=6332&...
             if(this.qryParams) url.search = new URLSearchParams(this.qryParams).toString();
 
             return url;
@@ -169,7 +182,8 @@ dnbProduct0.idx = 0;
 dnbProduct0.productNum = '00';
 dnbProduct0.extPath = 'data/duns';
 dnbProduct0.qryParams = {
-    blockIDs: 'companyinfo_L2_v1,principalscontacts_L1_v2,hierarchyconnections_L1_v1'
+    blockIDs: 'companyinfo_L2_v1,principalscontacts_L1_v2,hierarchyconnections_L1_v1',
+    orderReason: 6332
 };
 
 const dnbProduct1 = Object.create(providers.dnb); //Prototypal inheritance from the provider
@@ -178,7 +192,8 @@ dnbProduct1.productNum = '01';
 dnbProduct1.extPath = 'data/duns';
 dnbProduct1.qryParams = {
     blockIDs: 'financialstrengthinsight_L2_v1,paymentinsight_L1_v1',
-    tradeUp: 'hq'
+    tradeUp: 'hq',
+    orderReason: 6332
 };
 
 const dnbProduct2 = Object.create(providers.dnb); //Prototypal inheritance from the provider
@@ -188,6 +203,17 @@ dnbProduct2.extPath = 'familyTree';
 dnbProduct2.qryParams = {
     'page[size]': '1000',
     'page[number]': '1'
+};
+
+const dnbProduct3 = Object.create(providers.dnb); //Prototypal inheritance from the provider
+dnbProduct3.idx = 3;
+dnbProduct3.productNum = '03';
+dnbProduct3.extPath = 'beneficialowner';
+dnbProduct3.qryParams = {
+    productId: 'cmpbol',
+    versionId: 'v1',
+    tradeUp: 'hq',
+    ownershipPercentage: '2.5'
 };
 
 //Products made available by GLEIF
@@ -200,7 +226,8 @@ const gleifProducts = [
 const dnbProducts = [
     dnbProduct0,
     dnbProduct1,
-    dnbProduct2
+    dnbProduct2,
+    dnbProduct3
 ];
 
 // SQL statements for the products
