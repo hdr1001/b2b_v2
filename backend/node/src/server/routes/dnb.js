@@ -29,6 +29,41 @@ import db from '../../share/pg.js';
 
 const router = express.Router();
 
+//The full family tree product can be paginated
+async function getPagesFamTree(req, resp, sRespBody, iPageReq) {
+    //Convert the API response to an product object
+    resp.b2b.dnbProdObj = JSON.parse(sRespBody);
+
+    //Get the URL of the last page from the links object
+    const urlPageLast = new URL(resp.b2b.dnbProdObj?.links?.last);
+
+    //The page number is embedded in a URL search parameter
+    if(urlPageLast?.searchParams?.size) {
+        //Must be possible to convert the last page to an integer
+        const iPageLast = parseInt(urlPageLast.searchParams.get('page[number]'));
+
+        console.log(`Fetched page ${iPageReq}, in total ${iPageLast} pages in the product`);
+
+        //Only fetch additional pages if needed
+        while(iPageLast > iPageReq) {
+            iPageReq++; console.log(`Now fetching page ${iPageReq}`);
+
+            //The actual fetch logic
+            const nextFetchResp = await fetch(req.b2b.rec.getFetchReqObjNextPage(iPageReq));
+            const nextDnbProdObj = await nextFetchResp.json();
+
+            //Append the additional family tree members
+            resp.b2b.dnbProdObj.familyTreeMembers.push( ...nextDnbProdObj.familyTreeMembers );
+        }
+
+        console.log(`Total number of family members retrieved ${resp.b2b.dnbProdObj.familyTreeMembers.length}`);
+    }
+
+    resp.b2b.numPagesFetched = iPageReq;
+
+    return (resp.b2b.numPagesFetched > 1) ? JSON.stringify(resp.b2b.dnbProdObj) : sRespBody;
+}
+
 router.get('/', (req, resp) => {
     resp.json( appConsts.providers.dnb )
 });
@@ -92,31 +127,15 @@ router.get(`/duns/:key`, async (req, resp, next) => {
             )
         }
 
-        //Deal with pagination if necessary
-        let iPageReq = parseInt(req.b2b?.rec?.qryParams?.['page[number]']);
+        //Some products might be paginated
+        if(req.b2b.rec.extPath === 'familyTree') {
+            const iPageReq = parseInt(req.b2b?.rec?.qryParams?.['page[number]']);
 
-        if(iPageReq) { //page[number] query parameter specified and != 0
-            resp.b2b.dnbProdObj = JSON.parse(sRespBody);
-
-            const urlPageLast = new URL(resp.b2b.dnbProdObj?.links?.last);
-
-            if(urlPageLast?.searchParams?.size) {
-                const iPageLast = parseInt(urlPageLast.searchParams.get('page[number]'));
-
-                //console.log(`Fetched page ${iPageReq}, in total ${iPageLast} pages in the product`);
-
-                while(iPageLast > iPageReq++) {
-                    //console.log(`Fetching page ${iPageReq}`);
-
-                    const nextFetchResp = await fetch(req.b2b.rec.getFetchReqObjNextPage(iPageReq));
-                    const nextDnbProdObj = await nextFetchResp.json();
-
-                    resp.b2b.dnbProdObj.familyTreeMembers.push( ...nextDnbProdObj.familyTreeMembers );
-                }
-
-                //console.log(`Total number of family members retrieved ${resp.b2b.dnbProdObj.familyTreeMembers.length}`);
-
-                sRespBody = JSON.stringify(resp.b2b.dnbProdObj);
+            if(iPageReq === 1) {
+                sRespBody = await getPagesFamTree(req, resp, sRespBody, iPageReq)
+            }
+            else {
+                console.error('Pagination only works if value page[number] parameter is initially set to 1!')
             }
         }
 
@@ -126,7 +145,7 @@ router.get(`/duns/:key`, async (req, resp, next) => {
             'X-B2BV2-Cache': false,
             'X-B2BV2-Obtained-At': new Date(resp.b2b.tsz).toISOString(),
             'X-B2BV2-Extnl-API-Status': resp.b2b.fetchResp.status ,
-            'X-B2BV2-Num-Pages': iPageReq && iPageReq > 1 ? iPageReq - 1 : 1
+            'X-B2BV2-Num-Pages': resp.b2b.numPagesFetched ? resp.b2b.numPagesFetched : 1
         });
 
         //Return the response body to the client and upsert it into the database
