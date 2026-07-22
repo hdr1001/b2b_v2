@@ -137,7 +137,7 @@ const providers = {
         getFetchReqObjNextPage: function(iNextPage) {
             const url = this.getReqURL();
 
-            url.searchParams.set('page[number]', iNextPage);
+            url.searchParams.set(this.extPath === 'familyTree' ? 'page[number]' : 'pageNumber', iNextPage);
 
             return new Request(
                 url,
@@ -213,7 +213,9 @@ dnbProduct3.qryParams = {
     productId: 'cmpbol',
     versionId: 'v1',
     tradeUp: 'hq',
-    ownershipPercentage: '2.5'
+    //ownershipPercentage: '2.5',
+    returnPaginatedResults: true,
+    pageNumber: 1
 };
 
 //Products made available by GLEIF
