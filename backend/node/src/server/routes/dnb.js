@@ -29,18 +29,21 @@ import db from '../../share/pg.js';
 
 const router = express.Router();
 
-//The full family tree product can be paginated
-async function getPagesFamTree(req, resp, sRespBody, iPageReq) {
+//D&B products can be paginated
+async function getPaginatedResp(req, resp, sRespBody, iPageReq) {
     //Convert the API response to an product object
     resp.b2b.dnbProdObj = JSON.parse(sRespBody);
 
+    //Get the last property of the links section (a URLencoded string)
+    const sLinkLast = resp.b2b.dnbProdObj?.links?.last;
+
     //Get the URL of the last page from the links object
-    const urlPageLast = new URL(resp.b2b.dnbProdObj?.links?.last);
+    const urlPageLast = sLinkLast ? new URL(sLinkLast) : null;
 
     //The page number is embedded in a URL search parameter
     if(urlPageLast?.searchParams?.size) {
         //Must be possible to convert the last page to an integer
-        const iPageLast = parseInt(urlPageLast.searchParams.get('page[number]'));
+        const iPageLast = parseInt(urlPageLast.searchParams.get(req.b2b.rec.qryParamPageNum));
 
         console.log(`Fetched page ${iPageReq}, in total ${iPageLast} pages in the product`);
 
@@ -52,46 +55,19 @@ async function getPagesFamTree(req, resp, sRespBody, iPageReq) {
             const nextFetchResp = await fetch(req.b2b.rec.getFetchReqObjNextPage(iPageReq));
             const nextDnbProdObj = await nextFetchResp.json();
 
-            //Append the additional family tree members
-            resp.b2b.dnbProdObj.familyTreeMembers.push( ...nextDnbProdObj.familyTreeMembers );
+            //Append the additional array elements
+            if(req.b2b.rec.extPath === 'familyTree') {
+                resp.b2b.dnbProdObj.familyTreeMembers.push( ...nextDnbProdObj.familyTreeMembers );
+            }
+
+            if(req.b2b.rec.extPath === 'beneficialowner') {
+                resp.b2b.dnbProdObj.organization.beneficialOwnership.beneficialOwners.push( ...nextDnbProdObj.organization.beneficialOwnership.beneficialOwners );
+            }
         }
 
-        console.log(`Total number of family members retrieved ${resp.b2b.dnbProdObj.familyTreeMembers.length}`);
-    }
+        const numElems = resp.b2b.dnbProdObj.familyTreeMembers?.length || resp.b2b.dnbProdObj.organization?.beneficialOwnership?.beneficialOwners?.length;
 
-    resp.b2b.numPagesFetched = iPageReq;
-
-    return (resp.b2b.numPagesFetched > 1) ? JSON.stringify(resp.b2b.dnbProdObj) : sRespBody;
-}
-
-//The beneficial ownership product can be paginated
-async function getPagesBeneficialOwner(req, resp, sRespBody, iPageReq) {
-    //Convert the API response to an product object
-    resp.b2b.dnbProdObj = JSON.parse(sRespBody);
-
-    //Get the URL of the last page from the links object
-    const urlPageLast = new URL(resp.b2b.dnbProdObj?.links?.last);
-
-    //The page number is embedded in a URL search parameter
-    if(urlPageLast?.searchParams?.size) {
-        //Must be possible to convert the last page to an integer
-        const iPageLast = parseInt(urlPageLast.searchParams.get('pageNumber'));
-
-        console.log(`Fetched page ${iPageReq}, in total ${iPageLast} pages in the product`);
-
-        //Only fetch additional pages if needed
-        while(iPageLast > iPageReq) {
-            iPageReq++; console.log(`Now fetching page ${iPageReq}`);
-
-            //The actual fetch logic
-            const nextFetchResp = await fetch(req.b2b.rec.getFetchReqObjNextPage(iPageReq));
-            const nextDnbProdObj = await nextFetchResp.json();
-
-            //Append the additional family tree members
-            resp.b2b.dnbProdObj.organization.beneficialOwnership.beneficialOwners.push( ...nextDnbProdObj.organization.beneficialOwnership.beneficialOwners );
-        }
-
-        console.log(`Total number of beneficial owners retrieved ${resp.b2b.dnbProdObj.organization.beneficialOwnership.beneficialOwners.length}`);
+        console.log(`Total number of array elements retrieved ${numElems}`);
     }
 
     resp.b2b.numPagesFetched = iPageReq;
@@ -163,25 +139,14 @@ router.get(`/duns/:key`, async (req, resp, next) => {
         }
 
         //Some products might be paginated
-        if(req.b2b.rec.extPath === 'familyTree') {
-            const iPageReq = parseInt(req.b2b?.rec?.qryParams?.['page[number]']);
+        if(req.b2b.rec.qryParamPageNum) { //Paginated request (or, at least, could be)
+            const iPageReq = parseInt(req.b2b.rec?.qryParams?.[req.b2b.rec.qryParamPageNum]);
 
             if(iPageReq === 1) {
-                sRespBody = await getPagesFamTree(req, resp, sRespBody, iPageReq)
+                sRespBody = await getPaginatedResp(req, resp, sRespBody, iPageReq)
             }
             else {
-                console.error('Pagination only works if value page[number] parameter is initially set to 1!')
-            }
-        }
-
-        if(req.b2b.rec.extPath === 'beneficialowner') {
-            const iPageReq = parseInt(req.b2b?.rec?.qryParams?.['pageNumber']);
-
-            if(iPageReq === 1) {
-                sRespBody = await getPagesBeneficialOwner(req, resp, sRespBody, iPageReq)
-            }
-            else {
-                console.error('Pagination only works if value pageNumber parameter is initially set to 1!')
+                console.error('Pagination only works if value page number parameter is initially set to 1!')
             }
         }
 

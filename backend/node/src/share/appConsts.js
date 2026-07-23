@@ -137,7 +137,7 @@ const providers = {
         getFetchReqObjNextPage: function(iNextPage) {
             const url = this.getReqURL();
 
-            url.searchParams.set(this.extPath === 'familyTree' ? 'page[number]' : 'pageNumber', iNextPage);
+            url.searchParams.set(this.qryParamPageNum, iNextPage);
 
             return new Request(
                 url,
@@ -204,6 +204,7 @@ dnbProduct2.qryParams = {
     'page[size]': '1000',
     'page[number]': '1'
 };
+dnbProduct2.qryParamPageNum = 'page[number]';
 
 const dnbProduct3 = Object.create(providers.dnb); //Prototypal inheritance from the provider
 dnbProduct3.idx = 3;
@@ -217,6 +218,7 @@ dnbProduct3.qryParams = {
     returnPaginatedResults: true,
     pageNumber: 1
 };
+dnbProduct3.qryParamPageNum = 'pageNumber';
 
 //Products made available by GLEIF
 const gleifProducts = [
