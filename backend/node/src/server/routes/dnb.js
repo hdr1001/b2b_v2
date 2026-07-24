@@ -53,6 +53,19 @@ async function getPaginatedResp(req, resp, sRespBody, iPageReq) {
 
             //The actual fetch logic
             const nextFetchResp = await fetch(req.b2b.rec.getFetchReqObjNextPage(iPageReq));
+
+            //Check if the external API responded with an HTTP error status
+            if(!nextFetchResp.ok) {
+                const buffErrResp = await nextFetchResp.arrayBuffer();
+
+                throw new B2bApiErr(
+                    'extnlApiErr',
+                    `External API responded with an HTTP error status: ${nextFetchResp.status}`,
+                    nextFetchResp.status,
+                    dcdrUtf8.decode(buffErrResp)
+                );
+            }
+
             const nextDnbProdObj = await nextFetchResp.json();
 
             //Append the additional array elements
