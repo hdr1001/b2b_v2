@@ -23,7 +23,7 @@
 import { join as urlJoin } from 'node:path/posix';
 
 //Common attributes as they relate to providers of B2B APIs
-const providers = {
+const providers = Object.freeze({
     gleif: {
         //API details for the GLEIF API
         name: 'gleif',
@@ -163,62 +163,78 @@ const providers = {
             return '000000000'.slice(0, 9 - outDUNS.length) + outDUNS;
         }
     }
-};
+});
 
 //GLEIF level 1 product (the LEI record itself)
-const gleifProduct0 = Object.create(providers.gleif); //Prototypal inheritance from the provider
-gleifProduct0.idx = 0;
-gleifProduct0.productNum = '00';
+const gleifProduct0 = Object.assign(
+    Object.create(providers.gleif), //Prototypal inheritance from the provider
+    { idx: 0, productNum: '00' }
+); 
 
 //GLEIF level 2 product (the direct parent of the LEI record)
-const gleifProduct1 = Object.create(providers.gleif); //Prototypal inheritance from the provider
-gleifProduct1.idx = 1;
-gleifProduct1.productNum = '01';
-gleifProduct1.singleton = 'direct-parent';
+const gleifProduct1 = Object.assign(
+    Object.create(providers.gleif), //Prototypal inheritance from the provider
+    { idx: 1, productNum: '01', singleton: 'direct-parent' }
+); 
 
 //D&B data blocks request
-const dnbProduct0 = Object.create(providers.dnb); //Prototypal inheritance from the provider
-dnbProduct0.idx = 0;
-dnbProduct0.productNum = '00';
-dnbProduct0.extPath = 'data/duns';
-dnbProduct0.qryParams = {
-    blockIDs: 'companyinfo_L2_v1,principalscontacts_L1_v2,hierarchyconnections_L1_v1',
-    orderReason: 6332
-};
+const dnbProduct0 = Object.assign(
+    Object.create(providers.dnb), //Prototypal inheritance from the provider
+    {
+        idx: 0,
+        productNum: '00',
+        extPath: 'data/duns',
+        qryParams: {
+            blockIDs: 'companyinfo_L2_v1,principalscontacts_L1_v2,hierarchyconnections_L1_v1',
+            orderReason: 6332
+        }
+    }
+);
 
-const dnbProduct1 = Object.create(providers.dnb); //Prototypal inheritance from the provider
-dnbProduct1.idx = 1;
-dnbProduct1.productNum = '01';
-dnbProduct1.extPath = 'data/duns';
-dnbProduct1.qryParams = {
-    blockIDs: 'financialstrengthinsight_L2_v1,paymentinsight_L1_v1',
-    tradeUp: 'hq',
-    orderReason: 6332
-};
+const dnbProduct1 = Object.assign(
+    Object.create(providers.dnb), //Prototypal inheritance from the provider
+    {
+        idx: 1,
+        productNum: '01',
+        extPath: 'data/duns',
+        qryParams: {
+            blockIDs: 'financialstrengthinsight_L2_v1,paymentinsight_L1_v1',
+            tradeUp: 'hq',
+            orderReason: 6332
+        }
+    }
+);
 
-const dnbProduct2 = Object.create(providers.dnb); //Prototypal inheritance from the provider
-dnbProduct2.idx = 2;
-dnbProduct2.productNum = '02';
-dnbProduct2.extPath = 'familyTree';
-dnbProduct2.qryParams = {
-    'page[size]': '1000',
-    'page[number]': '1'
-};
-dnbProduct2.qryParamPageNum = 'page[number]';
+const dnbProduct2 = Object.assign(
+    Object.create(providers.dnb), //Prototypal inheritance from the provider
+    {
+        idx: 2,
+        productNum: '02',
+        extPath: 'familyTree',
+        qryParams: {
+            'page[size]': '1000',
+            'page[number]': '1'
+        },
+        qryParamPageNum: 'page[number]' //Paginated request
+    }
+);
 
-const dnbProduct3 = Object.create(providers.dnb); //Prototypal inheritance from the provider
-dnbProduct3.idx = 3;
-dnbProduct3.productNum = '03';
-dnbProduct3.extPath = 'beneficialowner';
-dnbProduct3.qryParams = {
-    productId: 'cmpbol',
-    versionId: 'v1',
-    tradeUp: 'hq',
-    //ownershipPercentage: '2.5',
-    returnPaginatedResults: true,
-    pageNumber: 1
-};
-dnbProduct3.qryParamPageNum = 'pageNumber';
+const dnbProduct3 = Object.assign(
+    Object.create(providers.dnb), //Prototypal inheritance from the provider
+    {
+        idx: 3,
+        productNum: '03',
+        extPath: 'beneficialowner',
+        qryParams: {
+            productId: 'cmpbol',
+            versionId: 'v1',
+            tradeUp: 'hq',
+            returnPaginatedResults: true,
+            pageNumber: 1
+        },
+        qryParamPageNum: 'pageNumber' //Paginated request
+    }
+);
 
 //Products made available by GLEIF
 const gleifProducts = [
@@ -252,11 +268,13 @@ function sqlUpsert() {
 gleifProducts.forEach(prod => {
     prod.sqlSelect = sqlSelect.call(prod);
     prod.sqlUpsert = sqlUpsert.call(prod);
+    Object.freeze(prod);
 })
 
 dnbProducts.forEach(prod => {
     prod.sqlSelect = sqlSelect.call(prod);
     prod.sqlUpsert = sqlUpsert.call(prod);
+    Object.freeze(prod);
 })
 
 export default {
