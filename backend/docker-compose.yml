@@ -1,24 +1,25 @@
-version: '3.4'
+name: b2b_v2
 
 services:
-  b2bapiv2:
-    image: b2bapiv2
+  postgres18:
+    container_name: pg18
 
     build:
-      context: node/src
-      dockerfile: ../Dockerfile
-      args:
-        NODE_ENV: ${NODE_ENV}
+      context: ./postgres
+
+    secrets:
+      - pg_password
 
     environment:
-      API_SERVER_PORT: ${API_SERVER_PORT}
-
-      PG_USER: ${PG_USER}
-      PG_PASSWORD: ${PG_PASSWORD}
-
-      PG_HOST: ${PG_HOST}
-      PG_DATABASE: ${PG_DATABASE}
-      PG_PORT: ${PG_PORT}
+      - POSTGRES_DB=${PG_DATABASE}
+      - POSTGRES_USER=${PG_USER} 
+      - POSTGRES_PASSWORD_FILE=/run/secrets/pg_password
 
     ports:
-      - ${API_SERVER_PORT}:${API_SERVER_PORT}
+      - ${PG_PORT_LOCAL}:${PG_PORT_DKR}
+
+    restart: unless-stopped
+
+secrets:
+   pg_password:
+      file: ${HOME}/.secrets/db_pwd
