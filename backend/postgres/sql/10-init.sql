@@ -58,12 +58,6 @@ DROP SEQUENCE IF EXISTS public.archive_dnb_id_seq;
 -- Drop the sequence for the primary key of the archive GLEIF table if it exists
 DROP SEQUENCE IF EXISTS public.archive_gleif_id_seq;
 
--- Drop the database if it exists
-DROP DATABASE IF EXISTS b2b_v2;
-
--- Create the database
-CREATE DATABASE b2b_v2;
-
 -- Create the sequence for the primary key of table archive gleif
 CREATE SEQUENCE public.archive_gleif_id_seq
     INCREMENT 1

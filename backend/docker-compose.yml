@@ -18,7 +18,17 @@ services:
     ports:
       - ${PG_PORT_LOCAL}:${PG_PORT_DKR}
 
+    volumes:
+      - /var/lib/pg/data:/var/lib/postgresql/18/docker
+      - ./postgres/sql:/docker-entrypoint-initdb.d
+
     restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${PG_USER} -d ${PG_DATABASE}'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 secrets:
    pg_password:
