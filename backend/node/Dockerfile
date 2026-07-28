@@ -4,13 +4,13 @@ FROM node:24.18-trixie
 WORKDIR /usr/src/app
 
 # Install app dependencies
-COPY package*.json .
+COPY package*.json ./
 
 RUN npm ci --production
 # RUN npm ci --omit=dev
 
 # Deliver source code
-COPY ./src .
+COPY ./src ./src
 
 USER node
 

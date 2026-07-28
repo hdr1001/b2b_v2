@@ -12,7 +12,7 @@ services:
 
     environment:
       - POSTGRES_DB=${PG_DATABASE}
-      - POSTGRES_USER=${PG_USER} 
+      - POSTGRES_USER=${PG_USER}
       - POSTGRES_PASSWORD_FILE=/run/secrets/pg_password
 
     ports:
@@ -30,6 +30,44 @@ services:
       timeout: 5s
       retries: 5
 
+  node24:
+    container_name: node24
+
+    build:
+      context: ./node
+
+    secrets:
+      - pg_password
+      - dnb_dpl_key
+      - dnb_dpl_secret
+
+    environment:
+      - PG_HOST=${PG_HOST}
+      - PG_DATABASE=${PG_DATABASE}
+      - PG_USER=${PG_USER}
+      - PG_PORT=${PG_PORT_LOCAL}
+
+      - PG_PASSWORD=/run/secrets/pg_password
+
+      - NODE_ENV=${NODE_ENV}
+      - API_SERVER_PORT=${API_SERVER_PORT}
+
+      - DNB_DPL_KEY=/run/secrets/dnb_dpl_key
+      - DNB_DPL_SECRET=/run/secrets/dnb_dpl_secret
+
+    depends_on:
+      postgres18:
+        condition: service_healthy
+
+    ports:
+      - ${API_SERVER_PORT}:${API_SERVER_PORT}
+
+    restart: unless-stopped
+
 secrets:
    pg_password:
-      file: ${HOME}/.secrets/db_pwd
+      file: ${HOME}/.secrets/pg_password
+   dnb_dpl_key:
+      file: ${HOME}/.secrets/dnb_dpl_key
+   dnb_dpl_secret:
+      file: ${HOME}/.secrets/dnb_dpl_secret
