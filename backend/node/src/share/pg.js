@@ -20,14 +20,16 @@
 //
 // *********************************************************************
 
+import { readFileSync } from 'node:fs';
 import pg from 'pg';
+
 pg.defaults.parseInt8 = true;
 
 const pgConn = {
     host: process.env.PG_HOST,
     database: process.env.PG_DATABASE,
     user: process.env.PG_USER,
-    password: process.env.PG_PASSWORD,
+    password: process.env.PG_PASSWORD || readFileSync('/run/secrets/pg_password', 'utf8').trim(),
     port: process.env.PG_PORT || 5432,
     max: 10, //set pool max size to 10
     idleTimeoutMillis: 1000, //close idle clients after 1 second

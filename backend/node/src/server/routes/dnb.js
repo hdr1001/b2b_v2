@@ -22,7 +22,7 @@
 
 import express from 'express';
 import { getBoolQryParam, httpStatusOk, dcdrUtf8 } from '../../share/utils.js';
-import appConsts from '../../share/appConsts.js';
+import { providers } from '../../share/appConsts.js';
 import { createDunsRec } from '../../share/apiDefs.js';
 import { B2bApiErr } from '../../share/b2bApiErr.js';
 import db from '../../share/pg.js';
@@ -89,7 +89,7 @@ async function getPaginatedResp(req, resp, sRespBody, iPageReq) {
 }
 
 router.get('/', (req, resp) => {
-    resp.json( appConsts.providers.dnb )
+    resp.json( providers.dnb )
 });
 
 router.get(`/duns/:key`, async (req, resp, next) => {

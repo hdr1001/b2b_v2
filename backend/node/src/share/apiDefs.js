@@ -21,19 +21,19 @@
 // *********************************************************************
 
 import qry from './pg.js';
-import appConsts from './appConsts.js';
+import { providers, gleifProducts, dnbProducts } from './appConsts.js';
 import { B2bApiErr } from './b2bApiErr.js';
 
 export function createLeiRec(resource, product = 0) {
     //Validate the product number
     const iProduct = parseInt(product, 10);
 
-    if(isNaN(iProduct) || iProduct < 0 || iProduct >= appConsts.gleifProducts.length) {
+    if(isNaN(iProduct) || iProduct < 0 || iProduct >= gleifProducts.length) {
         throw new B2bApiErr('invalidParameter', `Invalid product number ${product} for LEI record`);
     }
 
     //Create a new object inheriting from the specified product
-    const leiRec = Object.create(appConsts.gleifProducts[iProduct]);
+    const leiRec = Object.create(gleifProducts[iProduct]);
 
     //Set product number property
     leiRec.product = iProduct;
@@ -42,7 +42,7 @@ export function createLeiRec(resource, product = 0) {
     leiRec.resource = resource;
     leiRec.key = resource.trim();
 
-    if(!appConsts.providers.gleif.validateKey(leiRec.key)) throw new B2bApiErr('invalidParameter', `Invalid LEI: ${leiRec.key}`);
+    if(!providers.gleif.validateKey(leiRec.key)) throw new B2bApiErr('invalidParameter', `Invalid LEI: ${leiRec.key}`);
 
     //Return a new object inheriting from the specified product
     return leiRec;
@@ -52,19 +52,19 @@ export function createDunsRec(resource, product = 0) {
     //Validate the product number
     const iProduct = parseInt(product, 10);
 
-    if(isNaN(iProduct) || iProduct < 0 || iProduct >= appConsts.dnbProducts.length) {
+    if(isNaN(iProduct) || iProduct < 0 || iProduct >= dnbProducts.length) {
         throw new B2bApiErr('invalidParameter', `Invalid product number ${product} for DUNS record`);
     }
 
     //Create a new object inheriting from the specified product
-    const dunsRec = Object.create(appConsts.dnbProducts[iProduct]);
+    const dunsRec = Object.create(dnbProducts[iProduct]);
 
     //Set product number property
     dunsRec.product = iProduct;
 
     //Validate the DUNS key
     dunsRec.resource = resource;
-    dunsRec.key = appConsts.providers.dnb.cleanDUNS(resource.trim());
+    dunsRec.key = providers.dnb.cleanDUNS(resource.trim());
 
     if(!dunsRec.key) throw new B2bApiErr('invalidParameter', `Invalid DUNS: ${dunsRec.key}`);
 

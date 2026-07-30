@@ -21,14 +21,14 @@
 // *********************************************************************
 
 import express from 'express';
-import appConsts from '../../share/appConsts.js';
+import { providers } from '../../share/appConsts.js';
 import gleifRoutes from './gleif.js';
 import dnbRoutes from './dnb.js';
 
 const router = express.Router();
 
 router.get('/', (req, resp) => {
-    resp.json( Object.keys( appConsts.providers ) );
+    resp.json( Object.keys( providers ) );
 });
 
 router.use('/gleif', gleifRoutes);

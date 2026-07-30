@@ -22,7 +22,7 @@
 
 import express from 'express';
 import { getBoolQryParam, httpStatusOk, dcdrUtf8 } from '../../share/utils.js';
-import appConsts from '../../share/appConsts.js';
+import { providers } from '../../share/appConsts.js';
 import { createLeiRec } from '../../share/apiDefs.js';
 import { B2bApiErr } from '../../share/b2bApiErr.js';
 import db from '../../share/pg.js';
@@ -30,7 +30,7 @@ import db from '../../share/pg.js';
 const router = express.Router();
 
 router.get('/', (req, resp) => {
-    resp.json( appConsts.providers.gleif )
+    resp.json( providers.gleif )
 });
 
 router.get(`/lei/:key`, async (req, resp, next) => {

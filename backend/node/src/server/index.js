@@ -31,7 +31,7 @@ import providersRoutes from './routes/providers.js';
 import errHandler from './middleware/err.js';
 
 //D&B Direct+ authentication
-import dnbDplAuth from '../share/dnbDplAuth.js';
+import { dnbDplAuth } from '../share/appConsts.js';
 
 const port = process.env.API_SERVER_PORT || 8088; //Server port
 

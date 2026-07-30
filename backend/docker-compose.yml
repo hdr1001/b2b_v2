@@ -46,14 +46,8 @@ services:
       - PG_DATABASE=${PG_DATABASE}
       - PG_USER=${PG_USER}
       - PG_PORT=${PG_PORT_LOCAL}
-
-      - PG_PASSWORD=/run/secrets/pg_password
-
       - NODE_ENV=${NODE_ENV}
       - API_SERVER_PORT=${API_SERVER_PORT}
-
-      - DNB_DPL_KEY=/run/secrets/dnb_dpl_key
-      - DNB_DPL_SECRET=/run/secrets/dnb_dpl_secret
 
     depends_on:
       postgres18:

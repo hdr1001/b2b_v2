@@ -21,6 +21,7 @@
 // *********************************************************************
 
 import { join as urlJoin } from 'node:path/posix';
+import { readFileSync } from 'node:fs';
 
 //Common attributes as they relate to providers of B2B APIs
 const providers = Object.freeze({
@@ -121,7 +122,7 @@ const providers = Object.freeze({
                 headers: { ...this.headers }
             };
 
-            oOpts.headers.Authorization = `Bearer ${process.env.DNB_DPL_TOKEN}`;
+            oOpts.headers.Authorization = `Bearer ${dnbDplAuth.token}`;
 
             return oOpts;
         },
@@ -277,8 +278,85 @@ dnbProducts.forEach(prod => {
     Object.freeze(prod);
 })
 
-export default {
+class DnbDplAuth {
+    #creds_key;
+    #creds_secret;
+    #token;
+    #expiresAt;
+
+    constructor() {
+        this.#creds_key = process.env.DNB_DPL_KEY || readFileSync('/run/secrets/dnb_dpl_key', 'utf8').trim();
+        this.#creds_secret = process.env.DNB_DPL_SECRET || readFileSync('/run/secrets/dnb_dpl_secret', 'utf8').trim();
+
+        const bodyParams = new URLSearchParams();
+        bodyParams.append('grant_type', 'client_credentials');
+
+        this.fetchReqObj = new Request(
+            new URL('v3/token', providers.dnb.base),
+            {
+                method: 'POST',
+                headers: {
+                    ...providers.dnb.headers,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    Authorization: `Basic ${Buffer.from(`${this.#creds_key}:${this.#creds_secret}`).toString('Base64')}`
+                },
+                body: bodyParams.toString()
+            }
+        );
+
+        //Object properties
+        this.access_token = null;
+        this.expiresAt = null;
+
+        //Check whether the access token is still valid
+        this.checkInterval = setInterval(this.getToken.bind(this), 1800000);
+    }
+
+    renewAdvised() {
+        if(!this.#expiresAt) return true;
+
+        //Advise renewal if less than 96 minutes left
+        return (this.#expiresAt - Date.now()) < 5760000;
+    }
+
+    async getToken() {
+        if(this.#token) {
+            if(!this.renewAdvised()) {
+                console.log('No D&B Direct+ token renewal needed 😊');
+
+                return this.#token;
+            }
+        }
+
+        //Get a new token online
+        try {
+            //Make the D&B Direct+ API call
+            const fetchAuthResp = await fetch(this.fetchReqObj.clone());
+            const oAuth = await fetchAuthResp.json();
+
+            //Update the object's attributes
+            this.#token = oAuth.access_token;
+            this.#expiresAt = new Date(Date.now() + oAuth.expires_in * 1000);
+
+            console.log(`D&B Direct+ token ${this.#token.substr(0, 3)}...`);
+
+            return this.#token;
+        }
+        catch(err) {
+            console.error(err.message)
+        }
+    }
+
+    get token() {
+        return this.#token;
+    } 
+}
+
+const dnbDplAuth = new DnbDplAuth;
+
+export {
     providers,
     gleifProducts,
-    dnbProducts
+    dnbProducts,
+    dnbDplAuth
 };
