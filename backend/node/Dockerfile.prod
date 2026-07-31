@@ -1,4 +1,4 @@
-FROM node:24.18-trixie
+FROM node:24.18-trixie-slim
 
 # App directory
 WORKDIR /usr/src/app
@@ -6,8 +6,8 @@ WORKDIR /usr/src/app
 # Install app dependencies
 COPY package*.json ./
 
-# Install the dependencies (incl.dev)
-RUN npm ci
+# Install the dependencies (excl.dev)
+RUN npm ci --omit=dev
 
 # Deliver source code
 COPY ./src ./src
@@ -15,4 +15,4 @@ COPY ./src ./src
 USER node
 
 # Start application
-CMD [ "npm", "run", "dev" ]
+CMD [ "npm", "start" ]
