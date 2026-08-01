@@ -39,8 +39,8 @@ const pgConn = {
 
 const { Pool } = pg;
 
-const pool = new Pool({ ...pgConn, ssl: false });
-//const pool = new Pool({ ...pgConn, ssl: { require: true } });
+//const pool = new Pool({ ...pgConn, ssl: false });
+const pool = new Pool({ ...pgConn, ssl: { require: true } });
 
 pool.query('SELECT NOW() as now')
     .then(sqlRslt => console.log(`Database connection at ${sqlRslt.rows[0].now}`))

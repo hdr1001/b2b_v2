@@ -77,3 +77,8 @@ process.on('SIGINT', () => {
 
 //Get the first D&B Direct+ access token
 await dnbDplAuth.getToken();
+
+//Make sure the NODE_ENV environment variable is set
+if(!process.env.NODE_ENV) process.env.NODE_ENV = 'development';
+
+console.log(`Running in ${process.env.NODE_ENV} mode`);
