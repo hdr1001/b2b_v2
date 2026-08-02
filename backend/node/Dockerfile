@@ -15,4 +15,4 @@ COPY ./src ./src
 USER node
 
 # Start application
-CMD [ "npm", "run", "dev" ]
+CMD [ "npm", "run", "dkrdev" ]
