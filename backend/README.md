@@ -69,7 +69,7 @@ To stop the server: ctrl+c
 
 #### Check out the repository
 
-#### Fill out .env parameters
+#### Fill out .env.dkr.dev parameters
 Use .env file .env.dkr.dev
 ```
 NODE_ENV=development
@@ -104,4 +104,45 @@ docker compose --env-file ./.env.dkr.dev up -d
 #### Stop the server
 ```
 docker compose --env-file ./.env.dkr.dev down
+```
+
+### Scenario 3: Run the Dockerized production version of the project 
+
+#### Check out the repository
+
+#### Fill out .env parameters
+Use .env file .env.dkr.prod
+```
+NODE_ENV=production
+API_SERVER_PORT=8081
+
+PG_HOST=host.docker.internal
+PG_DATABASE=b2bv2
+PG_USER=postgres
+PG_PORT_LOCAL=5433
+PG_PORT_DKR=5432
+```
+
+#### Fill out the application secrets
+In directory ~/.secrets/ make sure the following files contain the appropriate credentials:
+```
+pg_password
+dnb_dpl_key
+dnb_dpl_secret
+```
+
+#### Build the Docker images
+```
+cd backend
+docker compose --env-file ./.env.dkr.prod build
+```
+
+#### Start the application, Postgres & Node
+```
+docker compose --env-file ./.env.dkr.prod up -d
+```
+
+#### Stop the server
+```
+docker compose --env-file ./.env.dkr.prod down
 ```
