@@ -31,6 +31,9 @@ DROP FUNCTION IF EXISTS public.f_archive_dnb_product_03();
 -- Drop the table for logging errors if it exists
 DROP TABLE IF EXISTS public.b2bv2_errs;
 
+-- Drop the table for storing D&B IDentity Resolution requests if it exists
+DROP TABLE IF EXISTS public.idr_dnb_dpl;
+
 -- Drop the table for archiving D&B data products if it exists
 DROP TABLE IF EXISTS public.archive_dnb;
 
@@ -52,6 +55,9 @@ DROP TABLE IF EXISTS public.products_gleif;
 -- Drop the sequence for the primary key of the errors table if it exists
 DROP SEQUENCE IF EXISTS public.errs_id_seq;
 
+-- Drop the sequence for the primary key of the D&B IDentity Resolutiontable if it exists
+DROP SEQUENCE IF EXISTS public.idr_dnb_dpl_id_seq;
+
 -- Drop the sequence for the primary key of the archive D&B table if it exists
 DROP SEQUENCE IF EXISTS public.archive_dnb_id_seq;
 
@@ -68,6 +74,14 @@ CREATE SEQUENCE public.archive_gleif_id_seq
 
 -- Create the sequence for the primary key of table archive D&B
 CREATE SEQUENCE public.archive_dnb_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+-- Create the sequence for the primary key of table D&B Direct+ IDR
+CREATE SEQUENCE public.idr_dnb_dpl_id_seq
     INCREMENT 1
     START 1
     MINVALUE 1
@@ -259,6 +273,16 @@ CREATE TRIGGER trgr_archive_dnb_product_03
    FOR EACH ROW
    WHEN (OLD.product_03 IS NOT NULL)
    EXECUTE PROCEDURE public.f_archive_dnb_product_03();
+
+-- Create table for persisting IDR requests
+CREATE TABLE public.idr_dnb_dpl (
+   id integer NOT NULL DEFAULT nextval('idr_dnb_dpl_id_seq'::regclass),
+   req_params JSONB,
+   resp_idr JSONB,
+   http_status smallint,
+   tsz timestamptz,
+   CONSTRAINT idr_dnb_dpl_pkey PRIMARY KEY (id)
+);
 
 -- Create table for logging errors
 CREATE TABLE public.b2bv2_errs (

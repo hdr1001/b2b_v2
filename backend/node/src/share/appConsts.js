@@ -129,10 +129,7 @@ const providers = Object.freeze({
 
         //Get the fetch request object for this provider
         getFetchReqObj: function() {
-            return new Request(
-                this.getReqURL(),
-                this.getReqOpts()
-            );
+            return new Request( this.getReqURL(), this.getReqOpts() )
         },
 
         getFetchReqObjNextPage: function(iNextPage) {
@@ -140,10 +137,7 @@ const providers = Object.freeze({
 
             url.searchParams.set(this.qryParamPageNum, iNextPage);
 
-            return new Request(
-                url,
-                this.getReqOpts()
-            );
+            return new Request( url, this.getReqOpts() );
         },
 
         cleanDUNS: function (inDUNS) {
@@ -234,6 +228,13 @@ const dnbProduct3 = Object.assign(
             pageNumber: 1
         },
         qryParamPageNum: 'pageNumber' //Paginated request
+    }
+);
+
+const dnbIDentityResolution = Object.assign(
+    Object.create(providers.dnb), //Prototypal inheritance from the provider
+    {
+        extPath: 'match/cleanseMatch',
     }
 );
 
