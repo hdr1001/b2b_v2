@@ -23,7 +23,7 @@
 import express from 'express';
 import { getBoolQryParam, httpStatusOk, dcdrUtf8 } from '../../share/utils.js';
 import { providers } from '../../share/appConsts.js';
-import { createDunsRec } from '../../share/apiDefs.js';
+import { createDunsRec, createDnbIDR } from '../../share/apiDefs.js';
 import { B2bApiErr } from '../../share/b2bApiErr.js';
 import db from '../../share/pg.js';
 
@@ -90,6 +90,71 @@ async function getPaginatedResp(req, resp, sRespBody, iPageReq) {
 
 router.get('/', (req, resp) => {
     resp.json( providers.dnb )
+});
+
+router.post(`/idr`, async (req, resp, next) => {
+    try {
+        //Instantiate a new Direct+ record with the DUNS key from the request parameters
+        req.b2b = {
+            rec: createDnbIDR(req.body)
+        };
+
+        //Instantiate a B2B object on the response object
+        resp.b2b = {};
+
+        //Timestamp the request
+        req.b2b.tsz = Date.now();
+
+        //Fetch the DUNS record from the external API
+        resp.b2b.fetchResp = await fetch(req.b2b.rec.getFetchReqObj());
+
+        //Timestamp the resonse
+        resp.b2b.tsz = Date.now();
+
+        //Log the response status time it took to get the response from the external API
+        console.log(`External API responded with status ${resp.b2b.fetchResp.status} in ${resp.b2b.tsz - req.b2b.tsz} ms`);
+
+        //Read the response body as an ArrayBuffer
+        resp.b2b.arrBuff = await resp.b2b.fetchResp.arrayBuffer();
+
+        //Decode the response body from the external API
+        let sRespBody = dcdrUtf8.decode(resp.b2b.arrBuff);
+
+        //Check if the external API responded with an HTTP error status
+        if(!resp.b2b.fetchResp.ok) {
+            throw new B2bApiErr(
+                'extnlApiErr',
+                `External API responded with an HTTP error status: ${resp.b2b.fetchResp.status}`,
+                resp.b2b.fetchResp.status,
+                sRespBody
+            )
+        }
+
+        //Set response headers
+        resp.set({
+            'Content-Type': 'application/json',
+            'X-B2BV2-Obtained-At': new Date(resp.b2b.tsz).toISOString(),
+            'X-B2BV2-Extnl-API-Status': resp.b2b.fetchResp.status,
+        });
+
+        //Return the response body to the client and upsert it into the database
+        resp.send(sRespBody);
+/*
+        //Update the database with the LEI record, using an upsert operation
+        const sqlUpsert = await db.query( req.b2b.rec.sqlUpsert, [ req.b2b.rec.key, sRespBody, resp.b2b.fetchResp.status ] );
+
+        //Check if the upsert operation affected exactly one row in the database
+        if(sqlUpsert.rowCount !== 1) {
+            console.error(`Unexpected rowCount from SQL upsert. Expected 1, got ${sqlUpsert.rowCount}`);
+        }; */
+    }
+    catch(err) {
+        if(err instanceof B2bApiErr) return next(err, req, resp);
+
+        console.error(err.stack || err);
+
+        next( new B2bApiErr('unexpected', `Unexpected error in /dnb/idr, ${err.message} (${err.cause})`) );
+    }
 });
 
 router.get(`/duns/:key`, async (req, resp, next) => {
@@ -168,7 +233,7 @@ router.get(`/duns/:key`, async (req, resp, next) => {
             'Content-Type': 'application/json',
             'X-B2BV2-Cache': false,
             'X-B2BV2-Obtained-At': new Date(resp.b2b.tsz).toISOString(),
-            'X-B2BV2-Extnl-API-Status': resp.b2b.fetchResp.status ,
+            'X-B2BV2-Extnl-API-Status': resp.b2b.fetchResp.status,
             'X-B2BV2-Num-Pages': resp.b2b.numPagesFetched ? resp.b2b.numPagesFetched : 1
         });
 

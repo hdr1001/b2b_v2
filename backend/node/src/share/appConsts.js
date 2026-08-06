@@ -100,14 +100,17 @@ const providers = Object.freeze({
             //url will be https://plus.dnb.com/v1/data/duns, https://plus.dnb.com/v1/familyTree, ...
             if(this.extPath) url.pathname = urlJoin(url.pathname, this.extPath);
 
-            //Ownership Insights endpoints do not end in a resource 🙁
-            if(this.extPath === 'beneficialowner') {
-                //url will be https://plus.dnb.com/v1/beneficialowner?duns=...
-                if(this.key) this.qryParams.duns = this.key;
-            }
-            else {
-                //https://plus.dnb.com/v1/data/duns/123456789
-                if(this.key) url.pathname = urlJoin(url.pathname, this.key);
+            if(this.extPath !== 'match/cleanseMatch') { //cleanseMatch endpoint fully formed
+                //Ownership Insights endpoints do not end in a resource 🙁
+                if(this.extPath === 'beneficialowner') {
+                    //url will be https://plus.dnb.com/v1/beneficialowner?duns=...
+                    if(this.key) this.qryParams.duns = this.key;
+                }
+                //All other endpoints end in a resource 🙃
+                else {
+                    //https://plus.dnb.com/v1/data/duns/123456789
+                    if(this.key) url.pathname = urlJoin(url.pathname, this.key);
+                }
             }
 
             //https://plus.dnb.com/v1/data/duns/123456789?orderReason=6332&...
@@ -359,5 +362,6 @@ export {
     providers,
     gleifProducts,
     dnbProducts,
+    dnbIDentityResolution,
     dnbDplAuth
 };

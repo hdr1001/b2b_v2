@@ -21,7 +21,8 @@
 // *********************************************************************
 
 import qry from './pg.js';
-import { providers, gleifProducts, dnbProducts } from './appConsts.js';
+import { isObject } from './utils.js';
+import { providers, gleifProducts, dnbProducts, dnbIDentityResolution } from './appConsts.js';
 import { B2bApiErr } from './b2bApiErr.js';
 
 export function createLeiRec(resource, product = 0) {
@@ -70,4 +71,24 @@ export function createDunsRec(resource, product = 0) {
 
     //Return a new object inheriting from the specified product
     return dunsRec;
+}
+
+export function createDnbIDR(qryParams) {
+    //Validate, at the most basic level, that search criteria have been provided
+    if(!qryParams || !isObject(qryParams)) {
+        throw new B2bApiErr('invalidParameter', `No search criteria provided for identity resolution transaction`);
+    }
+
+    //At least a country code and one other search parameter must be provided
+    if(!qryParams.countryISOAlpha2Code || !qryParams.countryISOAlpha2Code.trim() || Object.keys(qryParams).length < 2) {
+        throw new B2bApiErr('invalidParameter', `Insufficient search criteria provided for the identity resolution transaction`);
+    }
+
+    //Create a new object inheriting from the specified product
+    const dnbIDR = Object.create(dnbIDentityResolution);
+
+    dnbIDR.qryParams = qryParams;
+
+    //Return the new object with the search criteria specified
+    return dnbIDR;
 }
