@@ -112,7 +112,7 @@ router.post(`/idr`, async (req, resp, next) => {
         resp.b2b.tsz = Date.now();
 
         //Log the response status time it took to get the response from the external API
-        console.log(`External API responded with status ${resp.b2b.fetchResp.status} in ${resp.b2b.tsz - req.b2b.tsz} ms`);
+        //console.log(`External API responded with status ${resp.b2b.fetchResp.status} in ${resp.b2b.tsz - req.b2b.tsz} ms`);
 
         //Read the response body as an ArrayBuffer
         resp.b2b.arrBuff = await resp.b2b.fetchResp.arrayBuffer();
@@ -130,23 +130,26 @@ router.post(`/idr`, async (req, resp, next) => {
             )
         }
 
+        //Update the database with the IDR record, straight-up insert
+        const sqlInsert = await db.query( req.b2b.rec.sqlInsert, [ req.b2b.rec.qryParams, sRespBody, resp.b2b.fetchResp.status ] );
+
+        if(sqlInsert.rowCount !== 1) {
+            console.error(`Unexpected rowCount from SQL insert. Expected 1, got ${sqlInsert.rowCount}`);
+        }
+        
+        //Get the ID of the inserted row
+        const insID = sqlInsert.rows && sqlInsert.rows[0] && sqlInsert.rows[0].id;
+
         //Set response headers
         resp.set({
             'Content-Type': 'application/json',
             'X-B2BV2-Obtained-At': new Date(resp.b2b.tsz).toISOString(),
             'X-B2BV2-Extnl-API-Status': resp.b2b.fetchResp.status,
+            'X-B2BV2-IDR-Row-ID': insID
         });
 
         //Return the response body to the client and upsert it into the database
         resp.send(sRespBody);
-/*
-        //Update the database with the LEI record, using an upsert operation
-        const sqlUpsert = await db.query( req.b2b.rec.sqlUpsert, [ req.b2b.rec.key, sRespBody, resp.b2b.fetchResp.status ] );
-
-        //Check if the upsert operation affected exactly one row in the database
-        if(sqlUpsert.rowCount !== 1) {
-            console.error(`Unexpected rowCount from SQL upsert. Expected 1, got ${sqlUpsert.rowCount}`);
-        }; */
     }
     catch(err) {
         if(err instanceof B2bApiErr) return next(err, req, resp);

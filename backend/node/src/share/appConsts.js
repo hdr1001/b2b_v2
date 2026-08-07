@@ -238,6 +238,7 @@ const dnbIDentityResolution = Object.assign(
     Object.create(providers.dnb), //Prototypal inheritance from the provider
     {
         extPath: 'match/cleanseMatch',
+        sqlInsert: `INSERT INTO idr_dnb_dpl (req_params, resp_idr, http_status, tsz) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING id;`,
     }
 );
 
