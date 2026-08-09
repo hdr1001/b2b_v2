@@ -185,7 +185,7 @@ CREATE INDEX products_dnb_03_duns_idx ON public.products_dnb((product_03->'organ
 -- Create table for archiving a D&B data product
 CREATE TABLE public.archive_dnb (
    id integer NOT NULL DEFAULT nextval('archive_dnb_id_seq'::regclass),
-   duns character varying(32) COLLATE pg_catalog."default",
+   duns character varying(9) COLLATE pg_catalog."default",
    product JSONB,
    product_key character(2),
    http_status smallint,
@@ -281,6 +281,8 @@ CREATE TABLE public.idr_dnb_dpl (
    resp_idr JSONB,
    http_status smallint,
    tsz timestamptz,
+   duns character varying(9),
+   duns_tsz timestamptz,
    CONSTRAINT idr_dnb_dpl_pkey PRIMARY KEY (id)
 );
 

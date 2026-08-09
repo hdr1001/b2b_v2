@@ -160,6 +160,53 @@ router.post(`/idr`, async (req, resp, next) => {
     }
 });
 
+router.put(`/idr/:id`, async (req, resp, next) => {
+    try {
+        //Validate the record ID specified
+        if(!req.params.id) {
+            throw new B2bApiErr('invalidParam', `No IDR record ID specified.`);
+        }
+
+        const idrID = parseInt(req.params.id);
+
+        if(isNaN(idrID)) {
+            throw new B2bApiErr('invalidParam', `Invalid IDR record ID specified: ${req.params.id}`);
+        }
+
+        const sqlUpdate = 'UPDATE idr_dnb_dpl SET duns = $1, duns_tsz = CURRENT_TIMESTAMP WHERE id = $2';
+
+        const dbQry = await db.query(sqlUpdate, [req.body.duns, idrID]);
+
+        if(dbQry.rowCount === 0) {
+            throw new B2bApiErr('unableToLocate', `No IDR record found with ID ${idrID}`);
+        }
+
+        if(dbQry.rowCount > 1) {
+            throw new B2bApiErr('unexpected', `Unexpected rowCount from SQL update. Expected 1, got ${dbQry.rowCount}`);
+        }
+
+        //Set response headers
+        resp.set({
+            'Content-Type': 'application/json',
+            'X-B2BV2-IDR-Row-ID': idrID
+        });
+
+        //Return the response body to the client and upsert it into the database
+        resp.send({
+            idr_id: idrID,
+            status: 'updated',
+            duns: req.body.duns,
+        });
+    }
+    catch(err) {
+        if(err instanceof B2bApiErr) return next(err, req, resp);
+
+        console.error(err.stack || err);
+
+        next( new B2bApiErr('unexpected', `Unexpected error in /dnb/idr/${req.params.id}, ${err.message} (${err.cause})`) );
+    }   
+});
+
 router.get(`/duns/:key`, async (req, resp, next) => {
     try {
         //Instantiate a new Direct+ record with the DUNS key from the request parameters
