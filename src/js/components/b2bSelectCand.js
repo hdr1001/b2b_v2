@@ -19,6 +19,7 @@
 //
 // ***************************************************************** */
 
+import { getButtonElement } from '../elemsShared.js';
 import LeiRec from '../gleif/leiRec.js';
 import LabelArrValues from '../ui/lvsLabelArrValues.js';
 import RptSection from '../ui/rptSection.js';
@@ -80,19 +81,6 @@ export default class B2bSelectCand extends HTMLElement {
         //References to specific form parts
         this.#b2bSelectCand = document.createElement('div');
         this.#selectCandForm = document.createElement('form');
-
-        //Function to create a dialog button element
-        function getButtonElement(id, name, label) {
-            const button = document.createElement('button');
-
-            button.id = id;
-            button.name = name;
-            button.type = 'button';
-
-            button.textContent = label;
-
-            return button;
-        }
 
         //Create the component's HTML structure
         this.#b2bSelectCand.id = 'top-select-candidate';

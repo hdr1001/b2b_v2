@@ -21,6 +21,7 @@
 
 import { createElement, X, Plus, Minus } from 'lucide';
 import { isoCountries } from '../../assets/codes/isoCountries.js';
+import { getButtonElement } from '../elemsShared.js';
 
 const cssB2bSearchCriteria = new URL('./css/b2bSearchCriteria.css', import.meta.url).href;
 
@@ -238,19 +239,6 @@ export default class B2bSearchCriteria extends HTMLElement {
             docFrag.appendChild(formLabel);
 
             return docFrag;
-        }
-
-        //Function to create a dialog button element
-        function getButtonElement(id, name, label) {
-            const button = document.createElement('button');
-
-            button.id = id;
-            button.name = name;
-            button.type = 'button';
-
-            button.textContent = label;
-
-            return button;
         }
 
         //The text-input elements which are part of the dialog

@@ -85,6 +85,16 @@ export default class B2bAbout extends HTMLElement {
     
         this.#dialogAbout.appendChild(aboutTitle);
 
+        const tab = document.createElement('div');
+        tab.classList.add('tab');
+        tab.innerHTML = `
+            <button class="tablinks" onclick="openCity(event, 'London')">London</button>
+            <button class="tablinks" onclick="openCity(event, 'Paris')">Paris</button>
+            <button class="tablinks" onclick="openCity(event, 'Tokyo')">Tokyo</button>
+        `;
+
+        this.#dialogAbout.appendChild(tab);
+
         //Display the about information in a table
         const table = document.createElement('table');
 
