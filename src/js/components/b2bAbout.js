@@ -20,6 +20,7 @@
 // ***************************************************************** */
 
 import { createElement, X } from 'lucide';
+import { getButtonElement } from '../elemsShared.js';
 
 const cssB2bAbout = new URL('./css/b2bAbout.css', import.meta.url).href;
 
@@ -28,6 +29,7 @@ export default class B2bAbout extends HTMLElement {
     #dialogAbout;
 
     //Event handling functions
+    //#tabClick = evnt => { this.showModal() }
     #dialogClose = evnt => { if(evnt.target === this.#dialogAbout) this.close() }
     #iconClose = () => this.close();
 
@@ -85,15 +87,18 @@ export default class B2bAbout extends HTMLElement {
     
         this.#dialogAbout.appendChild(aboutTitle);
 
-        const tab = document.createElement('div');
-        tab.classList.add('tab');
-        tab.innerHTML = `
-            <button class="tablinks" onclick="openCity(event, 'London')">London</button>
-            <button class="tablinks" onclick="openCity(event, 'Paris')">Paris</button>
-            <button class="tablinks" onclick="openCity(event, 'Tokyo')">Tokyo</button>
-        `;
+        const tabs = document.createElement('div');
+        tabs.classList.add('tabs');
 
-        this.#dialogAbout.appendChild(tab);
+        tabs.appendChild(getButtonElement('about-general', 'about', 'About'));
+        tabs.appendChild(getButtonElement('about-connection', 'connection', 'Connection'));
+
+        this.#dialogAbout.appendChild(tabs);
+
+        //Create the content of the tabs in divs with the class 'tab-content'
+        let tabContentDiv = document.createElement('div');
+        tabContentDiv.classList.add('tab-content');
+        tabContentDiv.id = 'about-general';
 
         //Display the about information in a table
         const table = document.createElement('table');
@@ -104,7 +109,23 @@ export default class B2bAbout extends HTMLElement {
         addAboutRow(table, 'License', 'Apache 2.0');
         addAboutRow(table, 'Hosted on', window.location?.host || 'N/A');
 
-        this.#dialogAbout.appendChild(table);
+        //Add the table in a content div and add the content div to the dialog
+        tabContentDiv.appendChild(table);
+        this.#dialogAbout.appendChild(tabContentDiv);
+
+        //Create the content of the tabs in divs with the class 'tab-content'
+        tabContentDiv = document.createElement('div');
+        tabContentDiv.classList.add('tab-content');
+        tabContentDiv.id = 'about-connection';
+        tabContentDiv.style.display = 'none';
+
+        //Set the connection parameters
+        const temp = document.createElement('p');
+        temp.innerText = 'Connection parameters will be displayed here.';
+
+        //Add the content to the connection tab
+        tabContentDiv.appendChild(temp);
+        this.#dialogAbout.appendChild(tabContentDiv);
 
         //Add an event listener to close the dialog when clicking outside of it
         this.#dialogAbout.addEventListener('click', this.#dialogClose);
