@@ -29,7 +29,12 @@ export default class B2bAbout extends HTMLElement {
     #dialogAbout;
 
     //Event handling functions
-    //#tabClick = evnt => { this.showModal() }
+    #tabClick = evnt => {
+        this.#dialogAbout.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+
+        const nowActDiv = this.#dialogAbout.querySelector('#' + evnt.target.id.slice(4));
+        if(nowActDiv) nowActDiv.style.display = 'block';
+    }
     #dialogClose = evnt => { if(evnt.target === this.#dialogAbout) this.close() }
     #iconClose = () => this.close();
 
@@ -50,7 +55,7 @@ export default class B2bAbout extends HTMLElement {
 
     //When the component is added to the DOM, render its content
     connectedCallback() {
-        //The actual content consists of header/data pairs
+        //The actual content of the general tab consists of header/data pairs
         function addAboutRow(table, sHeader, sData) {
             const tr = document.createElement('tr');
             const th = document.createElement('th');
@@ -87,13 +92,21 @@ export default class B2bAbout extends HTMLElement {
     
         this.#dialogAbout.appendChild(aboutTitle);
 
-        const tabs = document.createElement('div');
-        tabs.classList.add('tabs');
+        //The about dialog has two tabs
+        const tabContainer = document.createElement('div');
+        tabContainer.classList.add('tabContainer');
 
-        tabs.appendChild(getButtonElement('about-general', 'about', 'About'));
-        tabs.appendChild(getButtonElement('about-connection', 'connection', 'Connection'));
+        const tabCtrls = document.createElement('div');
+        tabCtrls.classList.add('tabCtrls');
 
-        this.#dialogAbout.appendChild(tabs);
+        //Create the buttons for the tab controls and add event listeners to them
+        let btn = tabCtrls.appendChild(getButtonElement('btn-about-general', 'about', 'About'));
+        btn.addEventListener('click', this.#tabClick);
+
+        btn = tabCtrls.appendChild(getButtonElement('btn-about-connection', 'connection', 'Connection'));
+        btn.addEventListener('click', this.#tabClick);
+
+        tabContainer.appendChild(tabCtrls);
 
         //Create the content of the tabs in divs with the class 'tab-content'
         let tabContentDiv = document.createElement('div');
@@ -111,9 +124,11 @@ export default class B2bAbout extends HTMLElement {
 
         //Add the table in a content div and add the content div to the dialog
         tabContentDiv.appendChild(table);
-        this.#dialogAbout.appendChild(tabContentDiv);
 
-        //Create the content of the tabs in divs with the class 'tab-content'
+        //Add the tab content to the tab container
+        tabContainer.appendChild(tabContentDiv);
+
+        //Create the second tab content div for the connection parameters
         tabContentDiv = document.createElement('div');
         tabContentDiv.classList.add('tab-content');
         tabContentDiv.id = 'about-connection';
@@ -125,7 +140,12 @@ export default class B2bAbout extends HTMLElement {
 
         //Add the content to the connection tab
         tabContentDiv.appendChild(temp);
-        this.#dialogAbout.appendChild(tabContentDiv);
+
+        //Add the tab content to the tab container
+        tabContainer.appendChild(tabContentDiv);
+
+        //Add the tab container to the dialog
+        this.#dialogAbout.appendChild(tabContainer);
 
         //Add an event listener to close the dialog when clicking outside of it
         this.#dialogAbout.addEventListener('click', this.#dialogClose);
