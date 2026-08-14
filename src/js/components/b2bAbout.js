@@ -30,12 +30,16 @@ export default class B2bAbout extends HTMLElement {
 
     //Event handling functions
     #tabClick = evnt => {
-        this.#dialogAbout.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
-
-        const nowActDiv = this.#dialogAbout.querySelector('#' + evnt.target.id.slice(4));
-        if(nowActDiv) nowActDiv.style.display = 'block';
+        this.#dialogAbout.querySelectorAll('.tab-content').forEach(tab => {
+            if(tab.id === evnt.target.id.slice(4)) {
+                tab.style.display = 'block';
+            }
+            else {
+                tab.style.display = 'none';
+            }
+        })
     }
-    #dialogClose = evnt => { if(evnt.target === this.#dialogAbout) this.close() }
+    #dialogClose = evnt => { if(evnt.target === this.#dialogAbout) this.close() };
     #iconClose = () => this.close();
 
     constructor() {
@@ -97,7 +101,7 @@ export default class B2bAbout extends HTMLElement {
         tabContainer.classList.add('tabContainer');
 
         const tabCtrls = document.createElement('div');
-        tabCtrls.classList.add('tabCtrls');
+        tabCtrls.classList.add('tab-controls');
 
         //Create the buttons for the tab controls and add event listeners to them
         let btn = tabCtrls.appendChild(getButtonElement('btn-about-general', 'about', 'About'));
@@ -156,6 +160,12 @@ export default class B2bAbout extends HTMLElement {
 
     disconnectedCallback() {
         //Remove the event listeners
+        const btns = this.#dialogAbout.querySelectorAll('.tab-controls button');
+
+        if(btns) {
+            btns.forEach(btn => btn.removeEventListener('click', this.#tabClick));
+        }
+
         this.#dialogAbout.removeEventListener('click', this.#dialogClose);
 
         const iconClose = this.#dialogAbout.querySelector('.icon-close');
