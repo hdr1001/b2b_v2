@@ -27,6 +27,7 @@ const cssB2bAbout = new URL('./css/b2bAbout.css', import.meta.url).href;
 //A HTML5 B2B waiting animation custom component class
 export default class B2bAbout extends HTMLElement {
     #dialogAbout;
+    #connectionForm;
 
     //Event handling functions
     #tabClick = evnt => {
@@ -98,7 +99,7 @@ export default class B2bAbout extends HTMLElement {
 
         //The about dialog has two tabs
         const tabContainer = document.createElement('div');
-        tabContainer.classList.add('tabContainer');
+        tabContainer.classList.add('tab-container');
 
         const tabCtrls = document.createElement('div');
         tabCtrls.classList.add('tab-controls');
@@ -138,12 +139,48 @@ export default class B2bAbout extends HTMLElement {
         tabContentDiv.id = 'about-connection';
         tabContentDiv.style.display = 'none';
 
-        //Set the connection parameters
-        const temp = document.createElement('p');
-        temp.innerText = 'Connection parameters will be displayed here.';
+        this.#connectionForm = document.createElement('form');
 
-        //Add the content to the connection tab
-        tabContentDiv.appendChild(temp);
+        //Add the form element to the connection tab
+        tabContentDiv.appendChild(this.#connectionForm);
+
+        const frmFieldsTop = document.createElement('fieldset');
+        frmFieldsTop.id = 'connection-parameters';
+        this.#connectionForm.appendChild(frmFieldsTop);
+
+        const frmLegend = document.createElement('legend');
+        frmLegend.innerText = 'Connection parameters';
+        frmFieldsTop.appendChild(frmLegend);
+
+        let frmFields = document.createElement('fieldset');
+        frmFields.id = 'connection-protocol';
+
+        frmFieldsTop.appendChild(frmFields);
+
+        let lbl = document.createElement('label');
+        lbl.setAttribute('for', 'connection-protocol-http');
+        lbl.innerText = 'HTTP';
+        frmFields.appendChild(lbl);
+
+        let radioBtn = document.createElement('input');
+        radioBtn.type = 'radio';
+        radioBtn.name = 'connection-protocol';
+        radioBtn.id = 'connection-protocol-http';
+        radioBtn.value = 'http';
+        lbl.appendChild(radioBtn);
+
+        lbl = document.createElement('label');
+        lbl.setAttribute('for', 'connection-protocol-https');
+        lbl.innerText = 'HTTPS';
+        frmFields.appendChild(lbl);
+
+        radioBtn = document.createElement('input');
+        radioBtn.type = 'radio';
+        radioBtn.name = 'connection-protocol';
+        radioBtn.id = 'connection-protocol-https';
+        radioBtn.value = 'https';
+        radioBtn.checked = true;
+        lbl.appendChild(radioBtn);
 
         //Add the tab content to the tab container
         tabContainer.appendChild(tabContentDiv);
