@@ -74,6 +74,39 @@ export default class B2bAbout extends HTMLElement {
             table.appendChild(tr);
         }
 
+        //Function to create a fieldset element
+        const getFieldsetElement = fsElem => {
+            const fieldset = document.createElement('fieldset');
+            fieldset.id = fsElem.id;
+
+            if(fsElem.legend) {
+                const legend = document.createElement('legend');
+                legend.textContent = fsElem.legend;
+                fieldset.appendChild(legend);
+            }
+
+            return fieldset;
+        }
+
+        //Function to create a label/(text-)input element pair
+        const getInputElement = inpElem => {
+            const fldSet = getFieldsetElement( {id: `fs-${inpElem.id}`} );
+
+            const lbl = document.createElement('label');
+            lbl.htmlFor = inpElem.id;
+            lbl.textContent = inpElem.label;
+
+            const inp = document.createElement('input');
+            inp.type = 'text';
+            inp.id = inpElem.id;
+            inp.name = inpElem.name;
+
+            lbl.appendChild(inp);
+            fldSet.appendChild(lbl);
+
+            return fldSet;
+        }
+
         //This component is a dialog, so create a dialog element in the shadow DOM tree
         this.#dialogAbout = document.createElement('dialog');
         this.#dialogAbout.id = 'dialog-about';
@@ -139,24 +172,21 @@ export default class B2bAbout extends HTMLElement {
         tabContentDiv.id = 'about-connection';
         tabContentDiv.style.display = 'none';
 
+        //Create a form element to specify the connection parameters
         this.#connectionForm = document.createElement('form');
 
         //Add the form element to the connection tab
         tabContentDiv.appendChild(this.#connectionForm);
 
-        const frmFieldsTop = document.createElement('fieldset');
-        frmFieldsTop.id = 'connection-parameters';
+        //Create a fieldset element for the connection parameters
+        const frmFieldsTop = getFieldsetElement({id: 'connection-parameters', legend: 'Connection parameters'});
         this.#connectionForm.appendChild(frmFieldsTop);
 
-        const frmLegend = document.createElement('legend');
-        frmLegend.innerText = 'Connection parameters';
-        frmFieldsTop.appendChild(frmLegend);
-
-        let frmFields = document.createElement('fieldset');
-        frmFields.id = 'connection-protocol';
-
+        //Create a fieldset element for the connection protocol parameters
+        let frmFields = getFieldsetElement({id: 'connection-protocol'});
         frmFieldsTop.appendChild(frmFields);
 
+        //option 1: http
         let lbl = document.createElement('label');
         lbl.setAttribute('for', 'connection-protocol-http');
         lbl.innerText = 'HTTP';
@@ -169,6 +199,7 @@ export default class B2bAbout extends HTMLElement {
         radioBtn.value = 'http';
         lbl.appendChild(radioBtn);
 
+        //option 2: https
         lbl = document.createElement('label');
         lbl.setAttribute('for', 'connection-protocol-https');
         lbl.innerText = 'HTTPS';
@@ -181,6 +212,11 @@ export default class B2bAbout extends HTMLElement {
         radioBtn.value = 'https';
         radioBtn.checked = true;
         lbl.appendChild(radioBtn);
+
+        //Add the text input fields for the connection parameters
+        frmFieldsTop.appendChild(getInputElement({id: 'connection-host', name: 'connection-host', label: 'Host'}));
+        frmFieldsTop.appendChild(getInputElement({id: 'connection-port', name: 'connection-port', label: 'Port'}));
+        frmFieldsTop.appendChild(getInputElement({id: 'connection-path', name: 'connection-path', label: 'Path'}));
 
         //Add the tab content to the tab container
         tabContainer.appendChild(tabContentDiv);
