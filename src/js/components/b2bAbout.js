@@ -39,7 +39,23 @@ export default class B2bAbout extends HTMLElement {
                 tab.style.display = 'none';
             }
         })
-    }
+    };
+
+    #connBtnClicked = evnt => {
+        if(evnt.target.id === 'connection-btn-test') {
+            console.log('Test connection parameters');
+            return;
+        }
+        else if(evnt.target.id === 'connection-btn-reset') {
+            console.log('Reset connection parameters');
+            return;
+        }
+        else if(evnt.target.id === 'connection-btn-save') {
+            console.log('Save connection parameters');
+            return;
+        }
+    };
+
     #dialogClose = evnt => { if(evnt.target === this.#dialogAbout) this.close() };
     #iconClose = () => this.close();
 
@@ -218,6 +234,22 @@ export default class B2bAbout extends HTMLElement {
         frmFieldsTop.appendChild(getInputElement({id: 'connection-port', name: 'connection-port', label: 'Port'}));
         frmFieldsTop.appendChild(getInputElement({id: 'connection-path', name: 'connection-path', label: 'Path'}));
 
+        //Create a fieldset element for the connection protocol parameters
+        frmFields = getFieldsetElement({id: 'connection-btns'});
+        frmFieldsTop.appendChild(frmFields);
+
+        btn = getButtonElement('connection-btn-test', 'test', 'Test');
+        btn.addEventListener('click', this.#connBtnClicked);
+        frmFields.appendChild(btn);
+
+        btn = getButtonElement('connection-btn-reset', 'reset', 'Reset');
+        btn.addEventListener('click', this.#connBtnClicked);
+        frmFields.appendChild(btn);
+
+        btn = getButtonElement('connection-btn-save', 'save', 'Save');
+        btn.addEventListener('click', this.#connBtnClicked);
+        frmFields.appendChild(btn);
+
         //Add the tab content to the tab container
         tabContainer.appendChild(tabContentDiv);
 
@@ -233,10 +265,16 @@ export default class B2bAbout extends HTMLElement {
 
     disconnectedCallback() {
         //Remove the event listeners
-        const btns = this.#dialogAbout.querySelectorAll('.tab-controls button');
+        let btns = this.#dialogAbout.querySelectorAll('.tab-controls button');
 
         if(btns) {
             btns.forEach(btn => btn.removeEventListener('click', this.#tabClick));
+        }
+
+        btns = this.#connectionForm.querySelectorAll('#connection-btns button');
+
+        if(btns) {
+            btns.forEach(btn => btn.removeEventListener('click', this.#connBtnClicked));
         }
 
         this.#dialogAbout.removeEventListener('click', this.#dialogClose);
