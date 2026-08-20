@@ -23,8 +23,18 @@ const newLineSep = '\n';
 const joinSep = ', ';
 const delimSep = '|';
 
+const connB2bApi = {
+    protocol: 'http',
+    host: 'localhost',
+    port: 3000,
+    path: 'b2b/api'
+};
+
+let urlB2bApi = new URL(`${connB2bApi.path}/`, `${connB2bApi.protocol}://${connB2bApi.host}:${connB2bApi.port}/`);
+
 export default {
     newLineSep,
     joinSep,
-    delimSep
+    delimSep,
+    urlB2bApi
 };

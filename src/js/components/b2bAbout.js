@@ -20,6 +20,7 @@
 // ***************************************************************** */
 
 import { createElement, X } from 'lucide';
+import globals from '../globals.js';
 import { getButtonElement } from '../elemsShared.js';
 
 const cssB2bAbout = new URL('./css/b2bAbout.css', import.meta.url).href;
@@ -116,6 +117,7 @@ export default class B2bAbout extends HTMLElement {
             inp.type = 'text';
             inp.id = inpElem.id;
             inp.name = inpElem.name;
+            inp.value = inpElem.value || '';
 
             lbl.appendChild(inp);
             fldSet.appendChild(lbl);
@@ -208,11 +210,15 @@ export default class B2bAbout extends HTMLElement {
         lbl.innerText = 'HTTP';
         frmFields.appendChild(lbl);
 
+        let connProtocol = globals.urlB2bApi.protocol && globals.urlB2bApi.protocol.toLowerCase();
+        if(connProtocol && connProtocol.slice(-1) === ':') connProtocol = connProtocol.slice(0, -1);
+
         let radioBtn = document.createElement('input');
         radioBtn.type = 'radio';
         radioBtn.name = 'connection-protocol';
         radioBtn.id = 'connection-protocol-http';
         radioBtn.value = 'http';
+        if(connProtocol === 'http') radioBtn.checked = true;
         lbl.appendChild(radioBtn);
 
         //option 2: https
@@ -226,13 +232,19 @@ export default class B2bAbout extends HTMLElement {
         radioBtn.name = 'connection-protocol';
         radioBtn.id = 'connection-protocol-https';
         radioBtn.value = 'https';
-        radioBtn.checked = true;
+        if(connProtocol === 'https') radioBtn.checked = true;
         lbl.appendChild(radioBtn);
 
         //Add the text input fields for the connection parameters
-        frmFieldsTop.appendChild(getInputElement({id: 'connection-host', name: 'connection-host', label: 'Host'}));
-        frmFieldsTop.appendChild(getInputElement({id: 'connection-port', name: 'connection-port', label: 'Port'}));
-        frmFieldsTop.appendChild(getInputElement({id: 'connection-path', name: 'connection-path', label: 'Path'}));
+        frmFieldsTop.appendChild(getInputElement(
+            {id: 'connection-host', name: 'connection-host', label: 'Host', value: globals.urlB2bApi.hostname}
+        ));
+        frmFieldsTop.appendChild(getInputElement(
+            {id: 'connection-port', name: 'connection-port', label: 'Port', value: globals.urlB2bApi.port}
+        ));
+        frmFieldsTop.appendChild(getInputElement(
+            {id: 'connection-path', name: 'connection-path', label: 'Path', value: globals.urlB2bApi.pathname}
+        ));
 
         //Create a fieldset element for the connection protocol parameters
         frmFields = getFieldsetElement({id: 'connection-btns'});
