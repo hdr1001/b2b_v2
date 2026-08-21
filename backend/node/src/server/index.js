@@ -21,6 +21,7 @@
 // *********************************************************************
 
 import express from 'express';
+import cors from 'cors';
 import { B2bApiErr } from '../share/b2bApiErr.js';
 
 //Import the API routes
@@ -41,6 +42,9 @@ const path0 = 'b2b/api';
 //Initialize the Express server
 const app = express();
 app.use( express.json() ); //Middleware to parse JSON requests
+
+//Allow all Cross-Origin Resource Sharing requests
+app.use(cors());
 
 //Implement the API routes
 app.use(`/${path0}/about`, aboutRoutes);

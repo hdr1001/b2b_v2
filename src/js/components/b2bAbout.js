@@ -25,6 +25,31 @@ import { getButtonElement } from '../elemsShared.js';
 
 const cssB2bAbout = new URL('./css/b2bAbout.css', import.meta.url).href;
 
+async function testUrlB2bApi() {
+    const ret = { respOkay: false };
+
+    const testUrl = `${globals.urlB2bApi}about`;
+
+    try {
+        const apiResp = await fetch(testUrl);
+
+        if(!apiResp.ok) {
+            ret.status = apiResp.status;
+
+            throw new Error(`API data fetch resulted in HTTP status ${apiResp.status}`)
+        }
+
+        ret.respOkay = true;
+        ret.status = apiResp.status;
+        ret.msg = `API data fetch resulted in a HTTP status deemed okay ${apiResp.status}`;
+    }
+    catch(err) {
+        ret.msg = err.message;
+    }
+
+    return ret;
+}
+
 //A HTML5 B2B waiting animation custom component class
 export default class B2bAbout extends HTMLElement {
     #dialogAbout;
@@ -42,9 +67,12 @@ export default class B2bAbout extends HTMLElement {
         })
     };
 
-    #connBtnClicked = evnt => {
+    #connBtnClicked = async evnt => {
         if(evnt.target.id === 'connection-btn-test') {
-            console.log('Test connection parameters');
+            const testRslt = await testUrlB2bApi();
+
+            console.log('Test of connection parameters: ' + testRslt.respOkay);
+
             return;
         }
         else if(evnt.target.id === 'connection-btn-reset') {
