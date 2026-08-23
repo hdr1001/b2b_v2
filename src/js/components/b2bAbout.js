@@ -25,31 +25,6 @@ import { getButtonElement } from '../elemsShared.js';
 
 const cssB2bAbout = new URL('./css/b2bAbout.css', import.meta.url).href;
 
-async function testUrlB2bApi() {
-    const ret = { respOkay: false };
-
-    const testUrl = `${globals.urlB2bApi}about`;
-
-    try {
-        const apiResp = await fetch(testUrl);
-
-        if(!apiResp.ok) {
-            ret.status = apiResp.status;
-
-            throw new Error(`API data fetch resulted in HTTP status ${apiResp.status}`)
-        }
-
-        ret.respOkay = true;
-        ret.status = apiResp.status;
-        ret.msg = `API data fetch resulted in a HTTP status deemed okay ${apiResp.status}`;
-    }
-    catch(err) {
-        ret.msg = err.message;
-    }
-
-    return ret;
-}
-
 //A HTML5 B2B waiting animation custom component class
 export default class B2bAbout extends HTMLElement {
     #dialogAbout;
@@ -238,15 +213,12 @@ export default class B2bAbout extends HTMLElement {
         lbl.innerText = 'HTTP';
         frmFields.appendChild(lbl);
 
-        let connProtocol = globals.urlB2bApi.protocol && globals.urlB2bApi.protocol.toLowerCase();
-        if(connProtocol && connProtocol.slice(-1) === ':') connProtocol = connProtocol.slice(0, -1);
-
         let radioBtn = document.createElement('input');
         radioBtn.type = 'radio';
         radioBtn.name = 'connection-protocol';
         radioBtn.id = 'connection-protocol-http';
         radioBtn.value = 'http';
-        if(connProtocol === 'http') radioBtn.checked = true;
+        if(globals.connB2bApi.currConn.protocol === 'http') radioBtn.checked = true;
         lbl.appendChild(radioBtn);
 
         //option 2: https
@@ -260,18 +232,18 @@ export default class B2bAbout extends HTMLElement {
         radioBtn.name = 'connection-protocol';
         radioBtn.id = 'connection-protocol-https';
         radioBtn.value = 'https';
-        if(connProtocol === 'https') radioBtn.checked = true;
+        if(globals.connB2bApi.currConn.protocol === 'https') radioBtn.checked = true;
         lbl.appendChild(radioBtn);
 
         //Add the text input fields for the connection parameters
         frmFieldsTop.appendChild(getInputElement(
-            {id: 'connection-host', name: 'connection-host', label: 'Host', value: globals.urlB2bApi.hostname}
+            {id: 'connection-host', name: 'connection-host', label: 'Host', value: globals.connB2bApi.currConn.host}
         ));
         frmFieldsTop.appendChild(getInputElement(
-            {id: 'connection-port', name: 'connection-port', label: 'Port', value: globals.urlB2bApi.port}
+            {id: 'connection-port', name: 'connection-port', label: 'Port', value: globals.connB2bApi.currConn.port}
         ));
         frmFieldsTop.appendChild(getInputElement(
-            {id: 'connection-path', name: 'connection-path', label: 'Path', value: globals.urlB2bApi.pathname}
+            {id: 'connection-path', name: 'connection-path', label: 'Path', value: globals.connB2bApi.currConn.path}
         ));
 
         //Create a fieldset element for the connection protocol parameters
@@ -279,7 +251,7 @@ export default class B2bAbout extends HTMLElement {
         frmFieldsTop.appendChild(frmFields);
 
         btn = getButtonElement('connection-btn-test', 'test', 'Test');
-        btn.addEventListener('click', this.#connBtnClicked);
+        btn.addEventListener('click', globals.connB2bApi.validate.bind(globals.connB2bApi));
         frmFields.appendChild(btn);
 
         btn = getButtonElement('connection-btn-reset', 'reset', 'Reset');

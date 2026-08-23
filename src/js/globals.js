@@ -19,22 +19,76 @@
 //
 // ***************************************************************** */
 
+import { Network } from "lucide";
+
 const newLineSep = '\n';
 const joinSep = ', ';
 const delimSep = '|';
 
-const connB2bApi = {
-    protocol: 'http',
-    host: 'localhost',
-    port: 3000,
-    path: 'b2b/api'
-};
+class ConnB2bApi {
+    constructor() {
+        this.iniConn = {
+            protocol: 'http',
+            host: 'localhost',
+            port: 3000,
+            path: 'b2b/api',
+        };
 
-let urlB2bApi = new URL(`${connB2bApi.path}/`, `${connB2bApi.protocol}://${connB2bApi.host}:${connB2bApi.port}/`);
+        this.currConn = { ...this.iniConn };
+
+        this.url = new URL(
+            `${this.currConn.path}${this.currConn.path.slice(-1) === '/' ? '' : '/'}`,
+            `${this.currConn.protocol}://${this.currConn.host}:${this.currConn.port}/`
+        );
+
+        this.status = {
+            validated: {
+                tszReq: 0,
+                tszResp: 0
+            },
+            ok: null,
+            testUrl: '',
+            httpStatus: 0,
+            msg: ''
+        }
+    }
+
+    async validate() {
+        this.status.ok = false;
+
+        this.status.testUrl = `${this.url.toString()}about`;
+
+        this.status.validated.tszReq = Date.now();
+        this.status.validated.tszResp = 0;
+
+        this.status.httpStatus = 0; 
+
+        try {
+            const apiResp = await fetch(this.status.testUrl);
+
+            this.status.validated.tszResp = Date.now();
+
+            this.status.httpStatus = apiResp.status; 
+
+            if(!apiResp.ok) throw new Error(`API data fetch resulted in HTTP status ${apiResp.status}`)
+
+            this.status.ok = true;
+
+            this.status.msg = `API data fetch resulted in a HTTP status okay. Status: ${apiResp.status}`;
+        }
+        catch(err) {
+            this.status.msg = err.message;
+        }
+
+        return this.status;
+    }
+}
+
+const connB2bApi = new ConnB2bApi;
 
 export default {
     newLineSep,
     joinSep,
     delimSep,
-    urlB2bApi
+    connB2bApi
 };
