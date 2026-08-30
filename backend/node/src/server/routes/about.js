@@ -21,7 +21,7 @@
 // *********************************************************************
 
 import express from 'express';
-import db from '../../share/pg.js';
+import db from '../../../../../share/pg.js';
 
 const router = express.Router();
 

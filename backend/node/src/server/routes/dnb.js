@@ -25,7 +25,7 @@ import { getBoolQryParam, httpStatusOk, dcdrUtf8 } from '../../share/utils.js';
 import { providers } from '../../share/appConsts.js';
 import { createDunsRec, createDnbIDR } from '../../share/apiDefs.js';
 import { B2bApiErr } from '../../share/b2bApiErr.js';
-import db from '../../share/pg.js';
+import db from '../../../../../share/pg.js';
 
 const router = express.Router();
 

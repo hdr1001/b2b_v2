@@ -46,7 +46,7 @@ export default function setupMainEventListeners() {
     }
 
     //HTML element references
-    const navContact       = document.querySelector('#nav-contact');
+    const navContact = document.querySelector('#nav-contact');
 
     //Clicking the contact menu item will start/stop the automatic update of the B2B report component with different LEI records from the test data
     navContact.addEventListener('click', changeB2B_key());
