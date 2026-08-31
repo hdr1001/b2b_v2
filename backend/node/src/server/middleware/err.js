@@ -21,7 +21,7 @@
 // *********************************************************************
 
 import { B2bApiErr } from '../../share/b2bApiErr.js';
-import db from '../../../../../share/pg.js';
+import db from '../../share/pg.js';
 
 const errHandler = async (err, req, resp, next) => {
     let errMsg = 'Error occurred processing a request';
