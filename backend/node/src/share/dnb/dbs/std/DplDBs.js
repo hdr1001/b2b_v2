@@ -20,8 +20,10 @@
 //
 // *********************************************************************
 
+import { ElemLabel } from '../../../elemLabel.js';
+
 //D&B Direct+ Data Blocks JavaScript object wrapper
-class DplDBs {
+export class DplDBs {
     constructor(inp) {
         //Parse the JSON passed in as a string or buffer
         if((typeof inp === 'string' || Buffer.isBuffer(inp)) && inp.length) {
@@ -87,5 +89,31 @@ class DplDBs {
             this.map121.tradeUp = inqDetail.tradeUp;
             this.map121.custRef = inqDetail.customerReference;
         }
+    }
+
+    //Method tradeStylesToArray returns an array containing tradestyle names of a predefined
+    //length (numTradeStyles). tradeStyleNames objects are simple, they contain one component,
+    //name, and are sorted by priority. Tradestyles are available in data block Company Info 
+    //L1+.
+    //
+    //Two parameters
+    //1. numTradeStyles, specify the number of tradestyles to return
+    //2. bLabel, specify true for the element labels to be returned
+    tradeStylesToArray(numTradeStyles, bLabel) {
+        const retArr = new Array(numTradeStyles);
+
+        if(bLabel) {
+            return retArr.fill().map((elem, idx) => new ElemLabel('trdg style', numTradeStyles > 1 ? idx + 1 : null).toString());
+        }
+
+        const arrTradeStyles = this.org.tradeStyleNames || [];
+
+        arrTradeStyles.sort((ts1, ts2) => ts1.priority - ts2.priority);
+
+        for(let idx = 0; idx < numTradeStyles && idx < arrTradeStyles.length; idx++) {
+            retArr[idx] = arrTradeStyles[idx].name
+        }
+
+        return retArr;
     }
 }
