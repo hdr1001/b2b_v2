@@ -91,6 +91,98 @@ export class DplDBs {
         }
     }
 
+    //Compile Data Block request & response information into a Map object
+    //All API responses contain a inquiryDetail.blockIDs & blockStatus array
+    //
+    //JSON example: "blockIDs": [
+    //        "companyinfo_L1_v1",
+    //        "principalscontacts_L2_v2"
+    //    ],
+    //
+    //... and D+ Data Block property "blockStatus": [
+    //    {
+    //        "blockID": "companyinfo_L1_v1",
+    //        "status": "ok",
+    //        "reason": null
+    //    },{
+    //        "blockID": "principalscontacts_L2_v2",
+    //        "status": "ok",
+    //        "reason": null
+    //    },{
+    //        "blockID": "baseinfo_L1_v1",
+    //        "status": "ok",
+    //        "reason": null
+    //    }]
+    //
+    //... into
+    //  {
+    //    companyinfo: {
+    //      req: { level: 1, version: 1 },
+    //      resp: { level: 1, version: 1, status: 'ok', reason: null }
+    //    },
+    //    principalscontacts: {
+    //      req: { level: 2, version: 2 },
+    //      resp: { level: 2, version: 2, status: 'ok', reason: null }
+    //    },
+    //    baseinfo: { resp: { level: 1, version: 1, status: 'ok', reason: null } }
+    //  }
+    get blockIDs() {
+        const dbKey = 0, dbLvl = 1, dbVer = 2;
+
+        const blockIDs = this.dplDBs.inquiryDetail?.blockIDs || [];
+
+        blockIDs = blockIDs.map(elem => {
+            const components = elem.split('_');
+
+            return [
+                components[dbKey], 
+                {
+                    req: { 
+                        level: components[dbLvl].slice(-1),
+                        version: components[dbVer].slice(-1)
+                    }
+                }   
+            ];
+        });
+        const ret = this.dplDBs?.inquiryDetail.blockIDs.reduce((obj, blockID) => {
+            const arrBlockID = blockID.split('_');
+
+            obj[arrBlockID[appConsts.blockIDs.key]] = {
+                req: {
+                    level: parseInt(arrBlockID[appConsts.blockIDs.level].slice(1 - arrBlockID[appConsts.blockIDs.level].length)),
+                    version: parseInt(arrBlockID[appConsts.blockIDs.ver].slice(1 - arrBlockID[appConsts.blockIDs.ver].length))
+                }
+            };
+
+            return obj;
+        }, {});
+
+        this.dplDBs?.blockStatus.forEach(aBlockStatus => {
+            const arrBlockID = aBlockStatus.blockID.split('_');
+
+            if( !ret[arrBlockID[appConsts.blockIDs.key]] ) { ret[arrBlockID[appConsts.blockIDs.key]] = {} }
+
+            ret[arrBlockID[appConsts.blockIDs.key]].resp = {
+                level: parseInt(arrBlockID[appConsts.blockIDs.level].slice(1 - arrBlockID[appConsts.blockIDs.level].length)),
+                version: parseInt(arrBlockID[appConsts.blockIDs.ver].slice(1 - arrBlockID[appConsts.blockIDs.ver].length)),
+                status: aBlockStatus.status,
+                reason: aBlockStatus.reason
+            };
+        });
+
+        return ret;
+    }
+
+    //Method transactionTimestamp will get the transaction timestamp in the format YYYYMMDD
+    //All data block responses contain a transactionDetail object
+    transactionTimestamp(length) {
+        const tts = this.dplDBs.transactionDetail?.transactionTimestamp;
+
+        if(tts) { return sDateIsoToYYYYMMDD(tts, length) }
+
+        return '';
+    }
+
     //Method tradeStylesToArray returns an array containing tradestyle names of a predefined
     //length (numTradeStyles). tradeStyleNames objects are simple, they contain one component,
     //name, and are sorted by priority. Tradestyles are available in data block Company Info 
