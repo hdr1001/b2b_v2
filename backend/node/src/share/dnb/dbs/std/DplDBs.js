@@ -20,7 +20,107 @@
 //
 // *********************************************************************
 
+import { sDateIsoToYYYYMMDD } from '../../../utils.js';
 import { ElemLabel } from '../../../elemLabel.js';
+
+//Compile Data Block request & response information into a Map object
+//All API responses contain a inquiryDetail.blockIDs & blockStatus array
+//
+//JSON example: "blockIDs": [
+//        "companyinfo_L1_v1",
+//        "principalscontacts_L2_v2"
+//    ],
+//
+//... and D+ Data Block property "blockStatus": [
+//    {
+//        "blockID": "companyinfo_L1_v1",
+//        "status": "ok",
+//        "reason": null
+//    },{
+//        "blockID": "principalscontacts_L2_v2",
+//        "status": "ok",
+//        "reason": null
+//    },{
+//        "blockID": "baseinfo_L1_v1",
+//        "status": "ok",
+//        "reason": null
+//    }]
+//
+//... into
+//  new Map([
+//    ['companyinfo', {
+//      req: { level: 1, version: 1 },
+//      resp: { level: 1, version: 1, status: 'ok', reason: null }
+//    }],
+//    ['principalscontacts', {
+//      req: { level: 2, version: 2 },
+//      resp: { level: 2, version: 2, status: 'ok', reason: null }
+//    }],
+//    ['baseinfo', {
+//      resp: { level: 1, version: 1, status: 'ok', reason: null }
+//    }]
+//  ])
+
+function compileReqRespInfo(inqBlockIDs = [], respBlockStatus = []) {
+    const dbKey = 0, dbLvl = 1, dbVer = 2;
+
+    //A blockID string has the following format: <blockID>_<level>_<version>, e.g. companyinfo_L1_v1
+    function parseBlockID(sBlockID) {
+        const components = sBlockID.split('_');
+
+        return { key: components[dbKey], level: parseInt(components[dbLvl].slice(1)), version: parseInt(components[dbVer].slice(1)) };
+    }
+
+    //Create a Map object with the request information
+    const mapBlockIDs = new Map((inqBlockIDs).map(elem => {
+        const oBlockID = parseBlockID(elem);
+
+        return [
+            oBlockID.key, 
+            {
+                req: { 
+                    level: oBlockID.level,
+                    version: oBlockID.version
+                }
+            }   
+        ];
+    }));
+
+    //Create a Map object with the response information
+    const mapBlockStatus = new Map((respBlockStatus).map(elem => {
+        const oBlockID = parseBlockID(elem.blockID);
+
+        return [
+            oBlockID.key,
+            {
+                resp: {
+                    level: oBlockID.level,
+                    version: oBlockID.version,
+                    status: elem.status,
+                    reason: elem.reason
+                }
+            }
+        ];
+    }));
+
+    //Combine the request and response information into one Map object
+    if(mapBlockIDs.size && mapBlockStatus.size) {
+        mapBlockStatus.forEach((value, key) => { if(mapBlockIDs.has(key)) { value.req = mapBlockIDs.get(key).req } });
+
+        //Double-check if all requested data blocks have a response
+        const reqNotResp = [ ...mapBlockIDs.keys() ].filter(key => !mapBlockStatus.has(key));
+
+        if(reqNotResp.length) {
+            console.warn(`🤔 ➡️ Data blocks requested but no data block response received for: ${reqNotResp.join(', ')}`);
+
+            reqNotResp.forEach(key => mapBlockStatus.set(key, mapBlockIDs.get(key)));
+        }
+    }
+
+    //Return the Map object with the request and response information
+    //If no responses were generated, return the Map object with the request information (probably both are empty)
+    return mapBlockStatus.size ? mapBlockStatus : mapBlockIDs;
+}
 
 //D&B Direct+ Data Blocks JavaScript object wrapper
 export class DplDBs {
@@ -89,96 +189,25 @@ export class DplDBs {
             this.map121.tradeUp = inqDetail.tradeUp;
             this.map121.custRef = inqDetail.customerReference;
         }
+
+        //Expose the request and response information as a Map object
+        this.reqRespInfo = compileReqRespInfo(this.dplDBs.inquiryDetail?.blockIDs, this.dplDBs.blockStatus);
     }
 
-    //Compile Data Block request & response information into a Map object
-    //All API responses contain a inquiryDetail.blockIDs & blockStatus array
-    //
-    //JSON example: "blockIDs": [
-    //        "companyinfo_L1_v1",
-    //        "principalscontacts_L2_v2"
-    //    ],
-    //
-    //... and D+ Data Block property "blockStatus": [
-    //    {
-    //        "blockID": "companyinfo_L1_v1",
-    //        "status": "ok",
-    //        "reason": null
-    //    },{
-    //        "blockID": "principalscontacts_L2_v2",
-    //        "status": "ok",
-    //        "reason": null
-    //    },{
-    //        "blockID": "baseinfo_L1_v1",
-    //        "status": "ok",
-    //        "reason": null
-    //    }]
-    //
-    //... into
-    //  {
-    //    companyinfo: {
-    //      req: { level: 1, version: 1 },
-    //      resp: { level: 1, version: 1, status: 'ok', reason: null }
-    //    },
-    //    principalscontacts: {
-    //      req: { level: 2, version: 2 },
-    //      resp: { level: 2, version: 2, status: 'ok', reason: null }
-    //    },
-    //    baseinfo: { resp: { level: 1, version: 1, status: 'ok', reason: null } }
-    //  }
-    get blockIDs() {
-        const dbKey = 0, dbLvl = 1, dbVer = 2;
-
-        const blockIDs = this.dplDBs.inquiryDetail?.blockIDs || [];
-
-        blockIDs = blockIDs.map(elem => {
-            const components = elem.split('_');
-
-            return [
-                components[dbKey], 
-                {
-                    req: { 
-                        level: components[dbLvl].slice(-1),
-                        version: components[dbVer].slice(-1)
-                    }
-                }   
-            ];
-        });
-        const ret = this.dplDBs?.inquiryDetail.blockIDs.reduce((obj, blockID) => {
-            const arrBlockID = blockID.split('_');
-
-            obj[arrBlockID[appConsts.blockIDs.key]] = {
-                req: {
-                    level: parseInt(arrBlockID[appConsts.blockIDs.level].slice(1 - arrBlockID[appConsts.blockIDs.level].length)),
-                    version: parseInt(arrBlockID[appConsts.blockIDs.ver].slice(1 - arrBlockID[appConsts.blockIDs.ver].length))
-                }
-            };
-
-            return obj;
-        }, {});
-
-        this.dplDBs?.blockStatus.forEach(aBlockStatus => {
-            const arrBlockID = aBlockStatus.blockID.split('_');
-
-            if( !ret[arrBlockID[appConsts.blockIDs.key]] ) { ret[arrBlockID[appConsts.blockIDs.key]] = {} }
-
-            ret[arrBlockID[appConsts.blockIDs.key]].resp = {
-                level: parseInt(arrBlockID[appConsts.blockIDs.level].slice(1 - arrBlockID[appConsts.blockIDs.level].length)),
-                version: parseInt(arrBlockID[appConsts.blockIDs.ver].slice(1 - arrBlockID[appConsts.blockIDs.ver].length)),
-                status: aBlockStatus.status,
-                reason: aBlockStatus.reason
-            };
-        });
-
-        return ret;
-    }
+    //Property respStatusOk will return
+    //true if all data blocks have a response with status 'ok',
+    //false if any data block has a response with status not equal to 'ok', and
+    //null if no data blocks were requested (probably processing a seed file)
+    get respStatusOk() { return this.reqRespInfo.size ? this.reqRespInfo.values().every( val => val.resp?.status === 'ok' ) : null }
 
     //Method transactionTimestamp will get the transaction timestamp in the format YYYYMMDD
     //All data block responses contain a transactionDetail object
-    transactionTimestamp(length) {
+    transactionTimestamp(length = 8) {
         const tts = this.dplDBs.transactionDetail?.transactionTimestamp;
 
-        if(tts) { return sDateIsoToYYYYMMDD(tts, length) }
+        if(typeof tts === 'string' && tts.length) {
+            return sDateIsoToYYYYMMDD(tts, length);
+        }
 
         return '';
     }
