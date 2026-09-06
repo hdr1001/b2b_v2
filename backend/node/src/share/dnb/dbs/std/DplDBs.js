@@ -21,7 +21,7 @@
 // *********************************************************************
 
 import { sDateIsoToYYYYMMDD } from '../../../utils.js';
-import { ElemLabel } from '../../../elemLabel.js';
+import ci from './dbCompInfo.js';
 
 //Compile Data Block request & response information into a Map object
 //All API responses contain a inquiryDetail.blockIDs & blockStatus array
@@ -123,7 +123,7 @@ function compileReqRespInfo(inqBlockIDs = [], respBlockStatus = []) {
 }
 
 //D&B Direct+ Data Blocks JavaScript object wrapper
-export class DplDBs {
+export default class DplDBs {
     constructor(inp) {
         //Parse the JSON passed in as a string or buffer
         if((typeof inp === 'string' || Buffer.isBuffer(inp)) && inp.length) {
@@ -172,14 +172,13 @@ export class DplDBs {
 
             this.map121.opStatus = orgCtrlStatus.operatingStatus?.description;
             this.map121.opStatusDate = orgCtrlStatus.operatingStatus?.startDate;
-            this.map121.isMarketable = orgCtrlStatus.isMarketable;
+            this.map121.marketable = orgCtrlStatus.isMarketable;
         }
 
         //Miscellaneous one-to-one mappings
         this.map121.startDate = this.org.startDate;
         this.map121.SMB = this.org.organizationSizeCategory?.description;
         this.map121.defaultCurr = this.org.defaultCurrency;
-        this.map121.marketable = this.org.dunsControlStatus?.isMarketable;
 
         //One-to-one mappings of inquiry details
         if(this.dplDBs.inquiryDetail) {
@@ -212,29 +211,6 @@ export class DplDBs {
         return '';
     }
 
-    //Method tradeStylesToArray returns an array containing tradestyle names of a predefined
-    //length (numTradeStyles). tradeStyleNames objects are simple, they contain one component,
-    //name, and are sorted by priority. Tradestyles are available in data block Company Info 
-    //L1+.
-    //
-    //Two parameters
-    //1. numTradeStyles, specify the number of tradestyles to return
-    //2. bLabel, specify true for the element labels to be returned
-    tradeStylesToArray(numTradeStyles, bLabel) {
-        const retArr = new Array(numTradeStyles);
-
-        if(bLabel) {
-            return retArr.fill().map((elem, idx) => new ElemLabel('trdg style', numTradeStyles > 1 ? idx + 1 : null).toString());
-        }
-
-        const arrTradeStyles = this.org.tradeStyleNames || [];
-
-        arrTradeStyles.sort((ts1, ts2) => ts1.priority - ts2.priority);
-
-        for(let idx = 0; idx < numTradeStyles && idx < arrTradeStyles.length; idx++) {
-            retArr[idx] = arrTradeStyles[idx].name
-        }
-
-        return retArr;
-    }
+    //Return an array containing tradestyle names of a predefined length (numTradeStyles)    
+    tradeStylesToArr = (numTradeStyles, bLabel) => ci.tradeStylesToArr( this.org.tradeStyleNames, numTradeStyles, bLabel );
 }
