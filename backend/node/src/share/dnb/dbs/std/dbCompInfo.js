@@ -30,17 +30,17 @@ import { ElemLabel } from '../../../elemLabel.js';
 //Two parameters
 //1. numTradeStyles, specify the number of tradestyles to return
 //2. bLabel, specify true for the element labels to be returned
-function tradeStylesToArr(arrTradeStyles = [], numTradeStyles, bLabel) {
+function tradeStylesToArr(arrTradeStyles = [], attr = 'name', numTradeStyles = 1, bLabel = false, sLabel) {
     const retArr = new Array(numTradeStyles);
 
     if(bLabel) {
-        return retArr.fill().map((elem, idx) => new ElemLabel('trdg style', numTradeStyles > 1 ? idx + 1 : null).toString());
+        return retArr.fill().map((elem, idx) => new ElemLabel(sLabel, numTradeStyles > 1 ? idx + 1 : null).toString());
     }
 
     arrTradeStyles.sort((ts1, ts2) => ts1.priority - ts2.priority);
 
     for(let idx = 0; idx < numTradeStyles && idx < arrTradeStyles.length; idx++) {
-        retArr[idx] = arrTradeStyles[idx].name
+        retArr[idx] = arrTradeStyles[idx][attr]
     }
 
     return retArr;

@@ -22,27 +22,31 @@
 
 //Application constants
 const consts = {
-    map121: { //label values 
-        //inquiry detail
-        inqDuns: {sml: 'inq DUNS', med: 'inquiry DUNS', lrg: 'inquiry DUNS number'},
-        tradeUp: {sml: 'trade up', med: 'trade up', lrg: 'trade up'},
-        custRef: {sml: 'cust ref', med: 'customer reference', lrg: 'customer reference'},
+    labelSize: { small: 0, medium: 1, large: 2 },
+    labels: {
+        map121: { //label values 
+            //inquiry detail
+            inqDuns: ['inq DUNS', 'inquiry DUNS', 'inquiry DUNS number'],
+            tradeUp: ['trade up', 'trade up', 'trade up'],
+            custRef: ['cust ref', 'customer reference', 'customer reference'],
 
-        //Common data-elements
-        duns:        {sml: 'DUNS', med: 'DUNS', lrg: 'DUNS number'},
-        primaryName: {sml: 'bus nme', med: 'business name', lrg: 'business name'},
-        countryISO:  {sml: 'ctry ISO', med: 'country ISO code', lrg: 'country ISO alpha-2 code'},
+            //Common data-elements
+            duns:        ['DUNS', 'DUNS', 'DUNS number'],
+            primaryName: ['bus nme', 'business name', 'business name'],
+            countryISO:  ['ctry ISO', 'country ISO code', 'country ISO alpha-2 code'],
 
-        //Company information data-elements
-        opStatus:     {sml: 'op status', med: 'operating status', lrg: 'operating status'},
-        opStatusDate: {sml: 'op status date', med: 'operating status date', lrg: 'operating status date'},
-        startDate:    {sml: 'start date', med: 'start date', lrg: 'start date'},
-        SMB:          {sml: 'ent size', med: 'entity size', lrg: 'entity size'},
-        defaultCurr:  {sml: 'dflt curr', med: 'default currency', lrg: 'default currency'},
-        marketable:   {sml: 'marketable', med: 'marketable', lrg: 'is marketable'}
-    },
-    respStatusOk: {sml: 'ok', med: 'ok', lrg: 'okay'},
-    tradeStyles: {sml: 'trdg style', med: 'tradestyle', lrg: 'tradestyle'}
+            //Company information data-elements
+            opStatus:     ['op status', 'operating status', 'operating status'],
+            opStatusDate: ['op status date', 'operating status date', 'operating status date'],
+            startDate:    ['start date', 'start date', 'start date'],
+            SMB:          ['ent size', 'entity size', 'entity size'],
+            defaultCurr:  ['dflt curr', 'default currency', 'default currency'],
+            marketable:   ['marketable', 'marketable', 'is marketable']
+        },
+        respStatusOk: ['Resp status', 'Response status', 'Response status'],
+        transactionTimestamp: ['ts', 'transaction ts', 'transaction timestamp'],
+        tradeStyle: ['trdg style', 'tradestyle', 'tradestyle']
+    }
 };
 
 export default consts;

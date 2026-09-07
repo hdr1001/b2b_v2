@@ -21,6 +21,7 @@
 // *********************************************************************
 
 import { sDateIsoToYYYYMMDD } from '../../../utils.js';
+import consts from '../consts.js'; 
 import ci from './dbCompInfo.js';
 
 //Compile Data Block request & response information into a Map object
@@ -212,5 +213,7 @@ export default class DplDBs {
     }
 
     //Return an array containing tradestyle names of a predefined length (numTradeStyles)    
-    tradeStylesToArr = (numTradeStyles, bLabel) => ci.tradeStylesToArr( this.org.tradeStyleNames, numTradeStyles, bLabel );
+    tradeStylesToArr = (numTradeStyles, bLabel, sLabel) => ci.tradeStylesToArr( this.org.tradeStyleNames, 'name', numTradeStyles, bLabel, sLabel );
+
+    //emailsToArr = (numEmails, bLabel, sLabel) => ci.emailsToArr( this.org.emails, 'address', numEmails, bLabel, sLabel );
 }
