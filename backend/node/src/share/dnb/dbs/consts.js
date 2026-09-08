@@ -43,9 +43,10 @@ const consts = {
             defaultCurr:  ['dflt curr', 'default currency', 'default currency'],
             marketable:   ['marketable', 'marketable', 'is marketable']
         },
-        respStatusOk: ['Resp status', 'Response status', 'Response status'],
+        respStatusOk: ['resp ok', 'response ok', 'response status okay'],
         transactionTimestamp: ['ts', 'transaction ts', 'transaction timestamp'],
-        tradeStyle: ['trdg style', 'tradestyle', 'tradestyle']
+        tradeStyle: ['trdg style', 'tradestyle', 'tradestyle'],
+        email: ['email', 'email addr', 'email address']
     }
 };
 

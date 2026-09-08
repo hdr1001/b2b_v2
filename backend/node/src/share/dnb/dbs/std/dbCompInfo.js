@@ -1,7 +1,7 @@
 // *********************************************************************
 //
 // D&B Direct+ Standard Data Blocks JavaScript object wrapper
-// Code file for data block company information
+// Code file for data block Company Information
 //
 // Copyright 2026 Hans de Rooij
 //
@@ -21,31 +21,74 @@
 // *********************************************************************
 
 import { ElemLabel } from '../../../elemLabel.js';
+import consts from '../consts.js';
+
+//Generate a label array
+const labelArr = (sLabel, numLabels) => new Array(numLabels).fill().map((elem, idx) => new ElemLabel(sLabel, numLabels > 1 ? idx + 1 : null).toString());
 
 //Method tradeStylesToArray returns an array containing tradestyle names of a predefined
 //length (numTradeStyles). tradeStyleNames objects are simple, they contain one component,
 //name, and are sorted by priority. Tradestyles are available in data block Company Info 
 //L1+.
 //
-//Two parameters
-//1. numTradeStyles, specify the number of tradestyles to return
-//2. bLabel, specify true for the element labels to be returned
-function tradeStylesToArr(arrTradeStyles = [], attr = 'name', numTradeStyles = 1, bLabel = false, sLabel) {
-    const retArr = new Array(numTradeStyles);
+//The four function parameters
+//1. arrTradeStyles, the array of tradestyle name objects
+//2. numTradeStyles, specify the number of tradestyles to return
+//3. bLabel, specify true for the element labels to be returned
+//4. sLabel, specify the label string for the element labels
+function tradeStylesToArr(
+        arrTradeStyles = [],
+        numTradeStyles = 1,
+        bLabel = false,
+        sLabel = consts.labels.tradeStyle[consts.labelSize.medium]
+    )
+{
+    //Return an array of labels if bLabel is true
+    if(bLabel) { return labelArr( sLabel, numTradeStyles ) }
 
-    if(bLabel) {
-        return retArr.fill().map((elem, idx) => new ElemLabel(sLabel, numTradeStyles > 1 ? idx + 1 : null).toString());
+    //Make sure the array is sorted by priority
+    const retArr = arrTradeStyles.toSorted((ts1, ts2) => ts1.priority - ts2.priority);
+
+    //Slice the array if it contains more than or the exact number of tradestyles requested
+    if(retArr.length >= numTradeStyles) {
+        return retArr.slice(0, numTradeStyles).map(ts => ts.name);
     }
 
-    arrTradeStyles.sort((ts1, ts2) => ts1.priority - ts2.priority);
+    //At this point, retArr.length < numTradeStyles must be true
+    //Pad the returned array with empty array elements
+    return retArr.map(ts => ts.name).concat(new Array(numTradeStyles - retArr.length));
+}
 
-    for(let idx = 0; idx < numTradeStyles && idx < arrTradeStyles.length; idx++) {
-        retArr[idx] = arrTradeStyles[idx][attr]
+//Method emailsToArr returns an array containing email addresses of a predefined
+//length (numEmails). Email objects are simple, they contain one component,
+//address. Emails are available in data block Company Info L2+.
+//
+//The four function parameters
+//1. arrEmails, the array of email objects
+//2. numEmails, specify the number of emails to return
+//3. bLabel, specify true for the element labels to be returned
+//4. sLabel, specify the label string for the element labels
+function emailsToArr(
+        arrEmails = [],
+        numEmails = 1,
+        bLabel = false,
+        sLabel = consts.labels.email[consts.labelSize.medium]
+    )
+{
+    //Return an array of labels if bLabel is true
+    if(bLabel) { return labelArr( sLabel, numEmails ) }
+
+    //Slice the array if it contains more than or the exact number of emails requested
+    if(arrEmails.length >= numEmails) {
+        return arrEmails.slice(0, numEmails).map(email => email.address);
     }
 
-    return retArr;
+    //At this point, retArr.length < numEmails must be true
+    //Pad the returned array with empty array elements
+    return arrEmails.map(email => email.address).concat(new Array(numEmails - arrEmails.length));
 }
 
 export default { 
-    tradeStylesToArr
+    tradeStylesToArr,
+    emailsToArr
 };

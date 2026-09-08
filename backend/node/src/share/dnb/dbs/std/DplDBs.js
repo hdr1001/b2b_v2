@@ -213,7 +213,8 @@ export default class DplDBs {
     }
 
     //Return an array containing tradestyle names of a predefined length (numTradeStyles)    
-    tradeStylesToArr = (numTradeStyles, bLabel, sLabel) => ci.tradeStylesToArr( this.org.tradeStyleNames, 'name', numTradeStyles, bLabel, sLabel );
+    tradeStylesToArr = (numTradeStyles, bLabel, sLabel) => ci.tradeStylesToArr( this.org.tradeStyleNames, numTradeStyles, bLabel, sLabel );
 
-    //emailsToArr = (numEmails, bLabel, sLabel) => ci.emailsToArr( this.org.emails, 'address', numEmails, bLabel, sLabel );
+    //Return an array containing email addresses of a predefined length (numEmails)    
+    emailsToArr = (numEmails, bLabel, sLabel) => ci.emailsToArr( this.org.email, numEmails, bLabel, sLabel );
 }
