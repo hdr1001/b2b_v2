@@ -217,4 +217,7 @@ export default class DplDBs {
 
     //Return an array containing email addresses of a predefined length (numEmails)    
     emailsToArr = (numEmails, bLabel, sLabel) => ci.emailsToArr( this.org.email, numEmails, bLabel, sLabel );
+
+    //Return an array containing telephone numbers of a predefined length (numTels)    
+    telsToArr = (numTels, bLabel, sLabel) => ci.telsToArr( this.org.telephone, numTels, bLabel, sLabel );
 }

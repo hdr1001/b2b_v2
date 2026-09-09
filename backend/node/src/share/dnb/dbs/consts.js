@@ -46,7 +46,8 @@ const consts = {
         respStatusOk: ['resp ok', 'response ok', 'response status okay'],
         transactionTimestamp: ['ts', 'transaction ts', 'transaction timestamp'],
         tradeStyle: ['trdg style', 'tradestyle', 'tradestyle'],
-        email: ['email', 'email addr', 'email address']
+        email: ['email', 'email addr', 'email address'],
+        tel: ['tel', 'telephone', 'telephone number']
     }
 };
 

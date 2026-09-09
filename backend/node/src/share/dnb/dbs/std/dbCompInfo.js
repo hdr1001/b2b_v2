@@ -88,7 +88,40 @@ function emailsToArr(
     return arrEmails.map(email => email.address).concat(new Array(numEmails - arrEmails.length));
 }
 
+//Method telsToArr returns an array containing telephone numbers of a predefined
+//length (numTels). Telephone objects are simple, they contain two components,
+//which will be concatenated. Telephone numbers are available in data block Company
+//Info L1+.
+//
+//The four function parameters
+//1. arrTels, the array of telephone objects
+//2. numTels, specify the number of telephone numbers to return
+//3. bLabel, specify true for the element labels to be returned
+//4. sLabel, specify the label string for the element labels
+function telsToArr(
+        arrTels = [],
+        numTels = 1,
+        bLabel = false,
+        sLabel = consts.labels.tel[consts.labelSize.medium]
+    )
+{
+    const concatTel = tel => `${tel.isdCode ? `${'+' + tel.isdCode} ` : ''}${tel.telephoneNumber}`;
+
+    //Return an array of labels if bLabel is true
+    if(bLabel) { return labelArr( sLabel, numTels ) }
+
+    //Slice the array if it contains more than or the exact number of telephone numbers requested
+    if(arrTels.length >= numTels) {
+        return arrTels.slice(0, numTels).map(concatTel);
+    }
+
+    //At this point, retArr.length < numTels must be true
+    //Pad the returned array with empty array elements
+    return arrTels.map(concatTel).concat(new Array(numTels - arrTels.length));
+}
+
 export default { 
     tradeStylesToArr,
-    emailsToArr
+    emailsToArr,
+    telsToArr
 };
