@@ -26,6 +26,26 @@ import consts from '../consts.js';
 //Generate a label array
 const labelArr = (sLabel, numLabels) => new Array(numLabels).fill().map((elem, idx) => new ElemLabel(sLabel, numLabels > 1 ? idx + 1 : null).toString());
 
+//Method summaryFromArray returns a string containing editorial comments for the entity.
+//The string can contain HTML tags. Summary is available in data block Company Info L2+.
+//
+//The three function parameters
+//1. arrSummary, the array of summary objects
+//2. bLabel, specify true for the element label to be returned
+//3. sLabel, specify the label string for the element label
+function summaryFromArray(
+        arrSummary = [],
+        bLabel = false,
+        sLabel = consts.labels.summary[consts.labelSize.medium]
+    )
+{
+    //Return an array of labels if bLabel is true
+    if(bLabel) { return sLabel }
+
+    //Return the summary string if available, otherwise return an empty string
+    return arrSummary.reduce((acc, summ) => acc + (summ.text || ''), '');
+}
+
 //Method tradeStylesToArray returns an array containing tradestyle names of a predefined
 //length (numTradeStyles). tradeStyleNames objects are simple, they contain one component,
 //name, and are sorted by priority. Tradestyles are available in data block Company Info 
@@ -105,7 +125,7 @@ function telsToArr(
         sLabel = consts.labels.tel[consts.labelSize.medium]
     )
 {
-    const concatTel = tel => `${tel.isdCode ? `${'+' + tel.isdCode} ` : ''}${tel.telephoneNumber}`;
+    const concatTel = tel => `${tel.isdCode ? '+' + tel.isdCode + ' ' : ''}${tel.telephoneNumber}`;
 
     //Return an array of labels if bLabel is true
     if(bLabel) { return labelArr( sLabel, numTels ) }
@@ -120,7 +140,8 @@ function telsToArr(
     return arrTels.map(concatTel).concat(new Array(numTels - arrTels.length));
 }
 
-export default { 
+export default {
+    summaryFromArray,
     tradeStylesToArr,
     emailsToArr,
     telsToArr

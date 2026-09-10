@@ -212,6 +212,9 @@ export default class DplDBs {
         return '';
     }
 
+    //Return a string containing editorial comments for the entity.
+    summaryFromArray = (bLabel, sLabel) => ci.summaryFromArray( this.org.summary, bLabel, sLabel );
+
     //Return an array containing tradestyle names of a predefined length (numTradeStyles)    
     tradeStylesToArr = (numTradeStyles, bLabel, sLabel) => ci.tradeStylesToArr( this.org.tradeStyleNames, numTradeStyles, bLabel, sLabel );
 

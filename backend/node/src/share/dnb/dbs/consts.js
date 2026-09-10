@@ -47,7 +47,17 @@ const consts = {
         transactionTimestamp: ['ts', 'transaction ts', 'transaction timestamp'],
         tradeStyle: ['trdg style', 'tradestyle', 'tradestyle'],
         email: ['email', 'email addr', 'email address'],
-        tel: ['tel', 'telephone', 'telephone number']
+        tel: ['tel', 'telephone', 'telephone number'],
+        summary: ['summ', 'summary', 'summary']
+    },
+    prios: {
+        summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ] //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
+    },
+    flds: {
+        summary: {
+            txt: 'text',
+            desc: 'description'
+        }
     }
 };
 
