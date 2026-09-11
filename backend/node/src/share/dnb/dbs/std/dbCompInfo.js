@@ -24,7 +24,7 @@ import { ElemLabel } from '../../../elemLabel.js';
 import consts from '../consts.js';
 
 //Generate a label array
-const labelArr = (sLabel, numLabels) => new Array(numLabels).fill().map((elem, idx) => new ElemLabel(sLabel, numLabels > 1 ? idx + 1 : null).toString());
+const labelArr = (sLabel, numLabels) => new Array(numLabels === -1 ? 1 : numLabels).fill().map((elem, idx) => new ElemLabel(sLabel, numLabels > 1 ? idx + 1 : null).toString());
 
 //Method summaryFromArray returns a string containing editorial comments for the entity.
 //The string can contain HTML tags. Summary is available in data block Company Info L2+.
@@ -35,6 +35,7 @@ const labelArr = (sLabel, numLabels) => new Array(numLabels).fill().map((elem, i
 //3. sLabel, specify the label string for the element label
 function summaryFromArray(
         arrSummary = [],
+        arrFlds = [],
         bLabel = false,
         sLabel = consts.labels.summary[consts.labelSize.medium]
     )
@@ -69,8 +70,12 @@ function tradeStylesToArr(
     //Make sure the array is sorted by priority
     const retArr = arrTradeStyles.toSorted((ts1, ts2) => ts1.priority - ts2.priority);
 
+    if(numTradeStyles === -1 || retArr.length === numTradeStyles) {
+        return retArr.map(ts => ts.name);
+    }
+
     //Slice the array if it contains more than or the exact number of tradestyles requested
-    if(retArr.length >= numTradeStyles) {
+    if(retArr.length > numTradeStyles) {
         return retArr.slice(0, numTradeStyles).map(ts => ts.name);
     }
 
