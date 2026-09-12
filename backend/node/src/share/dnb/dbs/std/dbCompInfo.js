@@ -26,16 +26,21 @@ import consts from '../consts.js';
 //Generate a label array
 const labelArr = (sLabel, numLabels) => new Array(numLabels === -1 ? 1 : numLabels).fill().map((elem, idx) => new ElemLabel(sLabel, numLabels > 1 ? idx + 1 : null).toString());
 
-//Method summaryFromArray returns a string containing editorial comments for the entity.
-//The string can contain HTML tags. Summary is available in data block Company Info L2+.
+//Method summaryFromArray returns:
+//   - a description of the specific editorial summary for the entity
+//   - a string containing editorial comments for the entity
+//The comments can contain HTML tags. Summary is available in data block Company Info L2+.
 //
-//The three function parameters
+//The five function parameters
 //1. arrSummary, the array of summary objects
-//2. bLabel, specify true for the element label to be returned
-//3. sLabel, specify the label string for the element label
-function summaryFromArray(
+//2. arrFlds, the array of field names to include in the returned array
+//3. numSumms, specify the number of summaries to return (-1 for all)
+//4. bLabel, specify true for the element labels to be returned
+//5. sLabel, specify the labels string for the element label
+function summariesToArray(
         arrSummary = [],
-        arrFlds = [],
+        arrFlds = [ consts.flds.summary.txt ],
+        numSumms = 1,
         bLabel = false,
         sLabel = consts.labels.summary[consts.labelSize.medium]
     )
@@ -43,8 +48,21 @@ function summaryFromArray(
     //Return an array of labels if bLabel is true
     if(bLabel) { return sLabel }
 
+    const summ_prios = consts.prios.summary;
+
+    const retArr = arrSummary.map(elem => {
+        const prio = summ_prios.findIndex(prio => prio === elem.textType.dnbCode);
+
+        return {
+            desc: elem.textType.description,
+            txt: elem.text,
+            prio: prio === -1 ? summ_prios.length : prio 
+        }
+    }).sort((elem1, elem2) => elem1.prio - elem2.prio);
+
+    console.log(retArr);
     //Return the summary string if available, otherwise return an empty string
-    return arrSummary.reduce((acc, summ) => acc + (summ.text || ''), '');
+    //return arrSummary.reduce((acc, summ) => acc + (summ.text || ''), '');
 }
 
 //Method tradeStylesToArray returns an array containing tradestyle names of a predefined
@@ -54,7 +72,7 @@ function summaryFromArray(
 //
 //The four function parameters
 //1. arrTradeStyles, the array of tradestyle name objects
-//2. numTradeStyles, specify the number of tradestyles to return
+//2. numTradeStyles, specify the number of tradestyles to return (-1 for all)
 //3. bLabel, specify true for the element labels to be returned
 //4. sLabel, specify the label string for the element labels
 function tradeStylesToArr(
@@ -70,6 +88,8 @@ function tradeStylesToArr(
     //Make sure the array is sorted by priority
     const retArr = arrTradeStyles.toSorted((ts1, ts2) => ts1.priority - ts2.priority);
 
+    //Return the array if it contains the exact number of tradestyles requested
+    //or if numTradeStyles is -1 (i.e. return all available tradestyles)
     if(numTradeStyles === -1 || retArr.length === numTradeStyles) {
         return retArr.map(ts => ts.name);
     }
@@ -90,7 +110,7 @@ function tradeStylesToArr(
 //
 //The four function parameters
 //1. arrEmails, the array of email objects
-//2. numEmails, specify the number of emails to return
+//2. numEmails, specify the number of emails to return (-1 for all)
 //3. bLabel, specify true for the element labels to be returned
 //4. sLabel, specify the label string for the element labels
 function emailsToArr(
@@ -103,8 +123,14 @@ function emailsToArr(
     //Return an array of labels if bLabel is true
     if(bLabel) { return labelArr( sLabel, numEmails ) }
 
+    //Return the array if it contains the exact number of emails requested
+    //or if numEmails is -1 (i.e. return all available emails)
+    if(numEmails === -1 || arrEmails.length === numEmails) {
+        return arrEmails.map(email => email.address);
+    }
+
     //Slice the array if it contains more than or the exact number of emails requested
-    if(arrEmails.length >= numEmails) {
+    if(arrEmails.length > numEmails) {
         return arrEmails.slice(0, numEmails).map(email => email.address);
     }
 
@@ -120,7 +146,7 @@ function emailsToArr(
 //
 //The four function parameters
 //1. arrTels, the array of telephone objects
-//2. numTels, specify the number of telephone numbers to return
+//2. numTels, specify the number of telephone numbers to return (-1 for all)
 //3. bLabel, specify true for the element labels to be returned
 //4. sLabel, specify the label string for the element labels
 function telsToArr(
@@ -135,8 +161,14 @@ function telsToArr(
     //Return an array of labels if bLabel is true
     if(bLabel) { return labelArr( sLabel, numTels ) }
 
+    //Return the array if it contains the exact number of telephone numbers requested
+    //or if numTels is -1 (i.e. return all available telephone numbers)
+    if(numTels === -1 || arrTels.length === numTels) {
+        return arrTels.map(concatTel);
+    }
+    
     //Slice the array if it contains more than or the exact number of telephone numbers requested
-    if(arrTels.length >= numTels) {
+    if(arrTels.length > numTels) {
         return arrTels.slice(0, numTels).map(concatTel);
     }
 
@@ -146,7 +178,7 @@ function telsToArr(
 }
 
 export default {
-    summaryFromArray,
+    summariesToArray,
     tradeStylesToArr,
     emailsToArr,
     telsToArr
