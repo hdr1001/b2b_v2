@@ -26,45 +26,6 @@ import consts from '../consts.js';
 //Generate a label array
 const labelArr = (sLabel, numLabels) => new Array(numLabels === -1 ? 1 : numLabels).fill().map((elem, idx) => new ElemLabel(sLabel, numLabels > 1 ? idx + 1 : null).toString());
 
-//Method summaryFromArray returns:
-//   - a description of the specific editorial summary for the entity
-//   - a string containing editorial comments for the entity
-//The comments can contain HTML tags. Summary is available in data block Company Info L2+.
-//
-//The five function parameters
-//1. arrSummary, the array of summary objects
-//2. arrFlds, the array of field names to include in the returned array
-//3. numSumms, specify the number of summaries to return (-1 for all)
-//4. bLabel, specify true for the element labels to be returned
-//5. sLabel, specify the labels string for the element label
-function summariesToArray(
-        arrSummary = [],
-        arrFlds = [ consts.flds.summary.txt ],
-        numSumms = 1,
-        bLabel = false,
-        sLabel = consts.labels.summary[consts.labelSize.medium]
-    )
-{
-    //Return an array of labels if bLabel is true
-    if(bLabel) { return sLabel }
-
-    const summ_prios = consts.prios.summary;
-
-    const retArr = arrSummary.map(elem => {
-        const prio = summ_prios.findIndex(prio => prio === elem.textType.dnbCode);
-
-        return {
-            desc: elem.textType.description,
-            txt: elem.text,
-            prio: prio === -1 ? summ_prios.length : prio 
-        }
-    }).sort((elem1, elem2) => elem1.prio - elem2.prio);
-
-    console.log(retArr);
-    //Return the summary string if available, otherwise return an empty string
-    //return arrSummary.reduce((acc, summ) => acc + (summ.text || ''), '');
-}
-
 //Method tradeStylesToArray returns an array containing tradestyle names of a predefined
 //length (numTradeStyles). tradeStyleNames objects are simple, they contain one component,
 //name, and are sorted by priority. Tradestyles are available in data block Company Info 
@@ -177,9 +138,67 @@ function telsToArr(
     return arrTels.map(concatTel).concat(new Array(numTels - arrTels.length));
 }
 
+//Method summaryFromArray returns:
+//   - a description of the specific editorial summary for the entity
+//   - a string containing editorial comments for the entity
+//The comments can contain HTML tags. Summary is available in data block Company Info L2+.
+//
+//The five function parameters
+//1. arrSummary, the array of summary objects
+//2. arrFlds, the array of field names to include in the returned array
+//3. numSumms, specify the number of summaries to return (-1 for all)
+//4. bLabel, specify true for the element labels to be returned
+//5. sLabel, specify the labels string for the element label
+function summariesToArr(
+        arrSummary = [],
+        arrFlds = consts.flds.summary,
+        numSumms = 1,
+        bLabel = false,
+        sLabel = consts.labels.summary[consts.labelSize.medium]
+    )
+{
+    //Return an array of labels if bLabel is true
+    if(bLabel) { return sLabel }
+
+    //Cache the priorities of the summary types
+    const summ_prios = consts.prios.summary;
+
+    //Get the values for the requested fields
+    const getArrSummVals = summ => arrFlds.reduce((acc, key) => acc.concat(summ[key]), []);
+
+    //Simplify the structure of the summary objects and add a priority attribute
+    const retArr = arrSummary.map(elem => {
+        const prio = summ_prios.findIndex(prio => prio === elem.textType.dnbCode);
+
+        return {
+            desc: elem.textType.description,
+            txt: elem.text,
+            prio: prio === -1 ? summ_prios.length : prio 
+        }
+    })
+    //Sort the summary objects based on priority
+    .sort((elem1, elem2) => elem1.prio - elem2.prio)
+    //Flatten the array with only requested values
+    .reduce((acc, summ) => acc.concat(getArrSummVals(summ)), []);
+
+    //Return the array if it contains the exact number of summaries requested
+    //or if numSumms is -1 (i.e. return all available summaries)
+    if(numSumms === -1 || retArr.length === arrFlds.length * numSumms) return retArr;
+
+    //Slice the array if it contains more than the arrFlds.length * numSumms
+    //elements requested
+    if(retArr.length > arrFlds.length * numSumms) {
+        return retArr.slice(0, arrFlds.length * numSumms);
+    }
+
+    //At this point, retArr.length < arrFlds.length * numSumms must be true
+    //Pad the returned array with empty array elements
+    return retArr.concat(new Array(arrFlds.length * numSumms - retArr.length));
+}
+
 export default {
-    summariesToArray,
     tradeStylesToArr,
     emailsToArr,
-    telsToArr
+    telsToArr,
+    summariesToArr
 };

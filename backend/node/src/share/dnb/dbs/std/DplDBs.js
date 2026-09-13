@@ -212,9 +212,6 @@ export default class DplDBs {
         return '';
     }
 
-    //Return a string containing editorial comments for the entity.
-    summariesToArray = (bLabel, sLabel) => ci.summariesToArray( this.org.summary, undefined, 1, bLabel );
-
     //Return an array containing tradestyle names of a predefined length (numTradeStyles)    
     tradeStylesToArr = (numTradeStyles, bLabel, sLabel) => ci.tradeStylesToArr( this.org.tradeStyleNames, numTradeStyles, bLabel, sLabel );
 
@@ -223,4 +220,7 @@ export default class DplDBs {
 
     //Return an array containing telephone numbers of a predefined length (numTels)    
     telsToArr = (numTels, bLabel, sLabel) => ci.telsToArr( this.org.telephone, numTels, bLabel, sLabel );
+
+    //Return a string containing editorial comments for the entity.
+    summariesToArr = (arrFlds, numSumms, bLabel, sLabel) => ci.summariesToArr( this.org.summary, arrFlds, numSumms, bLabel, sLabel );
 }
