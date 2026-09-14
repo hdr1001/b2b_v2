@@ -212,6 +212,17 @@ export default class DplDBs {
         return '';
     }
 
+    //Convert a LEI to a Company Information registration number object
+    leiToRegNum() {
+        if(!this.org.legalEntityIdentifier) return null;
+
+        return {
+                registrationNumber: this.org.legalEntityIdentifier,
+                typeDnBCode: 33916,
+                typeDescription: 'Legal Entity Identifier'
+        }
+    }
+
     //Return an array containing tradestyle names of a predefined length (numTradeStyles)    
     tradeStylesToArr = (numTradeStyles, bLabel, sLabel) => ci.tradeStylesToArr( this.org.tradeStyleNames, numTradeStyles, bLabel, sLabel );
 
