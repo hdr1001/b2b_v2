@@ -200,6 +200,23 @@ export default class DplDBs {
     //null if no data blocks were requested (probably processing a seed file)
     get respStatusOk() { return this.reqRespInfo.size ? this.reqRespInfo.values().every( val => val.resp?.status === 'ok' ) : null }
 
+    //Convert a LEI to a Company Information registration number object
+    get leiRegNum() {
+        if(!this.org.legalEntityIdentifier) return null;
+
+        return {
+            registrationNumber: this.org.legalEntityIdentifier,
+            typeDescription: 'Legal Entity Identifier',
+            typeDnBCode: 33916,
+            registrationNumberClass: {
+                description: 'International Identifier',
+                dnbCode: 41109
+            },
+            isPreferredRegistrationNumber: null,
+            registrationLocation: null
+        }
+    }
+
     //Method transactionTimestamp will get the transaction timestamp in the format YYYYMMDD
     //All data block responses contain a transactionDetail object
     transactionTimestamp(length = 8) {
@@ -210,17 +227,6 @@ export default class DplDBs {
         }
 
         return '';
-    }
-
-    //Convert a LEI to a Company Information registration number object
-    leiToRegNum() {
-        if(!this.org.legalEntityIdentifier) return null;
-
-        return {
-                registrationNumber: this.org.legalEntityIdentifier,
-                typeDnBCode: 33916,
-                typeDescription: 'Legal Entity Identifier'
-        }
     }
 
     //Return an array containing tradestyle names of a predefined length (numTradeStyles)    
@@ -234,4 +240,44 @@ export default class DplDBs {
 
     //Return a string containing editorial comments for the entity.
     summariesToArr = (arrFlds, numSumms, bLabel, sLabel) => ci.summariesToArr( this.org.summary, arrFlds, numSumms, bLabel, sLabel );
+
+    regNumsToArr = (arrFlds, numRegNums, bLabel, sLabel) => {
+        const createCustRegNum = (elem) => ({
+            regNum: elem.registrationNumber,
+            desc: elem.typeDescription,
+            classDesc: elem.registrationNumberClass?.description,
+            prio: elem.isPreferredRegistrationNumber === true ? 1 : ( //Preferred Registration Number
+                    elem.registrationNumberClass?.dnbCode === 2929 ? 2 : ( //Fiscal / Tax Registration Number
+                    elem.typeDnBCode === 33916 ? 3 : 4)), //LEI
+            regLocation: elem.registrationLocation
+        });
+
+        if(!this.org.regNums) {
+            if(!this.org.registrationNumbers || this.org.registrationNumbers.length === 0) {
+                this.org.regNums = [];
+            }
+            else {
+                let arrFiltered = this.org.registrationNumbers.filter(elem => elem.isPreferredRegistrationNumber === true);
+
+                this.org.regNums = arrFiltered.map(createCustRegNum);
+
+                arrFiltered = this.org.registrationNumbers.filter(elem => elem.registrationNumberClass?.dnbCode === 2929 &&
+                                                                            elem.isPreferredRegistrationNumber !== true);
+
+                if(arrFiltered.length) this.org.regNums = this.org.regNums.concat( arrFiltered.map(createCustRegNum) );
+
+                const leiRegNum = this.leiRegNum;
+
+                if(leiRegNum) this.org.regNums = this.org.regNums.concat( [ createCustRegNum(leiRegNum) ] );
+
+                arrFiltered = this.org.registrationNumbers.filter(elem => elem.typeDnBCode !== 33916 &&
+                                                                            elem.registrationNumberClass?.dnbCode !== 2929 &&
+                                                                            elem.isPreferredRegistrationNumber !== true);
+                
+                if(arrFiltered.length) this.org.regNums = this.org.regNums.concat( arrFiltered.map(createCustRegNum) );
+            }
+        }
+
+        return this.org.regNums;
+    }
 }
