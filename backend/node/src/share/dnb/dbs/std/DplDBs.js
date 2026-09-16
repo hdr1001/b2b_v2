@@ -21,8 +21,32 @@
 // *********************************************************************
 
 import { sDateIsoToYYYYMMDD } from '../../../utils.js';
+import { regNumTypeIsVAT } from '../../refData.js';
 import consts from '../consts.js'; 
 import ci from './dbCompInfo.js';
+
+//Create a custom registration number
+function createCustRegNum(elem) {
+    const ret = {};
+
+    //Check if the registration number is a known VAT
+    if(elem.typeDnBCode && regNumTypeIsVAT.has(elem.typeDnBCode)) ret.isVAT = true;
+
+    //Default priority is 4
+    ret.prio = 4;
+
+    //Set specific priorities
+    if (elem.isPreferredRegistrationNumber === true) { ret.prio = 1 } //Assign prio 1 if preferred
+    else if (ret.isVAT) { ret.prio = 2 } //Assign prio 2 to VATs (& not preferred)
+    else if (elem.typeDnBCode === 33916) { ret.prio = 3 } //Assign prio 3 to LEIs
+
+    ret.regNum = elem.registrationNumber;
+    ret.desc = elem.typeDescription;
+    ret.classDesc = elem.registrationNumberClass?.description;
+    ret.regLocation = elem.registrationLocation;
+
+    return ret;
+}
 
 //Compile Data Block request & response information into a Map object
 //All API responses contain a inquiryDetail.blockIDs & blockStatus array
@@ -238,43 +262,26 @@ export default class DplDBs {
     //Return an array containing telephone numbers of a predefined length (numTels)    
     telsToArr = (numTels, bLabel, sLabel) => ci.telsToArr( this.org.telephone, numTels, bLabel, sLabel );
 
-    //Return a string containing editorial comments for the entity.
+    //Return an array containing editorial comments for the entity.
     summariesToArr = (arrFlds, numSumms, bLabel, sLabel) => ci.summariesToArr( this.org.summary, arrFlds, numSumms, bLabel, sLabel );
 
+    //Return an array containing custom registration numbers of a predefined length (numTels)    
     regNumsToArr = (arrFlds, numRegNums, bLabel, sLabel) => {
-        const createCustRegNum = (elem) => ({
-            regNum: elem.registrationNumber,
-            desc: elem.typeDescription,
-            classDesc: elem.registrationNumberClass?.description,
-            prio: elem.isPreferredRegistrationNumber === true ? 1 : ( //Preferred Registration Number
-                    elem.registrationNumberClass?.dnbCode === 2929 ? 2 : ( //Fiscal / Tax Registration Number
-                    elem.typeDnBCode === 33916 ? 3 : 4)), //LEI
-            regLocation: elem.registrationLocation
-        });
-
         if(!this.org.regNums) {
             if(!this.org.registrationNumbers || this.org.registrationNumbers.length === 0) {
                 this.org.regNums = [];
             }
             else {
-                let arrFiltered = this.org.registrationNumbers.filter(elem => elem.isPreferredRegistrationNumber === true);
+                //Create an array of custom registration numbers from the data block data
+                this.org.regNums = this.org.registrationNumbers.map(createCustRegNum);
 
-                this.org.regNums = arrFiltered.map(createCustRegNum);
-
-                arrFiltered = this.org.registrationNumbers.filter(elem => elem.registrationNumberClass?.dnbCode === 2929 &&
-                                                                            elem.isPreferredRegistrationNumber !== true);
-
-                if(arrFiltered.length) this.org.regNums = this.org.regNums.concat( arrFiltered.map(createCustRegNum) );
-
+                //Add, if available, the LEI
                 const leiRegNum = this.leiRegNum;
 
-                if(leiRegNum) this.org.regNums = this.org.regNums.concat( [ createCustRegNum(leiRegNum) ] );
+                if(leiRegNum) this.org.regNums.push( createCustRegNum(leiRegNum) );
 
-                arrFiltered = this.org.registrationNumbers.filter(elem => elem.typeDnBCode !== 33916 &&
-                                                                            elem.registrationNumberClass?.dnbCode !== 2929 &&
-                                                                            elem.isPreferredRegistrationNumber !== true);
-                
-                if(arrFiltered.length) this.org.regNums = this.org.regNums.concat( arrFiltered.map(createCustRegNum) );
+                //Sort based on assigned priority
+                this.org.regNums.sort((elem1, elem2) => elem1.prio - elem2.prio);
             }
         }
 
