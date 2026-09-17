@@ -26,7 +26,7 @@ import consts from '../consts.js';
 //Generate a label array
 const labelArr = (sLabel, numLabels) => new Array(numLabels === -1 ? 1 : numLabels).fill().map((elem, idx) => new ElemLabel(sLabel, numLabels > 1 ? idx + 1 : null).toString());
 
-//Method tradeStylesToArray returns an array containing tradestyle names of a predefined
+//Function tradeStylesToArray returns an array containing tradestyle names of a predefined
 //length (numTradeStyles). tradeStyleNames objects are simple, they contain one component,
 //name, and are sorted by priority. Tradestyles are available in data block Company Info 
 //L1+.
@@ -65,7 +65,7 @@ function tradeStylesToArr(
     return retArr.map(ts => ts.name).concat(new Array(numTradeStyles - retArr.length));
 }
 
-//Method emailsToArr returns an array containing email addresses of a predefined
+//Function emailsToArr returns an array containing email addresses of a predefined
 //length (numEmails). Email objects are simple, they contain one component,
 //address. Emails are available in data block Company Info L2+.
 //
@@ -100,7 +100,7 @@ function emailsToArr(
     return arrEmails.map(email => email.address).concat(new Array(numEmails - arrEmails.length));
 }
 
-//Method telsToArr returns an array containing telephone numbers of a predefined
+//Function telsToArr returns an array containing telephone numbers of a predefined
 //length (numTels). Telephone objects are simple, they contain two components,
 //which will be concatenated. Telephone numbers are available in data block Company
 //Info L1+.
@@ -138,7 +138,7 @@ function telsToArr(
     return arrTels.map(concatTel).concat(new Array(numTels - arrTels.length));
 }
 
-//Method summaryFromArray returns:
+//Function summaryFromArray returns:
 //   - a description of the specific editorial summary for the entity
 //   - a string containing editorial comments for the entity
 //The comments can contain HTML tags. Summary is available in data block Company Info L2+.
@@ -196,9 +196,20 @@ function summariesToArr(
     return retArr.concat(new Array(arrFlds.length * numSumms - retArr.length));
 }
 
+function regNumsToArr(
+        arrRegNums = [],
+        arrFlds = consts.flds.summary,
+        numSumms = 1,
+        bLabel = false,
+        sLabel = consts.labels.summary[consts.labelSize.medium]
+    )
+{
+}
+
 export default {
     tradeStylesToArr,
     emailsToArr,
     telsToArr,
-    summariesToArr
+    summariesToArr,
+    regNumsToArr
 };

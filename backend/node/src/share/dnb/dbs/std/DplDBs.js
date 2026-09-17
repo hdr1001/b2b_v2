@@ -25,7 +25,7 @@ import { regNumTypeIsVAT } from '../../refData.js';
 import consts from '../consts.js'; 
 import ci from './dbCompInfo.js';
 
-//Create a custom registration number
+//Create a custom registration number object
 function createCustRegNum(elem) {
     const ret = {};
 
@@ -47,6 +47,21 @@ function createCustRegNum(elem) {
 
     return ret;
 }
+
+//Initialize the custom registration number array
+function iniRegNumArr(orgRegNums, leiRegNum) {
+    if(!orgRegNums || orgRegNums.length === 0) return [];
+
+    //Create an array of custom registration numbers from the data block data
+    let ret = orgRegNums.map(createCustRegNum);
+
+    //Add, if available, the LEI
+    if(leiRegNum) ret.push( createCustRegNum(leiRegNum) );
+
+    //Sort based on assigned priority
+    return ret.sort((elem1, elem2) => elem1.prio - elem2.prio);
+}
+
 
 //Compile Data Block request & response information into a Map object
 //All API responses contain a inquiryDetail.blockIDs & blockStatus array
@@ -267,24 +282,8 @@ export default class DplDBs {
 
     //Return an array containing custom registration numbers of a predefined length (numTels)    
     regNumsToArr = (arrFlds, numRegNums, bLabel, sLabel) => {
-        if(!this.org.regNums) {
-            if(!this.org.registrationNumbers || this.org.registrationNumbers.length === 0) {
-                this.org.regNums = [];
-            }
-            else {
-                //Create an array of custom registration numbers from the data block data
-                this.org.regNums = this.org.registrationNumbers.map(createCustRegNum);
+        if(!this.org.regNums) this.org.regNums = iniRegNumArr(this.org.registrationNumbers, this.leiRegNum);
 
-                //Add, if available, the LEI
-                const leiRegNum = this.leiRegNum;
-
-                if(leiRegNum) this.org.regNums.push( createCustRegNum(leiRegNum) );
-
-                //Sort based on assigned priority
-                this.org.regNums.sort((elem1, elem2) => elem1.prio - elem2.prio);
-            }
-        }
-
-        return this.org.regNums;
+        return ci.regNumsToArr(this.org.regNums, arrFlds, numRegNums, bLabel, sLabel);
     }
 }
