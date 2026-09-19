@@ -21,6 +21,7 @@
 // *********************************************************************
 
 import { ElemLabel } from '../../../elemLabel.js';
+import { objToArr } from '../../../utils.js';
 import consts from '../consts.js';
 
 //Generate a label array
@@ -163,9 +164,6 @@ function summariesToArr(
     //Cache the priorities of the summary types
     const summ_prios = consts.prios.summary;
 
-    //Get the values for the requested fields
-    const getArrSummVals = summ => arrFlds.reduce((acc, key) => acc.concat(summ[key]), []);
-
     //Simplify the structure of the summary objects and add a priority attribute
     const retArr = arrSummary.map(elem => {
         const prio = summ_prios.findIndex(prio => prio === elem.textType.dnbCode);
@@ -179,7 +177,7 @@ function summariesToArr(
     //Sort the summary objects based on priority
     .sort((elem1, elem2) => elem1.prio - elem2.prio)
     //Flatten the array with only requested values
-    .reduce((acc, summ) => acc.concat(getArrSummVals(summ)), []);
+    .reduce((acc, summ) => acc.concat(objToArr(summ, arrFlds)), []);
 
     //Return the array if it contains the exact number of summaries requested
     //or if numSumms is -1 (i.e. return all available summaries)
@@ -198,12 +196,28 @@ function summariesToArr(
 
 function regNumsToArr(
         arrRegNums = [],
-        arrFlds = consts.flds.summary,
-        numSumms = 1,
+        arrFlds = consts.flds.registrationNum,
+        numRegNums = 1,
         bLabel = false,
-        sLabel = consts.labels.summary[consts.labelSize.medium]
+        sLabel = consts.labels.registrationNum[consts.labelSize.medium]
     )
 {
+    //Flatten the array with the requested values
+    const retArr = arrRegNums.reduce((acc, regNum) => acc.concat(objToArr(regNum, arrFlds)), []);
+
+    //Return the array if it contains the exact number of registration numbers requested
+    //or if numRegNums is -1 (i.e. return all available IDs)
+    if(numRegNums === -1 || retArr.length === arrFlds.length * numRegNums) return retArr;
+
+    //Slice the array if it contains more than the arrFlds.length * numRegNums
+    //elements requested
+    if(retArr.length > arrFlds.length * numRegNums) {
+        return retArr.slice(0, arrFlds.length * numRegNums);
+    }
+
+    //At this point, retArr.length < arrFlds.length * numRegNums must be true
+    //Pad the returned array with empty array elements
+    return retArr.concat(new Array(arrFlds.length * numRegNums - retArr.length));
 }
 
 export default {

@@ -29,6 +29,9 @@ const nullUndefToEmptyStr = elem => elem == null ? '' : elem;
 //Test if a variable is an object ➡️ null doesn't qualify!
 const isObject = obj => typeof obj === 'object' && obj !== null;
 
+//Convert an object instance to an array
+const objToArr = (obj, arrFlds) => arrFlds.reduce((acc, prop) => acc.concat(obj[prop]), [])
+
 //ISO 8601 UTC Z date/time string to YYYYMMDD or YYMMDD
 function sDateIsoToYYYYMMDD (sDateIso, length = 8) {
     return typeof sDateIso === 'string'
@@ -56,6 +59,7 @@ export {
     dcdrUtf8,
     nullUndefToEmptyStr,
     isObject,
+    objToArr,
     sDateIsoToYYYYMMDD,
     getBoolQryParam,
     httpStatusOk
