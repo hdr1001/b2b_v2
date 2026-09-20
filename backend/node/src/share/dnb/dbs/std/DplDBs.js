@@ -278,7 +278,7 @@ export default class DplDBs {
     telsToArr = (numTels, bLabel, sLabel) => ci.telsToArr( this.org.telephone, numTels, bLabel, sLabel );
 
     //Return an array containing editorial comments for the entity.
-    summariesToArr = (arrFlds, numSumms, bLabel, sLabel) => ci.summariesToArr( this.org.summary, arrFlds, numSumms, bLabel, sLabel );
+    summariesToArr = (numSumms, bLabel, sLabel) => ci.summariesToArr( this.org.summary, numSumms, bLabel, sLabel );
 
     //Return an array containing custom registration numbers of a predefined length (numTels)    
     regNumsToArr = (arrFlds, numRegNums, bLabel, sLabel) => {

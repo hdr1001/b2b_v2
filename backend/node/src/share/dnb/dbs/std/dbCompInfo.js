@@ -26,6 +26,7 @@ import consts from '../consts.js';
 
 //Generate a label array
 const labelArr = (sLabel, numLabels) => new Array(numLabels === -1 ? 1 : numLabels).fill().map((elem, idx) => new ElemLabel(sLabel, numLabels > 1 ? idx + 1 : null).toString());
+const multLabelArr = (arrLabels, numRep) => new Array(numRep === -1 ? 1 : numLabels).fill().map((elem, idx) => new ElemLabel(sLabel, numRep > 1 ? idx + 1 : null).toString());
 
 //Function tradeStylesToArray returns an array containing tradestyle names of a predefined
 //length (numTradeStyles). tradeStyleNames objects are simple, they contain one component,
@@ -152,17 +153,35 @@ function telsToArr(
 //5. sLabel, specify the labels string for the element label
 function summariesToArr(
         arrSummary = [],
-        arrFlds = consts.flds.summary,
         numSumms = 1,
         bLabel = false,
-        sLabel = consts.labels.summary[consts.labelSize.medium]
+        labelSize = consts.labelSize.medium
     )
 {
-    //Return an array of labels if bLabel is true
-    if(bLabel) { return sLabel }
-
     //Cache the priorities of the summary types
     const summ_prios = consts.prios.summary;
+
+    function getSummLabel(elem) {
+        const mapSumms = consts.labels.summary;
+
+        const arrLabels = mapSumms.get(elem) || mapSumms.get(0);
+
+        return arrLabels.length ? arrLabels[labelSize] : 'summary';
+    }
+
+    if(bLabel) {
+        let arrSummTypes = [ 0 ];
+
+        if(numSumms !== -1) {
+            arrSummTypes = summ_prios.slice(0, numSumms);
+
+            if(arrSummTypes.length < numSumms) {
+                arrSummTypes = arrSummTypes.concat(new Array(numSumms - arrSummTypes.length).fill(0))
+            }
+        }
+
+        return arrSummTypes.map(getSummLabel);
+    }
 
     //Simplify the structure of the summary objects and add a priority attribute
     const retArr = arrSummary.map(elem => {
@@ -177,21 +196,19 @@ function summariesToArr(
     //Sort the summary objects based on priority
     .sort((elem1, elem2) => elem1.prio - elem2.prio)
     //Flatten the array with only requested values
-    .reduce((acc, summ) => acc.concat(objToArr(summ, arrFlds)), []);
+    .reduce((acc, summ) => acc.concat(objToArr(summ, ['txt'])), []);
 
     //Return the array if it contains the exact number of summaries requested
     //or if numSumms is -1 (i.e. return all available summaries)
-    if(numSumms === -1 || retArr.length === arrFlds.length * numSumms) return retArr;
+    if(numSumms === -1 || retArr.length === numSumms) return retArr;
 
     //Slice the array if it contains more than the arrFlds.length * numSumms
     //elements requested
-    if(retArr.length > arrFlds.length * numSumms) {
-        return retArr.slice(0, arrFlds.length * numSumms);
-    }
+    if(retArr.length > numSumms) return retArr.slice(0, numSumms);
 
     //At this point, retArr.length < arrFlds.length * numSumms must be true
     //Pad the returned array with empty array elements
-    return retArr.concat(new Array(arrFlds.length * numSumms - retArr.length));
+    return retArr.concat(new Array(numSumms - retArr.length));
 }
 
 function regNumsToArr(

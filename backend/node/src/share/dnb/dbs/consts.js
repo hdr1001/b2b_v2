@@ -45,19 +45,35 @@ const consts = {
             defaultCurr:  ['dflt curr', 'default currency', 'default currency'],
             marketable:   ['marketable', 'marketable', 'is marketable']
         },
+        summary: new Map([
+            [ 0, ['summ', 'summary', 'summary'] ],
+            [ 32456, ['profile', 'short profile', 'short profile'] ],
+            [ 32463, ['fin perf', 'fin performance summ', 'financial performance summary'] ],
+            [ 32469, ['strategic', 'strategic summ', 'strategic summary'] ],
+            [ 32461, ['op', 'operational summ', 'operational summary'] ],
+            [ 33960, ['hist', 'history', 'history'] ],
+            [ 32468, ['sales mktg', 'sales & marketing summ', 'sales and marketing summary'] ],
+            [ 32464, ['geo reach', 'geographical reach', 'geographical reach'] ]
+        ]),
         respStatusOk: ['resp ok', 'response ok', 'response status okay'],
         transactionTimestamp: ['ts', 'transaction ts', 'transaction timestamp'],
         tradeStyle: ['trdg style', 'tradestyle', 'tradestyle'],
         email: ['email', 'email addr', 'email address'],
         tel: ['tel', 'telephone', 'telephone number'],
-        summary: ['summ', 'summary', 'summary'],
-        registrationNum: ['reg num', 'registration num', 'registration number']
+        desc: [ 'desc', 'description', 'description'],
+        txt: [ 'txt', 'text', 'text' ],
+        registrationNum: ['reg num', 'registration num', 'registration number'],
+        isVAT: [ 'is VAT', 'is VAT', 'is value added tax num'],
+        prio: [ 'prio', 'priority', 'priority'],
+        isPref: [ 'is pref', 'is preferred', 'is preferred'],
+        type: [ 'type', 'type', 'type'],
+        class: [ 'class', 'class', 'class'],
+        regLoc: [ 'reg loc', 'registration loc', 'registration location']
     },
     prios: {
         summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ] //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
     },
     flds: {
-        summary: [ 'desc', 'txt' ],
         registrationNum: [ 'regNum', 'desc', 'classDesc', 'isVAT', 'prio', 'regLocation' ]
     }
 };
