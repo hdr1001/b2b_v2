@@ -74,6 +74,7 @@ const consts = {
         summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ] //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
     },
     flds: {
+        summary: [ 'desc', 'txt' ],
         registrationNum: [ 'regNum', 'desc', 'classDesc', 'isVAT', 'prio', 'regLocation' ]
     }
 };

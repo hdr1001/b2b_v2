@@ -153,14 +153,13 @@ function telsToArr(
 //5. sLabel, specify the labels string for the element label
 function summariesToArr(
         arrSummary = [],
+        arrRetFlds = consts.flds.summary,
+        arrSummPrio = consts.prios.summary,
         numSumms = 1,
         bLabel = false,
         labelSize = consts.labelSize.medium
     )
 {
-    //Cache the priorities of the summary types
-    const summ_prios = consts.prios.summary;
-
     function getSummLabel(elem) {
         const mapSumms = consts.labels.summary;
 
@@ -173,7 +172,7 @@ function summariesToArr(
         let arrSummTypes = [ 0 ];
 
         if(numSumms !== -1) {
-            arrSummTypes = summ_prios.slice(0, numSumms);
+            arrSummTypes = arrSummPrio.slice(0, numSumms);
 
             if(arrSummTypes.length < numSumms) {
                 arrSummTypes = arrSummTypes.concat(new Array(numSumms - arrSummTypes.length).fill(0))
@@ -185,18 +184,18 @@ function summariesToArr(
 
     //Simplify the structure of the summary objects and add a priority attribute
     const retArr = arrSummary.map(elem => {
-        const prio = summ_prios.findIndex(prio => prio === elem.textType.dnbCode);
+        const prio = arrSummPrio.findIndex(prio => prio === elem.textType.dnbCode);
 
         return {
             desc: elem.textType.description,
             txt: elem.text,
-            prio: prio === -1 ? summ_prios.length : prio 
+            prio: prio === -1 ? arrSummPrio.length : prio 
         }
     })
     //Sort the summary objects based on priority
     .sort((elem1, elem2) => elem1.prio - elem2.prio)
     //Flatten the array with only requested values
-    .reduce((acc, summ) => acc.concat(objToArr(summ, ['txt'])), []);
+    .reduce((acc, summ) => acc.concat(objToArr(summ, arrRetFlds)), []);
 
     //Return the array if it contains the exact number of summaries requested
     //or if numSumms is -1 (i.e. return all available summaries)
