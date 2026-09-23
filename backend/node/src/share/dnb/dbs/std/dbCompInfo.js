@@ -199,15 +199,15 @@ function summariesToArr(
 
     //Return the array if it contains the exact number of summaries requested
     //or if numSumms is -1 (i.e. return all available summaries)
-    if(numSumms === -1 || retArr.length === numSumms) return retArr;
+    if(numSumms === -1 || retArr.length === arrRetFlds.length * numSumms) return retArr;
 
     //Slice the array if it contains more than the arrFlds.length * numSumms
     //elements requested
-    if(retArr.length > numSumms) return retArr.slice(0, numSumms);
+    if(retArr.length > arrRetFlds.length * numSumms) return retArr.slice(0, arrRetFlds.length * numSumms);
 
     //At this point, retArr.length < arrFlds.length * numSumms must be true
     //Pad the returned array with empty array elements
-    return retArr.concat(new Array(numSumms - retArr.length));
+    return retArr.concat(new Array(arrRetFlds.length * numSumms - retArr.length));
 }
 
 function regNumsToArr(
