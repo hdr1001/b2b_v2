@@ -26,7 +26,25 @@ import consts from '../consts.js';
 
 //Generate a label array
 const labelArr = (sLabel, numLabels) => new Array(numLabels === -1 ? 1 : numLabels).fill().map((elem, idx) => new ElemLabel(sLabel, numLabels > 1 ? idx + 1 : null).toString());
-const multLabelArr = (arrLabels, numRep) => new Array(numRep === -1 ? 1 : numLabels).fill().map((elem, idx) => new ElemLabel(sLabel, numRep > 1 ? idx + 1 : null).toString());
+
+//Generate an array of labels for multiple labels passed in as an array
+const multLabelArr = (arrLabels, numLabels) => {
+    const arrOfLabelArrs = new Array(arrLabels.length)
+        .fill()
+        .map((elem, idx) => labelArr( arrLabels[idx], numLabels ))
+
+    const retArr = [];
+    const numRows = arrOfLabelArrs.length;
+    const numCols = arrOfLabelArrs[0].length;
+
+    for(let col = 0; col < numCols; col++) {
+        for(let row = 0; row < numRows; row++) {
+            retArr.push(arrOfLabelArrs[row][col])
+        }
+    }
+
+    return retArr;
+}
 
 //Function tradeStylesToArray returns an array containing tradestyle names of a predefined
 //length (numTradeStyles). tradeStyleNames objects are simple, they contain one component,
@@ -160,28 +178,15 @@ function summariesToArr(
         labelSize = consts.labelSize.medium
     )
 {
-    function getSummLabel(elem) {
-        const mapSumms = consts.labels.summary;
-
-        const arrLabels = mapSumms.get(elem) || mapSumms.get(0);
-
-        return arrLabels.length ? arrLabels[labelSize] : 'summary';
-    }
-
     if(bLabel) {
-        let arrSummTypes = [ 0 ];
+        const retLabelArr = multLabelArr( arrRetFlds, numSumms);
 
-        if(numSumms !== -1) {
-            arrSummTypes = arrSummPrio.slice(0, numSumms);
-
-            if(arrSummTypes.length < numSumms) {
-                arrSummTypes = arrSummTypes.concat(new Array(numSumms - arrSummTypes.length).fill(0))
-            }
-        }
-
-        return arrSummTypes.map(getSummLabel);
+        return retLabelArr;
     }
 
+    //Calculate the target length of the return array
+    const targetLen = arrRetFlds.length * numSumms;
+ 
     //Simplify the structure of the summary objects and add a priority attribute
     const retArr = arrSummary.map(elem => {
         const prio = arrSummPrio.findIndex(prio => prio === elem.textType.dnbCode);
@@ -199,15 +204,15 @@ function summariesToArr(
 
     //Return the array if it contains the exact number of summaries requested
     //or if numSumms is -1 (i.e. return all available summaries)
-    if(numSumms === -1 || retArr.length === arrRetFlds.length * numSumms) return retArr;
+    if(numSumms === -1 || retArr.length === targetLen) return retArr;
 
     //Slice the array if it contains more than the arrFlds.length * numSumms
     //elements requested
-    if(retArr.length > arrRetFlds.length * numSumms) return retArr.slice(0, arrRetFlds.length * numSumms);
+    if(retArr.length > targetLen) return retArr.slice(0, targetLen);
 
     //At this point, retArr.length < arrFlds.length * numSumms must be true
     //Pad the returned array with empty array elements
-    return retArr.concat(new Array(arrRetFlds.length * numSumms - retArr.length));
+    return retArr.concat(new Array(targetLen - retArr.length));
 }
 
 function regNumsToArr(
