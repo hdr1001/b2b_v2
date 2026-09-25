@@ -24,26 +24,25 @@ import { ElemLabel } from '../../../elemLabel.js';
 import { objToArr } from '../../../utils.js';
 import consts from '../consts.js';
 
+//Field to label
+const fldToLabel = (fld, labelSize) => consts.labels[fld][labelSize];
+
 //Generate a label array
-const labelArr = (sLabel, numLabels) => new Array(numLabels === -1 ? 1 : numLabels).fill().map((elem, idx) => new ElemLabel(sLabel, numLabels > 1 ? idx + 1 : null).toString());
+const labelArr = (sLabel, numRepeat = 1) => new Array(numRepeat === -1 ? 1 : numRepeat).fill().map((elem, idx) => new ElemLabel(sLabel, numRepeat > 1 ? idx + 1 : null).toString());
 
 //Generate an array of labels for multiple labels passed in as an array
-const multLabelArr = (arrLabels, numLabels) => {
-    const arrOfLabelArrs = new Array(arrLabels.length)
+const multLabelArr = (arrLabels, numRepeat) => {
+    if(!(Array.isArray(arrLabels) && arrLabels.length)) throw new Error('Parameter arrLabels must be an array and contain at least one element');
+
+    let retArr = new Array(arrLabels.length)
         .fill()
-        .map((elem, idx) => labelArr( arrLabels[idx], numLabels ))
+        .map((elem, idx) => labelArr( arrLabels[idx], numRepeat ));
 
-    const retArr = [];
-    const numRows = arrOfLabelArrs.length;
-    const numCols = arrOfLabelArrs[0].length;
+    //Transpose the array of arrays
+    retArr = retArr[0].map((_, colIdx) => retArr.map( row => row[colIdx] ));
 
-    for(let col = 0; col < numCols; col++) {
-        for(let row = 0; row < numRows; row++) {
-            retArr.push(arrOfLabelArrs[row][col])
-        }
-    }
-
-    return retArr;
+    //Flatten before returning
+    return retArr.flat();
 }
 
 //Function tradeStylesToArray returns an array containing tradestyle names of a predefined
@@ -161,14 +160,15 @@ function telsToArr(
 //Function summaryFromArray returns:
 //   - a description of the specific editorial summary for the entity
 //   - a string containing editorial comments for the entity
+//   - an assigned priority based on an input parameter
 //The comments can contain HTML tags. Summary is available in data block Company Info L2+.
 //
 //The five function parameters
 //1. arrSummary, the array of summary objects
-//2. arrFlds, the array of field names to include in the returned array
+//2. arrRetFlds, the array of field names to include in the returned array
 //3. numSumms, specify the number of summaries to return (-1 for all)
 //4. bLabel, specify true for the element labels to be returned
-//5. sLabel, specify the labels string for the element label
+//5. labelSize, specify the length of the label string
 function summariesToArr(
         arrSummary = [],
         arrRetFlds = consts.flds.summary,
@@ -179,9 +179,11 @@ function summariesToArr(
     )
 {
     if(bLabel) {
-        const retLabelArr = multLabelArr( arrRetFlds, numSumms);
+        const lblSumm = consts.labels.summ[labelSize];
 
-        return retLabelArr;
+        const arrLabels = arrRetFlds.map( fld => lblSumm + ' ' + fldToLabel( fld, labelSize ));
+
+        return multLabelArr( arrLabels, numSumms );
     }
 
     //Calculate the target length of the return array

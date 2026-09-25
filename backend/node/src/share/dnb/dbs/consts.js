@@ -68,7 +68,8 @@ const consts = {
         isPref: [ 'is pref', 'is preferred', 'is preferred'],
         type: [ 'type', 'type', 'type'],
         class: [ 'class', 'class', 'class'],
-        regLoc: [ 'reg loc', 'registration loc', 'registration location']
+        regLoc: [ 'reg loc', 'registration loc', 'registration location'],
+        summ: [ 'summ', 'summary', 'summary' ]
     },
     prios: {
         summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ] //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
