@@ -22,6 +22,7 @@
 
 import { ElemLabel } from '../../../elemLabel.js';
 import { objToArr } from '../../../utils.js';
+import { regNumTypeIsVAT } from '../../refData.js';
 import consts from '../consts.js';
 
 //Field to label
@@ -43,6 +44,72 @@ const multLabelArr = (arrLabels, numRepeat) => {
 
     //Flatten before returning
     return retArr.flat();
+}
+
+//Return a LEI registration number object
+function objLeiRegNum(sLei) {
+    if(!sLei) return null;
+
+    return {
+        registrationNumber: sLei,
+        typeDescription: 'Legal Entity Identifier',
+        typeDnBCode: 33916,
+        registrationNumberClass: {
+            description: 'International Identifier',
+            dnbCode: 41109
+        },
+        isPreferredRegistrationNumber: null,
+        registrationLocation: null
+    }
+}
+
+//Create a custom registration number object
+function createCustRegNum(elem) {
+    const ret = {};
+
+    //Check if the registration number is a known VAT
+    if(elem.typeDnBCode && regNumTypeIsVAT.has(elem.typeDnBCode)) ret.isVAT = true;
+
+    //Default priority is 4
+    ret.prio = 4;
+
+    //Set specific priorities
+    if (elem.isPreferredRegistrationNumber === true) { ret.prio = 1 } //Assign prio 1 if preferred
+    else if (ret.isVAT) { ret.prio = 2 } //Assign prio 2 to VATs (& not preferred)
+    else if (elem.typeDnBCode === 33916) { ret.prio = 3 } //Assign prio 3 to LEIs
+
+    //The actual ID
+    ret.regNum = elem.registrationNumber;
+
+    //The registration number type description & code
+    ret.desc = elem.typeDescription;
+    ret.type = elem.typeDnBCode;
+
+    //The registration number class description & code
+    ret.classDesc = elem.registrationNumberClass?.description;
+    ret.class = elem.registrationNumberClass?.dnbCode;
+
+    //The location of the registrar
+    ret.regLocation = elem.registrationLocation;
+
+    return ret;
+}
+
+//Initialize the custom registration number array
+function iniRegNumArr(orgRegNums, leiRegNum) {
+    let ret = [];
+
+    //Add, if available, the LEI to the array of custom objects
+    if(leiRegNum) ret.push( createCustRegNum(leiRegNum) );
+
+    //Done if no registration numbers available
+    if(!orgRegNums || orgRegNums.length === 0) return ret;
+
+    //Create an array of custom registration numbers from the data block data
+    ret = ret.concat( orgRegNums.map(createCustRegNum) );
+
+    //Sort based on assigned priority
+    return ret.sort((elem1, elem2) => elem1.prio - elem2.prio);
 }
 
 //Function tradeStylesToArray returns an array containing tradestyle names of a predefined
@@ -165,13 +232,13 @@ function telsToArr(
 //
 //The five function parameters
 //1. arrSummary, the array of summary objects
-//2. arrRetFlds, the array of field names to include in the returned array
+//2. arrFlds, the array of field names to include in the returned array
 //3. numSumms, specify the number of summaries to return (-1 for all)
 //4. bLabel, specify true for the element labels to be returned
 //5. labelSize, specify the length of the label string
 function summariesToArr(
         arrSummary = [],
-        arrRetFlds = consts.flds.summary,
+        arrFlds = consts.flds.summary,
         arrSummPrio = consts.prios.summary,
         numSumms = 1,
         bLabel = false,
@@ -181,13 +248,13 @@ function summariesToArr(
     if(bLabel) {
         const lblSumm = consts.labels.summ[labelSize];
 
-        const arrLabels = arrRetFlds.map( fld => lblSumm + ' ' + fldToLabel( fld, labelSize ));
+        const arrLabels = arrFlds.map( fld => lblSumm + ' ' + fldToLabel( fld, labelSize ));
 
         return multLabelArr( arrLabels, numSumms );
     }
 
     //Calculate the target length of the return array
-    const targetLen = arrRetFlds.length * numSumms;
+    const targetLen = arrFlds.length * numSumms;
  
     //Simplify the structure of the summary objects and add a priority attribute
     const retArr = arrSummary.map(elem => {
@@ -202,7 +269,7 @@ function summariesToArr(
     //Sort the summary objects based on priority
     .sort((elem1, elem2) => elem1.prio - elem2.prio)
     //Flatten the array with only requested values
-    .reduce((acc, summ) => acc.concat(objToArr(summ, arrRetFlds)), []);
+    .reduce((acc, summ) => acc.concat(objToArr(summ, arrFlds)), []);
 
     //Return the array if it contains the exact number of summaries requested
     //or if numSumms is -1 (i.e. return all available summaries)
@@ -222,28 +289,31 @@ function regNumsToArr(
         arrFlds = consts.flds.registrationNum,
         numRegNums = 1,
         bLabel = false,
-        sLabel = consts.labels.registrationNum[consts.labelSize.medium]
+        labelSize = consts.labels.registrationNum[consts.labelSize.medium]
     )
 {
+    //Calculate the target length of the return array
+    const targetLen = arrFlds.length * numRegNums;
+
     //Flatten the array with the requested values
     const retArr = arrRegNums.reduce((acc, regNum) => acc.concat(objToArr(regNum, arrFlds)), []);
 
     //Return the array if it contains the exact number of registration numbers requested
     //or if numRegNums is -1 (i.e. return all available IDs)
-    if(numRegNums === -1 || retArr.length === arrFlds.length * numRegNums) return retArr;
+    if(numRegNums === -1 || retArr.length === targetLen) return retArr;
 
     //Slice the array if it contains more than the arrFlds.length * numRegNums
     //elements requested
-    if(retArr.length > arrFlds.length * numRegNums) {
-        return retArr.slice(0, arrFlds.length * numRegNums);
-    }
+    if(retArr.length > targetLen) return retArr.slice(0, targetLen);
 
     //At this point, retArr.length < arrFlds.length * numRegNums must be true
     //Pad the returned array with empty array elements
-    return retArr.concat(new Array(arrFlds.length * numRegNums - retArr.length));
+    return retArr.concat(new Array(targetLen - retArr.length));
 }
 
 export default {
+    objLeiRegNum,
+    iniRegNumArr,
     tradeStylesToArr,
     emailsToArr,
     telsToArr,

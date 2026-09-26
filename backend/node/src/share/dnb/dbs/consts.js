@@ -20,8 +20,6 @@
 //
 // *********************************************************************
 
-const desc = [ 'desc', 'description', 'description' ];
-
 //Application constants
 const consts = {
     labelSize: { small: 0, medium: 1, large: 2 },
@@ -42,7 +40,8 @@ const consts = {
             opStatusDate: ['op status date', 'operating status date', 'operating status date'],
             startDate:    ['start date', 'start date', 'start date'],
             SMB:          ['ent size', 'entity size', 'entity size'],
-            defaultCurr:  ['dflt curr', 'default currency', 'default currency'],
+            dfltCurr:     ['dflt curr', 'default currency', 'default currency'],
+            lei:          ['LEI', 'LEI', 'legal entity identifier'],
             marketable:   ['marketable', 'marketable', 'is marketable']
         },
         summary: new Map([
@@ -76,7 +75,7 @@ const consts = {
     },
     flds: {
         summary: [ 'desc', 'txt' ],
-        registrationNum: [ 'regNum', 'desc', 'classDesc', 'isVAT', 'prio', 'regLocation' ]
+        registrationNum: [ 'regNum', 'desc', 'type', 'classDesc', 'class', 'isVAT', 'prio', 'regLocation' ]
     }
 };
 

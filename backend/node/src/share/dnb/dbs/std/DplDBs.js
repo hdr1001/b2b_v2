@@ -21,47 +21,7 @@
 // *********************************************************************
 
 import { sDateIsoToYYYYMMDD } from '../../../utils.js';
-import { regNumTypeIsVAT } from '../../refData.js';
-import consts from '../consts.js'; 
 import ci from './dbCompInfo.js';
-
-//Create a custom registration number object
-function createCustRegNum(elem) {
-    const ret = {};
-
-    //Check if the registration number is a known VAT
-    if(elem.typeDnBCode && regNumTypeIsVAT.has(elem.typeDnBCode)) ret.isVAT = true;
-
-    //Default priority is 4
-    ret.prio = 4;
-
-    //Set specific priorities
-    if (elem.isPreferredRegistrationNumber === true) { ret.prio = 1 } //Assign prio 1 if preferred
-    else if (ret.isVAT) { ret.prio = 2 } //Assign prio 2 to VATs (& not preferred)
-    else if (elem.typeDnBCode === 33916) { ret.prio = 3 } //Assign prio 3 to LEIs
-
-    ret.regNum = elem.registrationNumber;
-    ret.desc = elem.typeDescription;
-    ret.classDesc = elem.registrationNumberClass?.description;
-    ret.regLocation = elem.registrationLocation;
-
-    return ret;
-}
-
-//Initialize the custom registration number array
-function iniRegNumArr(orgRegNums, leiRegNum) {
-    if(!orgRegNums || orgRegNums.length === 0) return [];
-
-    //Create an array of custom registration numbers from the data block data
-    let ret = orgRegNums.map(createCustRegNum);
-
-    //Add, if available, the LEI
-    if(leiRegNum) ret.push( createCustRegNum(leiRegNum) );
-
-    //Sort based on assigned priority
-    return ret.sort((elem1, elem2) => elem1.prio - elem2.prio);
-}
-
 
 //Compile Data Block request & response information into a Map object
 //All API responses contain a inquiryDetail.blockIDs & blockStatus array
@@ -218,7 +178,8 @@ export default class DplDBs {
         //Miscellaneous one-to-one mappings
         this.map121.startDate = this.org.startDate;
         this.map121.SMB = this.org.organizationSizeCategory?.description;
-        this.map121.defaultCurr = this.org.defaultCurrency;
+        this.map121.dfltCurr = this.org.defaultCurrency;
+        this.map121.lei = this.org.legalEntityIdentifier;
 
         //One-to-one mappings of inquiry details
         if(this.dplDBs.inquiryDetail) {
@@ -240,21 +201,7 @@ export default class DplDBs {
     get respStatusOk() { return this.reqRespInfo.size ? this.reqRespInfo.values().every( val => val.resp?.status === 'ok' ) : null }
 
     //Convert a LEI to a Company Information registration number object
-    get leiRegNum() {
-        if(!this.org.legalEntityIdentifier) return null;
-
-        return {
-            registrationNumber: this.org.legalEntityIdentifier,
-            typeDescription: 'Legal Entity Identifier',
-            typeDnBCode: 33916,
-            registrationNumberClass: {
-                description: 'International Identifier',
-                dnbCode: 41109
-            },
-            isPreferredRegistrationNumber: null,
-            registrationLocation: null
-        }
-    }
+    get leiRegNum() { return ci.objLeiRegNum(this.map121.lei) }
 
     //Method transactionTimestamp will get the transaction timestamp in the format YYYYMMDD
     //All data block responses contain a transactionDetail object
@@ -278,12 +225,12 @@ export default class DplDBs {
     telsToArr = (numTels, bLabel, sLabel) => ci.telsToArr( this.org.telephone, numTels, bLabel, sLabel );
 
     //Return an array containing editorial comments for the entity.
-    summariesToArr = (arrRetFlds, arrSummPrio, numSumms, bLabel, labelSize) => ci.summariesToArr( this.org.summary, arrRetFlds, arrSummPrio, numSumms, bLabel, labelSize );
+    summariesToArr = (arrFlds, arrSummPrio, numSumms, bLabel, labelSize) => ci.summariesToArr( this.org.summary, arrFlds, arrSummPrio, numSumms, bLabel, labelSize );
 
-    //Return an array containing custom registration numbers of a predefined length (numTels)    
-    regNumsToArr = (arrFlds, numRegNums, bLabel, sLabel) => {
-        if(!this.org.regNums) this.org.regNums = iniRegNumArr(this.org.registrationNumbers, this.leiRegNum);
+    //Return an array containing custom registration numbers of a predefined length (numRegNums)    
+    regNumsToArr = (arrFlds, numRegNums, bLabel, labelSize) => {
+        if(!this.org.regNums) this.org.regNums = ci.iniRegNumArr(this.org.registrationNumbers, this.leiRegNum);
 
-        return ci.regNumsToArr(this.org.regNums, arrFlds, numRegNums, bLabel, sLabel);
+        return ci.regNumsToArr( this.org.regNums, arrFlds, numRegNums, bLabel, labelSize );
     }
 }
