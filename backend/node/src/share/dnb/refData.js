@@ -21,6 +21,9 @@
 
 // Some registration numbers are VAT#s
 // Gentle reminder -> ... is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND ...
+const regNumClassIsVAT = new Set( [ 2929, 44498, 44499 ] );
+
+// Gentle reminder -> ... is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND ...
 const regNumTypeIsVAT = new Set([
     99,    //BE Member
     480,   //LU Member
@@ -109,4 +112,7 @@ const regNumTypeIsVAT = new Set([
     42083  //RO Member
 ]);
 
-export { regNumTypeIsVAT };
+export {
+    regNumClassIsVAT,
+    regNumTypeIsVAT
+};

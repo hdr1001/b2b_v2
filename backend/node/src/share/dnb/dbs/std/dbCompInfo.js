@@ -22,7 +22,7 @@
 
 import { ElemLabel } from '../../../elemLabel.js';
 import { objToArr } from '../../../utils.js';
-import { regNumTypeIsVAT } from '../../refData.js';
+import { regNumClassIsVAT } from '../../refData.js';
 import consts from '../consts.js';
 
 //Field to label
@@ -67,8 +67,8 @@ function objLeiRegNum(sLei) {
 function createCustRegNum(elem) {
     const ret = {};
 
-    //Check if the registration number is a known VAT
-    if(elem.typeDnBCode && regNumTypeIsVAT.has(elem.typeDnBCode)) ret.isVAT = true;
+    //Check if the registration number is a Value Added Tax ID
+    ret.isVAT = elem.registrationNumberClass?.dnbCode && regNumClassIsVAT.has(elem.registrationNumberClass.dnbCode);
 
     //Default priority is 4
     ret.prio = 4;
@@ -90,7 +90,7 @@ function createCustRegNum(elem) {
     ret.class = elem.registrationNumberClass?.dnbCode;
 
     //The location of the registrar
-    ret.regLocation = elem.registrationLocation;
+    ret.regLoc = elem.registrationLocation;
 
     return ret;
 }
@@ -284,14 +284,44 @@ function summariesToArr(
     return retArr.concat(new Array(targetLen - retArr.length));
 }
 
+//Function regNumsToArr returns:
+//   - a registration number (aka national ID)
+//   - a registration number type & type description
+//   - a registration number class & class description
+//   - an indicator highlighting whether the ID is a VAT
+//   - a priority indicator
+//   - a location description of the registrar
+//Registration numbers are available in data block Company Info L1+.
+//
+//The five function parameters
+//1. arrRegNums, a custom array of registration number objects
+//2. arrFlds, the array of field names to include in the returned array
+//3. numRegNums, specify the number of registration numbers to return (-1 for all)
+//4. bLabel, specify true for the element labels to be returned
+//5. labelSize, specify the length of the label string
 function regNumsToArr(
         arrRegNums = [],
-        arrFlds = consts.flds.registrationNum,
+        arrFlds = consts.flds.regNum,
         numRegNums = 1,
         bLabel = false,
-        labelSize = consts.labels.registrationNum[consts.labelSize.medium]
+        labelSize = consts.labelSize.medium
     )
 {
+    if(bLabel) {
+        const lblRegNum = consts.labels.regNum[labelSize];
+
+        const arrLabels = arrFlds.map( fld => {
+                const addtnlLabel = fldToLabel( fld, labelSize );
+
+                if(lblRegNum === addtnlLabel) return lblRegNum;
+
+                return lblRegNum + ' ' + addtnlLabel;
+            }
+        );
+
+        return multLabelArr( arrLabels, numRegNums );
+    }
+
     //Calculate the target length of the return array
     const targetLen = arrFlds.length * numRegNums;
 

@@ -61,12 +61,14 @@ const consts = {
         tel: ['tel', 'telephone', 'telephone number'],
         desc: [ 'desc', 'description', 'description'],
         txt: [ 'txt', 'text', 'text' ],
-        registrationNum: ['reg num', 'registration num', 'registration number'],
+        regNum: ['reg num', 'registration num', 'registration number'],
         isVAT: [ 'is VAT', 'is VAT', 'is value added tax num'],
         prio: [ 'prio', 'priority', 'priority'],
         isPref: [ 'is pref', 'is preferred', 'is preferred'],
         type: [ 'type', 'type', 'type'],
         class: [ 'class', 'class', 'class'],
+        classDesc: [ 'class desc', 'class description', 'class description' ],
+        isVAT: [ 'is VAT', 'is VAT', 'is value added tax' ],
         regLoc: [ 'reg loc', 'registration loc', 'registration location'],
         summ: [ 'summ', 'summary', 'summary' ]
     },
@@ -75,7 +77,7 @@ const consts = {
     },
     flds: {
         summary: [ 'desc', 'txt' ],
-        registrationNum: [ 'regNum', 'desc', 'type', 'classDesc', 'class', 'isVAT', 'prio', 'regLocation' ]
+        regNum: [ 'regNum', 'desc', 'type', 'classDesc', 'class', 'isVAT', 'prio', 'regLoc' ]
     }
 };
 
