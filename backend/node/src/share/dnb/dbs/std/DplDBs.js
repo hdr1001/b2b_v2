@@ -233,4 +233,6 @@ export default class DplDBs {
 
         return ci.regNumsToArr( this.org.regNums, arrFlds, numRegNums, bLabel, labelSize );
     }
+
+    stockExchsToArr = (arrFlds, numStockExchs, bLabel, labelSize) => ci.stockExchsToArr( this.org.stockExchanges, arrFlds, numStockExchs, bLabel, labelSize );
 }

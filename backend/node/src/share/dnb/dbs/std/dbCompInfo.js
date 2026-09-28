@@ -341,6 +341,44 @@ function regNumsToArr(
     return retArr.concat(new Array(targetLen - retArr.length));
 }
 
+function stockExchsToArr(
+        arrStockExchs = [],
+        arrFlds = consts.flds.regNum,
+        numStockExchs = 1,
+        bLabel = false,
+        labelSize = consts.labelSize.medium
+    )
+{
+    //Calculate the target length of the return array
+    const targetLen = arrFlds.length * numStockExchs;
+ 
+    //Simplify the structure of the stock exchange objects and add a priority attribute
+    const retArr = arrStockExchs.map(elem => {
+        return {
+            tickerName: elem.tickerName,
+            exchName: elem.exchangeName?.description,
+            exchCountry: elem.exchangeCountry?.isoAlpha2Code,
+            prio: elem.isPrimary ? 1 : 2 
+        }
+    })
+    //Sort the summary objects based on priority
+    .sort((elem1, elem2) => elem1.prio - elem2.prio)
+    //Flatten the array with only requested values
+    .reduce((acc, summ) => acc.concat(objToArr(summ, arrFlds)), []);
+
+    //Return the array if it contains the exact number of summaries requested
+    //or if numSumms is -1 (i.e. return all available summaries)
+    if(numStockExchs === -1 || retArr.length === targetLen) return retArr;
+
+    //Slice the array if it contains more than the arrFlds.length * numSumms
+    //elements requested
+    if(retArr.length > targetLen) return retArr.slice(0, targetLen);
+
+    //At this point, retArr.length < arrFlds.length * numSumms must be true
+    //Pad the returned array with empty array elements
+    return retArr.concat(new Array(targetLen - retArr.length));
+}
+
 export default {
     objLeiRegNum,
     iniRegNumArr,
@@ -348,5 +386,6 @@ export default {
     emailsToArr,
     telsToArr,
     summariesToArr,
-    regNumsToArr
+    regNumsToArr,
+    stockExchsToArr
 };
