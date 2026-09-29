@@ -224,7 +224,7 @@ export default class DplDBs {
     //Return an array containing telephone numbers of a predefined length (numTels)    
     telsToArr = (numTels, bLabel, sLabel) => ci.telsToArr( this.org.telephone, numTels, bLabel, sLabel );
 
-    //Return an array containing editorial comments for the entity.
+    //Return an array containing editorial comments for the entity
     summariesToArr = (arrFlds, arrSummPrio, numSumms, bLabel, labelSize) => ci.summariesToArr( this.org.summary, arrFlds, arrSummPrio, numSumms, bLabel, labelSize );
 
     //Return an array containing custom registration numbers of a predefined length (numRegNums)    
@@ -234,5 +234,6 @@ export default class DplDBs {
         return ci.regNumsToArr( this.org.regNums, arrFlds, numRegNums, bLabel, labelSize );
     }
 
+    //Return an array, of predefined length, containing the stockexchanges on which the entity is listed
     stockExchsToArr = (arrFlds, numStockExchs, bLabel, labelSize) => ci.stockExchsToArr( this.org.stockExchanges, arrFlds, numStockExchs, bLabel, labelSize );
 }

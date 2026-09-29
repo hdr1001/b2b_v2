@@ -341,23 +341,45 @@ function regNumsToArr(
     return retArr.concat(new Array(targetLen - retArr.length));
 }
 
+//Function stockExchsToArr returns an array, of predefined length, containing the
+//stockexchanges on which the entity is listed
+//
+//The function returns:
+//   - a ticker name
+//   - a stockexchange name
+//   - a stockexchange country
+//   - an assigned priority
+//
+//The five function parameters
+//1. arrStockExchs, the array of ticker symbol objects
+//2. arrFlds, the array of field names to include in the returned array
+//3. numStockExchs, specify the number of summaries to return (-1 for all)
+//4. bLabel, specify true for the element labels to be returned
+//5. labelSize, specify the length of the label string
 function stockExchsToArr(
         arrStockExchs = [],
-        arrFlds = consts.flds.regNum,
+        arrFlds = consts.flds.stockExch,
         numStockExchs = 1,
         bLabel = false,
         labelSize = consts.labelSize.medium
     )
 {
+    //Return an array of labels if bLabel is true
+    if(bLabel) {
+        const lblExch = consts.labels.stockExch[labelSize];
+
+        return multLabelArr( arrFlds.map( fld => lblExch + ' ' + fldToLabel( fld, labelSize ) ), numStockExchs );
+    }
+
     //Calculate the target length of the return array
     const targetLen = arrFlds.length * numStockExchs;
  
     //Simplify the structure of the stock exchange objects and add a priority attribute
     const retArr = arrStockExchs.map(elem => {
         return {
-            tickerName: elem.tickerName,
-            exchName: elem.exchangeName?.description,
-            exchCountry: elem.exchangeCountry?.isoAlpha2Code,
+            ticker: elem.tickerName,
+            name: elem.exchangeName?.description,
+            country: elem.exchangeCountry?.isoAlpha2Code,
             prio: elem.isPrimary ? 1 : 2 
         }
     })

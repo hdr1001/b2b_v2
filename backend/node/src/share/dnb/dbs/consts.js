@@ -70,14 +70,19 @@ const consts = {
         classDesc: [ 'class desc', 'class description', 'class description' ],
         isVAT: [ 'is VAT', 'is VAT', 'is value added tax' ],
         regLoc: [ 'reg loc', 'registration loc', 'registration location'],
-        summ: [ 'summ', 'summary', 'summary' ]
+        summ: [ 'summ', 'summary', 'summary' ],
+        stockExch: [ 'exch', 'stock exch', 'stock exchange' ],
+        name: [ 'name', 'name', 'name' ],
+        country: [ 'ctry', 'country', 'country' ],
+        ticker: [ 'ticker', 'ticker', 'ticker symbol' ]
     },
     prios: {
         summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ] //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
     },
     flds: {
         summary: [ 'desc', 'txt' ],
-        regNum: [ 'regNum', 'desc', 'type', 'classDesc', 'class', 'isVAT', 'prio', 'regLoc' ]
+        regNum: [ 'regNum', 'desc', 'type', 'classDesc', 'class', 'isVAT', 'prio', 'regLoc' ],
+        stockExch: [ 'ticker', 'name', 'country', 'prio' ]
     }
 };
 
