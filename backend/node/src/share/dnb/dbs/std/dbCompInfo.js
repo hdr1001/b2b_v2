@@ -386,7 +386,7 @@ function stockExchsToArr(
     //Sort the summary objects based on priority
     .sort((elem1, elem2) => elem1.prio - elem2.prio)
     //Flatten the array with only requested values
-    .reduce((acc, summ) => acc.concat(objToArr(summ, arrFlds)), []);
+    .reduce((acc, exch) => acc.concat(objToArr(exch, arrFlds)), []);
 
     //Return the array if it contains the exact number of summaries requested
     //or if numSumms is -1 (i.e. return all available summaries)
@@ -401,6 +401,67 @@ function stockExchsToArr(
     return retArr.concat(new Array(targetLen - retArr.length));
 }
 
+//Function utf8NamesToArr returns an array, of predefined length, containing 
+//the so-called multi-Lingual names of an entity
+//
+//The function returns:
+//   - a utf8 name 
+//   - a language description
+//   - a language code
+//   - a writing script description
+//   - a writing script code
+//   - a priority indicator
+//
+//The five function parameters
+//1. arrUtf8Names, the array of utf8 name objects
+//2. arrFlds, the array of field names to include in the returned array
+//3. numUtf8Names, specify the number of names to return (-1 for all)
+//4. bLabel, specify true for the element labels to be returned
+//5. labelSize, specify the length of the label string
+function utf8NamesToArr(
+        arrUtf8Names = [],
+        arrFlds = consts.flds.utf8Name,
+        numUtf8Names = 1,
+        bLabel = false,
+        labelSize = consts.labelSize.medium
+    )
+{
+    if(bLabel) {
+        const lblUtf8Name = consts.labels.utf8Name[labelSize];
+    }
+
+    //Calculate the target length of the return array
+    const targetLen = arrFlds.length * numUtf8Names;
+
+    //Simplify the structure of the utf8 name objects
+    const retArr = arrUtf8Names.map(elem => {
+        return {
+            name: elem.name,
+            langDesc: elem.language?.description,
+            langCode: elem.language?.dnbCode,
+            scriptDesc: elem.writingScript?.description,
+            scriptCode: elem.writingScript?.dnbCode,
+            prio: elem.priority || arrUtf8Names.length
+        }
+    })
+    //Sort the summary objects based on priority
+    .sort((elem1, elem2) => elem1.prio - elem2.prio)
+    //Flatten the array with only requested values
+    .reduce((acc, summ) => acc.concat(objToArr(summ, arrFlds)), []);
+
+    //Return the array if it contains the exact number of names requested
+    //or if numUtf8Names is -1 (i.e. return all available names)
+    if(numUtf8Names === -1 || retArr.length === targetLen) return retArr;
+
+    //Slice the array if it contains more than the arrFlds.length * numUtf8Names
+    //elements requested
+    if(retArr.length > targetLen) return retArr.slice(0, targetLen);
+    
+    //At this point, retArr.length < targetLen  must be true
+    //Pad the returned array with empty array elements
+    return retArr.concat(new Array(targetLen - retArr.length));
+}
+
 export default {
     objLeiRegNum,
     iniRegNumArr,
@@ -409,5 +470,6 @@ export default {
     telsToArr,
     summariesToArr,
     regNumsToArr,
+    utf8NamesToArr,
     stockExchsToArr
 };
