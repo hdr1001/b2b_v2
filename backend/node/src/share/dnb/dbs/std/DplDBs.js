@@ -21,6 +21,7 @@
 // *********************************************************************
 
 import { sDateIsoToYYYYMMDD } from '../../../utils.js';
+import consts from '../consts.js';
 import ci from './dbCompInfo.js';
 
 //Compile Data Block request & response information into a Map object
@@ -236,4 +237,6 @@ export default class DplDBs {
 
     //Return an array, of predefined length, containing the stockexchanges on which the entity is listed
     stockExchsToArr = (arrFlds, numStockExchs, bLabel, labelSize) => ci.stockExchsToArr( this.org.stockExchanges, arrFlds, numStockExchs, bLabel, labelSize );
+
+    utf8PrimNamesToArr = (arrFlds, numUtf8Names, bLabel, labelSize) => ci.utf8NamesToArr( this.org.multilingualPrimaryName, consts.labels.prim, arrFlds, numUtf8Names, bLabel, labelSize );
 }

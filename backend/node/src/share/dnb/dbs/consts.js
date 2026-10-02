@@ -74,7 +74,10 @@ const consts = {
         stockExch: [ 'exch', 'stock exch', 'stock exchange' ],
         name: [ 'name', 'name', 'name' ],
         country: [ 'ctry', 'country', 'country' ],
-        ticker: [ 'ticker', 'ticker', 'ticker symbol' ]
+        ticker: [ 'ticker', 'ticker', 'ticker symbol' ],
+        language: [ 'lang', 'language', 'language' ],
+        prim: [ 'prim', 'primary', 'primary' ],
+        reg: [ 'reg', 'registered', 'registered' ]
     },
     prios: {
         summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ] //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
@@ -82,7 +85,8 @@ const consts = {
     flds: {
         summary: [ 'desc', 'txt' ],
         regNum: [ 'regNum', 'desc', 'type', 'classDesc', 'class', 'isVAT', 'prio', 'regLoc' ],
-        stockExch: [ 'ticker', 'name', 'country', 'prio' ]
+        stockExch: [ 'ticker', 'name', 'country', 'prio' ],
+        utf8Name: [ 'name', 'langDesc', 'langCode', 'scriptDesc', 'scriptCode', 'prio' ]
     }
 };
 

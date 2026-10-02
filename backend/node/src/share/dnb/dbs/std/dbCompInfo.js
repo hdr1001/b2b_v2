@@ -263,7 +263,7 @@ function summariesToArr(
         return {
             desc: elem.textType.description,
             txt: elem.text,
-            prio: prio === -1 ? arrSummPrio.length : prio 
+            prio: prio === -1 ? arrSummPrio.length + 1 : prio 
         }
     })
     //Sort the summary objects based on priority
@@ -420,6 +420,7 @@ function stockExchsToArr(
 //5. labelSize, specify the length of the label string
 function utf8NamesToArr(
         arrUtf8Names = [],
+        nameType = consts.labels.prim,
         arrFlds = consts.flds.utf8Name,
         numUtf8Names = 1,
         bLabel = false,
@@ -427,7 +428,18 @@ function utf8NamesToArr(
     )
 {
     if(bLabel) {
-        const lblUtf8Name = consts.labels.utf8Name[labelSize];
+        const lblUtf8Name = `${nameType[labelSize]} utf8 ${consts.labels.name[labelSize]}`;
+        
+        return multLabelArr( 
+            arrFlds.map( fld => {
+                if(fld === 'name') return lblUtf8Name;
+
+                if(fld === consts.labels.prio) return lblUtf8Name + ' ' + fldToLabel( fld, labelSize );
+
+                return '';
+            }),
+            numUtf8Names
+        );
     }
 
     //Calculate the target length of the return array
@@ -441,7 +453,7 @@ function utf8NamesToArr(
             langCode: elem.language?.dnbCode,
             scriptDesc: elem.writingScript?.description,
             scriptCode: elem.writingScript?.dnbCode,
-            prio: elem.priority || arrUtf8Names.length
+            prio: elem.priority || arrUtf8Names.length + 1
         }
     })
     //Sort the summary objects based on priority
