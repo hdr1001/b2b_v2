@@ -67,7 +67,6 @@ const consts = {
         isPref: [ 'is pref', 'is preferred', 'is preferred'],
         type: [ 'type', 'type', 'type'],
         class: [ 'class', 'class', 'class'],
-        classDesc: [ 'class desc', 'class description', 'class description' ],
         isVAT: [ 'is VAT', 'is VAT', 'is value added tax' ],
         regLoc: [ 'reg loc', 'registration loc', 'registration location'],
         summ: [ 'summ', 'summary', 'summary' ],
@@ -75,18 +74,20 @@ const consts = {
         name: [ 'name', 'name', 'name' ],
         country: [ 'ctry', 'country', 'country' ],
         ticker: [ 'ticker', 'ticker', 'ticker symbol' ],
-        language: [ 'lang', 'language', 'language' ],
+        lang: [ 'lang', 'language', 'language' ],
         prim: [ 'prim', 'primary', 'primary' ],
-        reg: [ 'reg', 'registered', 'registered' ]
+        reg: [ 'reg', 'registered', 'registered' ],
+        code: [ 'code', 'code', 'code' ],
+        script: [ 'script', 'script', 'script' ]
     },
     prios: {
         summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ] //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
     },
     flds: {
         summary: [ 'desc', 'txt' ],
-        regNum: [ 'regNum', 'desc', 'type', 'classDesc', 'class', 'isVAT', 'prio', 'regLoc' ],
+        regNum: [ 'regNum', 'desc', 'type', 'class_desc', 'class', 'isVAT', 'prio', 'regLoc' ],
         stockExch: [ 'ticker', 'name', 'country', 'prio' ],
-        utf8Name: [ 'name', 'langDesc', 'langCode', 'scriptDesc', 'scriptCode', 'prio' ]
+        utf8Name: [ 'name', 'lang_desc', 'lang_code', 'script_desc', 'script_code', 'prio' ]
     }
 };
 

@@ -26,7 +26,23 @@ import { regNumClassIsVAT } from '../../refData.js';
 import consts from '../consts.js';
 
 //Field to label
-const fldToLabel = (fld, labelSize) => consts.labels[fld][labelSize];
+const fldToLabel = (fld, labelSize, prefix) => {
+    let lbl;
+
+    //If a field is a compound field (i.e. contains an underscore), split it into its
+    //components and generate a label for each component, then join the labels with a space
+    if(fld.includes('_')) {
+        lbl = fld.split('_').map( fldPart => consts.labels[fldPart][labelSize] ).join(' ');
+    }
+    else {
+        lbl = consts.labels[fld][labelSize];
+    }
+
+    //Do not include the prefix if it is already part of the label
+    if(lbl.startsWith(prefix)) prefix = '';
+
+    return prefix ? `${prefix} ${lbl}` : lbl;
+}
 
 //Generate a label array
 const labelArr = (sLabel, numRepeat = 1) => new Array(numRepeat === -1 ? 1 : numRepeat).fill().map((elem, idx) => new ElemLabel(sLabel, numRepeat > 1 ? idx + 1 : null).toString());
@@ -86,7 +102,7 @@ function createCustRegNum(elem) {
     ret.type = elem.typeDnBCode;
 
     //The registration number class description & code
-    ret.classDesc = elem.registrationNumberClass?.description;
+    ret.class_desc = elem.registrationNumberClass?.description;
     ret.class = elem.registrationNumberClass?.dnbCode;
 
     //The location of the registrar
@@ -248,9 +264,7 @@ function summariesToArr(
     if(bLabel) {
         const lblSumm = consts.labels.summ[labelSize];
 
-        const arrLabels = arrFlds.map( fld => lblSumm + ' ' + fldToLabel( fld, labelSize ));
-
-        return multLabelArr( arrLabels, numSumms );
+        return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblSumm )), numSumms );
     }
 
     //Calculate the target length of the return array
@@ -310,16 +324,7 @@ function regNumsToArr(
     if(bLabel) {
         const lblRegNum = consts.labels.regNum[labelSize];
 
-        const arrLabels = arrFlds.map( fld => {
-                const addtnlLabel = fldToLabel( fld, labelSize );
-
-                if(lblRegNum === addtnlLabel) return lblRegNum;
-
-                return lblRegNum + ' ' + addtnlLabel;
-            }
-        );
-
-        return multLabelArr( arrLabels, numRegNums );
+        return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblRegNum )), numRegNums );
     }
 
     //Calculate the target length of the return array
@@ -368,7 +373,7 @@ function stockExchsToArr(
     if(bLabel) {
         const lblExch = consts.labels.stockExch[labelSize];
 
-        return multLabelArr( arrFlds.map( fld => lblExch + ' ' + fldToLabel( fld, labelSize ) ), numStockExchs );
+        return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblExch ) ), numStockExchs );
     }
 
     //Calculate the target length of the return array
@@ -429,17 +434,8 @@ function utf8NamesToArr(
 {
     if(bLabel) {
         const lblUtf8Name = `${nameType[labelSize]} utf8 ${consts.labels.name[labelSize]}`;
-        
-        return multLabelArr( 
-            arrFlds.map( fld => {
-                if(fld === 'name') return lblUtf8Name;
 
-                if(fld === consts.labels.prio) return lblUtf8Name + ' ' + fldToLabel( fld, labelSize );
-
-                return '';
-            }),
-            numUtf8Names
-        );
+        return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblUtf8Name ) ), numUtf8Names );
     }
 
     //Calculate the target length of the return array
@@ -449,10 +445,10 @@ function utf8NamesToArr(
     const retArr = arrUtf8Names.map(elem => {
         return {
             name: elem.name,
-            langDesc: elem.language?.description,
-            langCode: elem.language?.dnbCode,
-            scriptDesc: elem.writingScript?.description,
-            scriptCode: elem.writingScript?.dnbCode,
+            lang_desc: elem.language?.description,
+            lang_code: elem.language?.dnbCode,
+            script_desc: elem.writingScript?.description,
+            script_code: elem.writingScript?.dnbCode,
             prio: elem.priority || arrUtf8Names.length + 1
         }
     })
