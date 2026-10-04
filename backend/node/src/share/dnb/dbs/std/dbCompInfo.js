@@ -62,6 +62,26 @@ const multLabelArr = (arrLabels, numRepeat) => {
     return retArr.flat();
 }
 
+//Right size an array to a specific length
+const rightSizeArr = (arr, targetLen) => {
+    if(!Array.isArray(arr)) throw new Error('Parameter arr must be an array');
+
+    if(typeof targetLen !== 'number' || targetLen < -1) {
+        throw new Error('Parameter targetLen must be a non-negative number, 0 or -1')
+    }
+
+    //Return the array if it contains the exact number of elements requested
+    //or if targetLen is -1 (i.e. return all available elements)
+    if(targetLen === -1 || arr.length === targetLen) return arr;
+
+    //Slice the array if it contains more than or the exact number of tradestyles requested
+    if(arr.length > targetLen) return arr.slice(0, targetLen);
+
+    //At this point, arr.length < targetLen must be true
+    //Pad the returned array with empty array elements
+    return arr.concat(new Array(targetLen - arr.length).fill(null));
+}
+
 //Return a LEI registration number object
 function objLeiRegNum(sLei) {
     if(!sLei) return null;
@@ -149,22 +169,11 @@ function tradeStylesToArr(
     if(bLabel) { return labelArr( sLabel, numTradeStyles ) }
 
     //Make sure the array is sorted by priority
-    const retArr = arrTradeStyles.toSorted((ts1, ts2) => ts1.priority - ts2.priority);
+    const arrTSs = arrTradeStyles
+        .toSorted((ts1, ts2) => ts1.priority - ts2.priority)
+        .map(ts => ts.name)
 
-    //Return the array if it contains the exact number of tradestyles requested
-    //or if numTradeStyles is -1 (i.e. return all available tradestyles)
-    if(numTradeStyles === -1 || retArr.length === numTradeStyles) {
-        return retArr.map(ts => ts.name);
-    }
-
-    //Slice the array if it contains more than or the exact number of tradestyles requested
-    if(retArr.length > numTradeStyles) {
-        return retArr.slice(0, numTradeStyles).map(ts => ts.name);
-    }
-
-    //At this point, retArr.length < numTradeStyles must be true
-    //Pad the returned array with empty array elements
-    return retArr.map(ts => ts.name).concat(new Array(numTradeStyles - retArr.length));
+    return rightSizeArr(arrTSs, numTradeStyles);
 }
 
 //Function emailsToArr returns an array containing email addresses of a predefined
@@ -186,20 +195,7 @@ function emailsToArr(
     //Return an array of labels if bLabel is true
     if(bLabel) { return labelArr( sLabel, numEmails ) }
 
-    //Return the array if it contains the exact number of emails requested
-    //or if numEmails is -1 (i.e. return all available emails)
-    if(numEmails === -1 || arrEmails.length === numEmails) {
-        return arrEmails.map(email => email.address);
-    }
-
-    //Slice the array if it contains more than or the exact number of emails requested
-    if(arrEmails.length > numEmails) {
-        return arrEmails.slice(0, numEmails).map(email => email.address);
-    }
-
-    //At this point, retArr.length < numEmails must be true
-    //Pad the returned array with empty array elements
-    return arrEmails.map(email => email.address).concat(new Array(numEmails - arrEmails.length));
+    return rightSizeArr(arrEmails.map(email => email.address), numEmails);
 }
 
 //Function telsToArr returns an array containing telephone numbers of a predefined
@@ -224,20 +220,7 @@ function telsToArr(
     //Return an array of labels if bLabel is true
     if(bLabel) { return labelArr( sLabel, numTels ) }
 
-    //Return the array if it contains the exact number of telephone numbers requested
-    //or if numTels is -1 (i.e. return all available telephone numbers)
-    if(numTels === -1 || arrTels.length === numTels) {
-        return arrTels.map(concatTel);
-    }
-    
-    //Slice the array if it contains more than or the exact number of telephone numbers requested
-    if(arrTels.length > numTels) {
-        return arrTels.slice(0, numTels).map(concatTel);
-    }
-
-    //At this point, retArr.length < numTels must be true
-    //Pad the returned array with empty array elements
-    return arrTels.map(concatTel).concat(new Array(numTels - arrTels.length));
+    return rightSizeArr(arrTels.map(concatTel), numTels);
 }
 
 //Function summaryFromArray returns:
@@ -267,35 +250,23 @@ function summariesToArr(
         return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblSumm )), numSumms );
     }
 
-    //Calculate the target length of the return array
-    const targetLen = arrFlds.length * numSumms;
- 
     //Simplify the structure of the summary objects and add a priority attribute
-    const retArr = arrSummary.map(elem => {
-        const prio = arrSummPrio.findIndex(prio => prio === elem.textType.dnbCode);
+    const retArr = arrSummary
+        .map(elem => {
+            const prio = arrSummPrio.findIndex(prio => prio === elem.textType.dnbCode);
 
-        return {
-            desc: elem.textType.description,
-            txt: elem.text,
-            prio: prio === -1 ? arrSummPrio.length + 1 : prio 
-        }
-    })
-    //Sort the summary objects based on priority
-    .sort((elem1, elem2) => elem1.prio - elem2.prio)
-    //Flatten the array with only requested values
-    .reduce((acc, summ) => acc.concat(objToArr(summ, arrFlds)), []);
+            return {
+                desc: elem.textType.description,
+                txt: elem.text,
+                prio: prio === -1 ? arrSummPrio.length + 1 : prio 
+            }
+        })
+        //Sort the summary objects based on priority
+        .sort((elem1, elem2) => elem1.prio - elem2.prio)
+        //Flatten the array with only requested values
+        .reduce((acc, summ) => acc.concat(objToArr(summ, arrFlds)), []);
 
-    //Return the array if it contains the exact number of summaries requested
-    //or if numSumms is -1 (i.e. return all available summaries)
-    if(numSumms === -1 || retArr.length === targetLen) return retArr;
-
-    //Slice the array if it contains more than the arrFlds.length * numSumms
-    //elements requested
-    if(retArr.length > targetLen) return retArr.slice(0, targetLen);
-
-    //At this point, retArr.length < arrFlds.length * numSumms must be true
-    //Pad the returned array with empty array elements
-    return retArr.concat(new Array(targetLen - retArr.length));
+    return rightSizeArr(retArr, arrFlds.length * numSumms);
 }
 
 //Function regNumsToArr returns:
@@ -327,23 +298,10 @@ function regNumsToArr(
         return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblRegNum )), numRegNums );
     }
 
-    //Calculate the target length of the return array
-    const targetLen = arrFlds.length * numRegNums;
-
     //Flatten the array with the requested values
     const retArr = arrRegNums.reduce((acc, regNum) => acc.concat(objToArr(regNum, arrFlds)), []);
 
-    //Return the array if it contains the exact number of registration numbers requested
-    //or if numRegNums is -1 (i.e. return all available IDs)
-    if(numRegNums === -1 || retArr.length === targetLen) return retArr;
-
-    //Slice the array if it contains more than the arrFlds.length * numRegNums
-    //elements requested
-    if(retArr.length > targetLen) return retArr.slice(0, targetLen);
-
-    //At this point, retArr.length < arrFlds.length * numRegNums must be true
-    //Pad the returned array with empty array elements
-    return retArr.concat(new Array(targetLen - retArr.length));
+    return rightSizeArr(retArr, arrFlds.length * numRegNums);
 }
 
 //Function stockExchsToArr returns an array, of predefined length, containing the
@@ -376,34 +334,22 @@ function stockExchsToArr(
         return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblExch ) ), numStockExchs );
     }
 
-    //Calculate the target length of the return array
-    const targetLen = arrFlds.length * numStockExchs;
- 
     //Simplify the structure of the stock exchange objects and add a priority attribute
-    const retArr = arrStockExchs.map(elem => {
-        return {
-            ticker: elem.tickerName,
-            name: elem.exchangeName?.description,
-            country: elem.exchangeCountry?.isoAlpha2Code,
-            prio: elem.isPrimary ? 1 : 2 
-        }
-    })
-    //Sort the summary objects based on priority
-    .sort((elem1, elem2) => elem1.prio - elem2.prio)
-    //Flatten the array with only requested values
-    .reduce((acc, exch) => acc.concat(objToArr(exch, arrFlds)), []);
+    const retArr = arrStockExchs
+        .map(elem => {
+            return {
+                ticker: elem.tickerName,
+                name: elem.exchangeName?.description,
+                country: elem.exchangeCountry?.isoAlpha2Code,
+                prio: elem.isPrimary ? 1 : 2 
+            }
+        })
+        //Sort the summary objects based on priority
+        .sort((elem1, elem2) => elem1.prio - elem2.prio)
+        //Flatten the array with only requested values
+        .reduce((acc, exch) => acc.concat(objToArr(exch, arrFlds)), []);
 
-    //Return the array if it contains the exact number of summaries requested
-    //or if numSumms is -1 (i.e. return all available summaries)
-    if(numStockExchs === -1 || retArr.length === targetLen) return retArr;
-
-    //Slice the array if it contains more than the arrFlds.length * numSumms
-    //elements requested
-    if(retArr.length > targetLen) return retArr.slice(0, targetLen);
-
-    //At this point, retArr.length < arrFlds.length * numSumms must be true
-    //Pad the returned array with empty array elements
-    return retArr.concat(new Array(targetLen - retArr.length));
+    return rightSizeArr(retArr, arrFlds.length * numStockExchs);
 }
 
 //Function utf8NamesToArr returns an array, of predefined length, containing 
@@ -438,36 +384,24 @@ function utf8NamesToArr(
         return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblUtf8Name ) ), numUtf8Names );
     }
 
-    //Calculate the target length of the return array
-    const targetLen = arrFlds.length * numUtf8Names;
-
     //Simplify the structure of the utf8 name objects
-    const retArr = arrUtf8Names.map(elem => {
-        return {
-            name: elem.name,
-            lang_desc: elem.language?.description,
-            lang_code: elem.language?.dnbCode,
-            script_desc: elem.writingScript?.description,
-            script_code: elem.writingScript?.dnbCode,
-            prio: elem.priority || arrUtf8Names.length + 1
-        }
-    })
-    //Sort the summary objects based on priority
-    .sort((elem1, elem2) => elem1.prio - elem2.prio)
-    //Flatten the array with only requested values
-    .reduce((acc, summ) => acc.concat(objToArr(summ, arrFlds)), []);
+    const retArr = arrUtf8Names
+        .map(elem => {
+            return {
+                name: elem.name,
+                lang_desc: elem.language?.description,
+                lang_code: elem.language?.dnbCode,
+                script_desc: elem.writingScript?.description,
+                script_code: elem.writingScript?.dnbCode,
+                prio: elem.priority || arrUtf8Names.length + 1
+            }
+        })
+        //Sort the summary objects based on priority
+        .sort((elem1, elem2) => elem1.prio - elem2.prio)
+        //Flatten the array with only requested values
+        .reduce((acc, summ) => acc.concat(objToArr(summ, arrFlds)), []);
 
-    //Return the array if it contains the exact number of names requested
-    //or if numUtf8Names is -1 (i.e. return all available names)
-    if(numUtf8Names === -1 || retArr.length === targetLen) return retArr;
-
-    //Slice the array if it contains more than the arrFlds.length * numUtf8Names
-    //elements requested
-    if(retArr.length > targetLen) return retArr.slice(0, targetLen);
-    
-    //At this point, retArr.length < targetLen  must be true
-    //Pad the returned array with empty array elements
-    return retArr.concat(new Array(targetLen - retArr.length));
+    return rightSizeArr(retArr, arrFlds.length * numUtf8Names);
 }
 
 export default {
@@ -478,6 +412,6 @@ export default {
     telsToArr,
     summariesToArr,
     regNumsToArr,
-    utf8NamesToArr,
-    stockExchsToArr
+    stockExchsToArr,
+    utf8NamesToArr
 };

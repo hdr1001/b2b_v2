@@ -238,5 +238,10 @@ export default class DplDBs {
     //Return an array, of predefined length, containing the stockexchanges on which the entity is listed
     stockExchsToArr = (arrFlds, numStockExchs, bLabel, labelSize) => ci.stockExchsToArr( this.org.stockExchanges, arrFlds, numStockExchs, bLabel, labelSize );
 
+    //Return an array, of predefined length, containing the multilingual (utf8) primary, registered and tradestyle names of the entity
     utf8PrimNamesToArr = (arrFlds, numUtf8Names, bLabel, labelSize) => ci.utf8NamesToArr( this.org.multilingualPrimaryName, consts.labels.prim, arrFlds, numUtf8Names, bLabel, labelSize );
+
+    utf8RegNamesToArr = (arrFlds, numUtf8Names, bLabel, labelSize) => ci.utf8NamesToArr( this.org.multilingualRegisteredNames, consts.labels.reg, arrFlds, numUtf8Names, bLabel, labelSize );
+
+    utf8TradeNamesToArr = (arrFlds, numUtf8Names, bLabel, labelSize) => ci.utf8NamesToArr( this.org.multilingualTradestyleNames, consts.labels.tradeStyle, arrFlds, numUtf8Names, bLabel, labelSize );
 }
