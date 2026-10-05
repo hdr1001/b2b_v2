@@ -78,16 +78,19 @@ const consts = {
         prim: [ 'prim', 'primary', 'primary' ],
         reg: [ 'reg', 'registered', 'registered' ],
         code: [ 'code', 'code', 'code' ],
-        script: [ 'script', 'script', 'script' ]
+        script: [ 'script', 'script', 'script' ],
+        inds: [ 'inds', 'industry', 'industry' ]
     },
     prios: {
-        summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ] //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
+        summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ], //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
+        indsCodeClass: [ 43665, 29104, 3599, 399 ] //NACE v2.1, NACE v2, D&B Industry Code, SIC 87
     },
     flds: {
         summary: [ 'desc', 'txt' ],
         regNum: [ 'regNum', 'desc', 'type', 'class_desc', 'class', 'isVAT', 'prio', 'regLoc' ],
         stockExch: [ 'ticker', 'name', 'country', 'prio' ],
-        utf8Name: [ 'name', 'lang_desc', 'lang_code', 'script_desc', 'script_code', 'prio' ]
+        utf8Name: [ 'name', 'lang_desc', 'lang_code', 'script_desc', 'script_code', 'prio' ],
+        indsCode: [ 'code', 'desc', 'class_code', 'class_desc', 'class_prio', 'prio' ]
     }
 };
 

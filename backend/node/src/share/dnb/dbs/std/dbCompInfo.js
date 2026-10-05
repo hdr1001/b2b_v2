@@ -404,6 +404,58 @@ function utf8NamesToArr(
     return rightSizeArr(retArr, arrFlds.length * numUtf8Names);
 }
 
+//Function indsCodesToArr returns an array, of predefined length, containing 
+//the industry codes (NACE, SIC, etc.) of a company
+//
+//The function returns:
+//   - an industry code
+//   - an industry description
+//   - an industry class code
+//   - an industry class description
+//   - an industry class priority
+//   - an industry code priority
+//
+//The six function parameters
+//1. arrIndsCodes, the array of industry code objects
+//2. arrFlds, the array of field names to include in the returned array
+//3. arrIndsCodeClassPrio, the array of industry class priorities
+//4. numIndsCodes, specify the number of industry codes to return (-1 for all)
+//5. bLabel, specify true for the element labels to be returned
+//6. labelSize, specify the length of the label string
+function indsCodesToArr(
+        arrIndsCodes = [],
+        arrFlds = consts.flds.indsCode,
+        arrIndsCodeClassPrio = consts.prios.indsCodeClass,
+        numIndsCodes = 1,
+        bLabel = false,
+        labelSize = consts.labelSize.medium
+    )
+{
+    if(bLabel) {
+        const lblIndsCode = consts.labels.inds[labelSize] + ' ' + consts.labels.code[labelSize];
+
+        return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblIndsCode )), numIndsCodes );
+    }
+
+    const retArr = arrIndsCodes
+        .map(elem => {
+            const classPrio = arrIndsCodeClassPrio.findIndex(prio => prio === elem.typeDnBCode);
+
+            return {
+                code: elem.code,
+                desc: elem.description,
+                class_code: elem.typeDnBCode,
+                class_desc: elem.typeDescription,
+                class_prio: classPrio === -1 ? arrIndsCodeClassPrio.length + 1 : classPrio,
+                prio: elem.priority
+            }
+        })
+        .sort((elem1, elem2) => elem1.class_prio - elem2.class_prio || elem1.prio - elem2.prio)
+        .reduce((acc, inds) => acc.concat(objToArr(inds, arrFlds)), []);
+
+    return rightSizeArr(retArr, arrFlds.length * numIndsCodes);
+}
+
 export default {
     objLeiRegNum,
     iniRegNumArr,
@@ -413,5 +465,6 @@ export default {
     summariesToArr,
     regNumsToArr,
     stockExchsToArr,
-    utf8NamesToArr
+    utf8NamesToArr,
+    indsCodesToArr
 };
