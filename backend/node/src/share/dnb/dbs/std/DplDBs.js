@@ -225,6 +225,9 @@ export default class DplDBs {
     //Return an array containing telephone numbers of a predefined length (numTels)    
     telsToArr = (numTels, bLabel, sLabel) => ci.telsToArr( this.org.telephone, numTels, bLabel, sLabel );
 
+    //Return an array, of a predefined length, containing descriptions of company activities (numActs)
+    actsToArr = (arrFlds, numActs, bLabel, labelSize) => ci.actsToArr( this.org.activities, arrFlds, numActs, bLabel, labelSize );
+
     //Return an array containing editorial comments for the entity
     summariesToArr = (arrFlds, arrSummPrio, numSumms, bLabel, labelSize) => ci.summariesToArr( this.org.summary, arrFlds, arrSummPrio, numSumms, bLabel, labelSize );
 

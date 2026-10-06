@@ -223,6 +223,33 @@ function telsToArr(
     return rightSizeArr(arrTels.map(concatTel), numTels);
 }
 
+function actsToArr(
+        arrActs = [],
+        arrFlds = consts.flds.act,
+        numActs = 1,
+        bLabel = false,
+        labelSize = consts.labelSize.medium
+    )
+{
+    if(bLabel) {
+        const lblAct = consts.labels.act[labelSize];
+
+        return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblAct )), numActs );
+    }
+
+    const retArr = arrActs
+        .map(elem => {
+            return {
+                desc: elem.description,
+                lang_desc: elem.language?.description,
+                lang_code: elem.language?.dnbCode
+            }
+        })
+        .reduce((acc, act) => acc.concat(objToArr(act, arrFlds)), []);
+
+    return rightSizeArr(retArr, arrFlds.length * numActs);
+}
+
 //Function summaryFromArray returns:
 //   - a description of the specific editorial summary for the entity
 //   - a string containing editorial comments for the entity
@@ -462,6 +489,7 @@ export default {
     tradeStylesToArr,
     emailsToArr,
     telsToArr,
+    actsToArr,
     summariesToArr,
     regNumsToArr,
     stockExchsToArr,

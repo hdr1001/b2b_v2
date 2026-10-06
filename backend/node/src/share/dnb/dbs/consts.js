@@ -59,6 +59,7 @@ const consts = {
         tradeStyle: ['trdg style', 'tradestyle', 'tradestyle'],
         email: ['email', 'email addr', 'email address'],
         tel: ['tel', 'telephone', 'telephone number'],
+        act: ['act', 'activity', 'activity'],
         desc: [ 'desc', 'description', 'description'],
         txt: [ 'txt', 'text', 'text' ],
         regNum: ['reg num', 'registration num', 'registration number'],
@@ -86,6 +87,7 @@ const consts = {
         indsCodeClass: [ 43665, 29104, 3599, 399 ] //NACE v2.1, NACE v2, D&B Industry Code, SIC 87
     },
     flds: {
+        act: [ 'desc', 'lang_desc', 'lang_code' ],
         summary: [ 'desc', 'txt' ],
         regNum: [ 'regNum', 'desc', 'type', 'class_desc', 'class', 'isVAT', 'prio', 'regLoc' ],
         stockExch: [ 'ticker', 'name', 'country', 'prio' ],
