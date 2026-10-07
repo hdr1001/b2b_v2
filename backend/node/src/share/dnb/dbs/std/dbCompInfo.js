@@ -66,8 +66,8 @@ const multLabelArr = (arrLabels, numRepeat) => {
 const rightSizeArr = (arr, targetLen) => {
     if(!Array.isArray(arr)) throw new Error('Parameter arr must be an array');
 
-    if(typeof targetLen !== 'number' || targetLen < -1) {
-        throw new Error('Parameter targetLen must be a non-negative number, 0 or -1')
+    if(!Number.isInteger(targetLen) || targetLen < -1) {
+        throw new Error('Parameter targetLen must be a non-negative integer, 0 or -1')
     }
 
     //Return the array if it contains the exact number of elements requested
@@ -223,6 +223,18 @@ function telsToArr(
     return rightSizeArr(arrTels.map(concatTel), numTels);
 }
 
+//Function actsToArr returns:
+//   - a description of the entity's activities
+//   - a language description
+//   - a language code
+//The activities array is available in data block Company Info L1+.
+//
+//The five function parameters
+//1. arrActs, the array of activity objects
+//2. arrFlds, the array of field names to include in the returned array
+//3. numActs, specify the number of activities to return (-1 for all)
+//4. bLabel, specify true for the element labels to be returned
+//5. labelSize, specify the length of the label string
 function actsToArr(
         arrActs = [],
         arrFlds = consts.flds.act,
@@ -247,7 +259,7 @@ function actsToArr(
         })
         .reduce((acc, act) => acc.concat(objToArr(act, arrFlds)), []);
 
-    return rightSizeArr(retArr, arrFlds.length * numActs);
+    return rightSizeArr(retArr, numActs === -1 ? -1 : arrFlds.length * numActs);
 }
 
 //Function summaryFromArray returns:
@@ -293,7 +305,7 @@ function summariesToArr(
         //Flatten the array with only requested values
         .reduce((acc, summ) => acc.concat(objToArr(summ, arrFlds)), []);
 
-    return rightSizeArr(retArr, arrFlds.length * numSumms);
+    return rightSizeArr(retArr, numSumms === -1 ? -1 : arrFlds.length * numSumms);
 }
 
 //Function regNumsToArr returns:
@@ -328,7 +340,7 @@ function regNumsToArr(
     //Flatten the array with the requested values
     const retArr = arrRegNums.reduce((acc, regNum) => acc.concat(objToArr(regNum, arrFlds)), []);
 
-    return rightSizeArr(retArr, arrFlds.length * numRegNums);
+    return rightSizeArr(retArr, numRegNums === -1 ? -1 : arrFlds.length * numRegNums);
 }
 
 //Function stockExchsToArr returns an array, of predefined length, containing the
@@ -376,7 +388,7 @@ function stockExchsToArr(
         //Flatten the array with only requested values
         .reduce((acc, exch) => acc.concat(objToArr(exch, arrFlds)), []);
 
-    return rightSizeArr(retArr, arrFlds.length * numStockExchs);
+    return rightSizeArr(retArr, numStockExchs === -1 ? -1 : arrFlds.length * numStockExchs);
 }
 
 //Function utf8NamesToArr returns an array, of predefined length, containing 
@@ -428,7 +440,7 @@ function utf8NamesToArr(
         //Flatten the array with only requested values
         .reduce((acc, summ) => acc.concat(objToArr(summ, arrFlds)), []);
 
-    return rightSizeArr(retArr, arrFlds.length * numUtf8Names);
+    return rightSizeArr(retArr, numUtf8Names === -1 ? -1 : arrFlds.length * numUtf8Names);
 }
 
 //Function indsCodesToArr returns an array, of predefined length, containing 
@@ -480,7 +492,7 @@ function indsCodesToArr(
         .sort((elem1, elem2) => elem1.class_prio - elem2.class_prio || elem1.prio - elem2.prio)
         .reduce((acc, inds) => acc.concat(objToArr(inds, arrFlds)), []);
 
-    return rightSizeArr(retArr, arrFlds.length * numIndsCodes);
+    return rightSizeArr(retArr, numIndsCodes === -1 ? -1 : arrFlds.length * numIndsCodes);
 }
 
 export default {
