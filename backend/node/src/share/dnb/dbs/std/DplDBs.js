@@ -250,4 +250,7 @@ export default class DplDBs {
 
     //Return an array, of predefined length, containing the industry codes (NACE, SIC, etc.) of the entity
     indsCodesToArr = (arrFlds, arrIndsCodeClassPrio, numIndsCodes, bLabel, labelSize) => ci.indsCodesToArr( this.org.industryCodes, arrFlds, arrIndsCodeClassPrio, numIndsCodes, bLabel, labelSize );
+
+    //Return an array, of predefined length, containing the yearly revenue figures
+    finsToYrlyRevArr = (arrFlds, arrReliability, numYrlyRevs, bLabel, labelSize) => ci.finsToYrlyRevArr( this.org.financials, arrFlds, arrReliability, numYrlyRevs, bLabel, labelSize );
 }

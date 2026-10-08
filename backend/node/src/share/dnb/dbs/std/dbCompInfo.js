@@ -495,6 +495,50 @@ function indsCodesToArr(
     return rightSizeArr(retArr, numIndsCodes === -1 ? -1 : arrFlds.length * numIndsCodes);
 }
 
+function finsToYrlyRevArr(
+        arrFins = [],
+        arrFlds = consts.flds.yrlyRev,
+        arrReliability = consts.prios.reliability,
+        numYrlyRevs = 1,
+        bLabel = false,
+        labelSize = consts.labelSize.medium
+    )
+{
+    if(bLabel) {
+        const lblYrlyRev = consts.labels.yrlyRev[labelSize];
+
+        return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblYrlyRev )), numYrlyRevs );
+    }
+
+    //Calculate the target length of the return array
+    const targetLen = arrFlds.length * numYrlyRevs;
+
+    //Simplify the structure of the yearly revenue objects
+    const retArr = arrFins.map(elem => {
+        return {
+            rev: elem.revenue,
+            yr: elem.year,
+            rel: elem.reliability || arrYrlyRevs.length
+        }
+    })
+    //Sort the revenue objects based on reliability
+    .sort((elem1, elem2) => elem1.rel - elem2.rel)
+    //Flatten the array with only requested values
+    .reduce((acc, rev) => acc.concat(objToArr(rev, arrFlds)), []);
+
+    //Return the array if it contains the exact number of revenue figures requested
+    //or if numYrlyRevs is -1 (i.e. return all available figures)
+    if(numYrlyRevs === -1 || retArr.length === targetLen) return retArr;
+
+    //Slice the array if it contains more than the arrFlds.length * numYrlyRevs
+    //elements requested
+    if(retArr.length > targetLen) return retArr.slice(0, targetLen);
+    
+    //At this point, retArr.length < targetLen  must be true
+    //Pad the returned array with empty array elements
+    return retArr.concat(new Array(targetLen - retArr.length));
+}
+
 export default {
     objLeiRegNum,
     iniRegNumArr,
@@ -506,5 +550,6 @@ export default {
     regNumsToArr,
     stockExchsToArr,
     utf8NamesToArr,
-    indsCodesToArr
+    indsCodesToArr,
+    finsToYrlyRevArr
 };
