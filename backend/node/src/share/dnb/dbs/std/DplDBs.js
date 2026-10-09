@@ -252,5 +252,5 @@ export default class DplDBs {
     indsCodesToArr = (arrFlds, arrIndsCodeClassPrio, numIndsCodes, bLabel, labelSize) => ci.indsCodesToArr( this.org.industryCodes, arrFlds, arrIndsCodeClassPrio, numIndsCodes, bLabel, labelSize );
 
     //Return an array, of predefined length, containing the yearly revenue figures
-    finsToYrlyRevArr = (arrFlds, arrReliability, numYrlyRevs, bLabel, labelSize) => ci.finsToYrlyRevArr( this.org.financials, arrFlds, arrReliability, numYrlyRevs, bLabel, labelSize );
+    finsToYrlyRevArr = (arrFlds, arrReliability, numYrlyRevs, bLabel, labelSize) => ci.finsToYrlyRevArr( this.org.financials, arrFlds, arrReliability, numYrlyRevs, this.org.defaultCurrency, bLabel, labelSize );
 }

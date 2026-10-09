@@ -500,6 +500,7 @@ function finsToYrlyRevArr(
         arrFlds = consts.flds.yrlyRev,
         arrReliability = consts.prios.reliability,
         numYrlyRevs = 1,
+        curr = 'USD',
         bLabel = false,
         labelSize = consts.labelSize.medium
     )
@@ -510,10 +511,38 @@ function finsToYrlyRevArr(
         return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblYrlyRev )), numYrlyRevs );
     }
 
-    //Calculate the target length of the return array
-    const targetLen = arrFlds.length * numYrlyRevs;
+    const retArr = arrFins
+        .map(elem => {
+            const finObj = Object.assign({}, elem);
+
+            const finStmtToDate = Date.parse(elem.financialStatementToDate);
+
+            if(finStmtToDate) {
+                finObj.finStmtToDate = new Date(finStmtToDate);
+            }
+            else {
+                finObj.finStmtToDate = new Date(0);
+            }
+
+            let yrlyRev = null;
+    
+            if(Array.isArray(elem.yearlyRevenue) && elem.yearlyRevenue.length) {
+                const arrYrlyRev = elem.yearlyRevenue.filter(yrlyRev => yrlyRev.currency === curr);
+
+                if(arrYrlyRev.length) yrlyRev = arrYrlyRev[0];
+            }
+
+            if(yrlyRev) Object.assign(finObj, yrlyRev);
+
+            return finObj;
+        })
+        .sort((elem1, elem2) => elem2.finStmtToDate - elem1.finStmtToDate)
+
+    console.log(retArr);
+    return retArr;
 
     //Simplify the structure of the yearly revenue objects
+/*
     const retArr = arrFins.map(elem => {
         return {
             rev: elem.revenue,
@@ -537,6 +566,7 @@ function finsToYrlyRevArr(
     //At this point, retArr.length < targetLen  must be true
     //Pad the returned array with empty array elements
     return retArr.concat(new Array(targetLen - retArr.length));
+*/
 }
 
 export default {
