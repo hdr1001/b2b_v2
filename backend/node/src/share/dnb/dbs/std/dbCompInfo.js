@@ -297,7 +297,7 @@ function summariesToArr(
             return {
                 desc: elem.textType.description,
                 txt: elem.text,
-                prio: prio === -1 ? arrSummPrio.length + 1 : prio 
+                prio: prio === -1 ? arrSummPrio.length : prio 
             }
         })
         //Sort the summary objects based on priority
@@ -485,7 +485,7 @@ function indsCodesToArr(
                 desc: elem.description,
                 class_code: elem.typeDnBCode,
                 class_desc: elem.typeDescription,
-                class_prio: classPrio === -1 ? arrIndsCodeClassPrio.length + 1 : classPrio,
+                class_prio: classPrio === -1 ? arrIndsCodeClassPrio.length : classPrio,
                 prio: elem.priority
             }
         })
@@ -513,17 +513,10 @@ function finsToYrlyRevArr(
 
     const retArr = arrFins
         .map(elem => {
-            const finObj = Object.assign({}, elem);
-
             const finStmtToDate = Date.parse(elem.financialStatementToDate);
 
-            if(finStmtToDate) {
-                finObj.finStmtToDate = new Date(finStmtToDate);
-            }
-            else {
-                finObj.finStmtToDate = new Date(0);
-            }
-
+            const reliabPrio = arrReliability.findIndex(prio => prio === elem.reliabilityDnBCode);
+/*
             let yrlyRev = null;
     
             if(Array.isArray(elem.yearlyRevenue) && elem.yearlyRevenue.length) {
@@ -533,12 +526,18 @@ function finsToYrlyRevArr(
             }
 
             if(yrlyRev) Object.assign(finObj, yrlyRev);
-
-            return finObj;
+*/
+            return {
+                finStmt_to_date: elem.financialStatementToDate,
+                oDateFinStmt_to: finStmtToDate ? new Date(finStmtToDate) : new Date(0), //Used for sorting
+                finStmt_infoScope: elem.informationScopeDescription,
+                finStmt_infoScope_prio: elem.informationScopeDnBCode === 9067 ? 1 : 2, //Prefer consolidated
+                finStmt_reliab: elem.reliabilityDescription,
+                finStmt_reliab_prio: reliabPrio === -1 ? arrReliability.length : reliabPrio
+            };
         })
-        .sort((elem1, elem2) => elem2.finStmtToDate - elem1.finStmtToDate)
+        .sort((elem1, elem2) => elem2.oDateFinStmt_to - elem1.oDateFinStmt_to || elem1.finStmt_infoScope_prio - elem2.finStmt_infoScope_prio || elem1.finStmt_reliab_prio - elem2.finStmt_reliab_prio)
 
-    console.log(retArr);
     return retArr;
 
     //Simplify the structure of the yearly revenue objects

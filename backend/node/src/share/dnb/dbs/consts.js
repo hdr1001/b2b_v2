@@ -81,6 +81,11 @@ const consts = {
         code: [ 'code', 'code', 'code' ],
         script: [ 'script', 'script', 'script' ],
         inds: [ 'inds', 'industry', 'industry' ],
+        finStmt: [ 'fin stmt', 'fin statement', 'financial statement' ],
+        to: [ 'to', 'to', 'to' ],
+        date: [ 'date', 'date', 'date' ],
+        infoScope: [ 'info scope', 'information scope', 'information scope' ],
+        reliab: [ 'reliab', 'reliability', 'reliability' ],
         yrlyRev: [ 'yrly rev', 'yearly revenue', 'yearly revenue' ],
         amt: [ 'amt', 'amount', 'amount' ],
         curr: [ 'curr', 'currency', 'currency' ],
@@ -98,7 +103,7 @@ const consts = {
         stockExch: [ 'ticker', 'name', 'country', 'prio' ],
         utf8Name: [ 'name', 'lang_desc', 'lang_code', 'script_desc', 'script_code', 'prio' ],
         indsCode: [ 'code', 'desc', 'class_code', 'class_desc', 'class_prio', 'prio' ],
-        yrlyRev: [ 'amt', 'curr', 'unit' ]
+        yrlyRev: [ 'finStmt_to_date', 'finStmt_infoScope', 'finStmt_infoScope_prio', 'finStmt_reliab', 'finStmt_reliab_prio', 'amt', 'curr', 'unit' ]
     }
 };
 
