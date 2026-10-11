@@ -103,7 +103,7 @@ const consts = {
         stockExch: [ 'ticker', 'name', 'country', 'prio' ],
         utf8Name: [ 'name', 'lang_desc', 'lang_code', 'script_desc', 'script_code', 'prio' ],
         indsCode: [ 'code', 'desc', 'class_code', 'class_desc', 'class_prio', 'prio' ],
-        yrlyRev: [ 'finStmt_to_date', 'finStmt_infoScope', 'finStmt_infoScope_prio', 'finStmt_reliab', 'finStmt_reliab_prio', 'amt', 'curr', 'unit' ]
+        yrlyRev: [ 'finStmt_to_date', 'finStmt_infoScope', 'finStmt_infoScope_prio', 'finStmt_reliab', 'finStmt_reliab_prio', 'finStmt_unit', 'amt', 'curr' ]
     }
 };
 

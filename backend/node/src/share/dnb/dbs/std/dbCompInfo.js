@@ -513,10 +513,13 @@ function finsToYrlyRevArr(
 
     const retArr = arrFins
         .map(elem => {
+            //Get the date's timestamp from the financial statement to date string
             const finStmtToDate = Date.parse(elem.financialStatementToDate);
 
+            //Determine the priority of the reliability code based on the order in arrReliability
             const reliabPrio = arrReliability.findIndex(prio => prio === elem.reliabilityDnBCode);
-/*
+
+            //Get the yearly revenue object for the requested currency, if available
             let yrlyRev = null;
     
             if(Array.isArray(elem.yearlyRevenue) && elem.yearlyRevenue.length) {
@@ -525,47 +528,22 @@ function finsToYrlyRevArr(
                 if(arrYrlyRev.length) yrlyRev = arrYrlyRev[0];
             }
 
-            if(yrlyRev) Object.assign(finObj, yrlyRev);
-*/
             return {
                 finStmt_to_date: elem.financialStatementToDate,
                 oDateFinStmt_to: finStmtToDate ? new Date(finStmtToDate) : new Date(0), //Used for sorting
                 finStmt_infoScope: elem.informationScopeDescription,
                 finStmt_infoScope_prio: elem.informationScopeDnBCode === 9067 ? 1 : 2, //Prefer consolidated
                 finStmt_reliab: elem.reliabilityDescription,
-                finStmt_reliab_prio: reliabPrio === -1 ? arrReliability.length : reliabPrio
+                finStmt_reliab_prio: reliabPrio === -1 ? arrReliability.length : reliabPrio,
+                finStmt_unit: elem.unitCode,
+                amt: yrlyRev?.value,
+                curr: yrlyRev?.currency
             };
         })
         .sort((elem1, elem2) => elem2.oDateFinStmt_to - elem1.oDateFinStmt_to || elem1.finStmt_infoScope_prio - elem2.finStmt_infoScope_prio || elem1.finStmt_reliab_prio - elem2.finStmt_reliab_prio)
+        .reduce((acc, fins) => acc.concat(objToArr(fins, arrFlds)), []);
 
-    return retArr;
-
-    //Simplify the structure of the yearly revenue objects
-/*
-    const retArr = arrFins.map(elem => {
-        return {
-            rev: elem.revenue,
-            yr: elem.year,
-            rel: elem.reliability || arrYrlyRevs.length
-        }
-    })
-    //Sort the revenue objects based on reliability
-    .sort((elem1, elem2) => elem1.rel - elem2.rel)
-    //Flatten the array with only requested values
-    .reduce((acc, rev) => acc.concat(objToArr(rev, arrFlds)), []);
-
-    //Return the array if it contains the exact number of revenue figures requested
-    //or if numYrlyRevs is -1 (i.e. return all available figures)
-    if(numYrlyRevs === -1 || retArr.length === targetLen) return retArr;
-
-    //Slice the array if it contains more than the arrFlds.length * numYrlyRevs
-    //elements requested
-    if(retArr.length > targetLen) return retArr.slice(0, targetLen);
-    
-    //At this point, retArr.length < targetLen  must be true
-    //Pad the returned array with empty array elements
-    return retArr.concat(new Array(targetLen - retArr.length));
-*/
+    return rightSizeArr(retArr, numYrlyRevs === -1 ? -1 : arrFlds.length * numYrlyRevs);
 }
 
 export default {
