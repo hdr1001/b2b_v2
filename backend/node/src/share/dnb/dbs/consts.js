@@ -89,7 +89,8 @@ const consts = {
         yrlyRev: [ 'yrly rev', 'yearly revenue', 'yearly revenue' ],
         amt: [ 'amt', 'amount', 'amount' ],
         curr: [ 'curr', 'currency', 'currency' ],
-        unit: [ 'unit', 'unit', 'unit' ]
+        unit: [ 'unit', 'unit', 'unit' ],
+        formatted: [ 'formatted', 'formatted', 'formatted' ]
     },
     prios: {
         summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ], //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
@@ -103,7 +104,7 @@ const consts = {
         stockExch: [ 'ticker', 'name', 'country', 'prio' ],
         utf8Name: [ 'name', 'lang_desc', 'lang_code', 'script_desc', 'script_code', 'prio' ],
         indsCode: [ 'code', 'desc', 'class_code', 'class_desc', 'class_prio', 'prio' ],
-        yrlyRev: [ 'finStmt_to_date', 'finStmt_infoScope', 'finStmt_infoScope_prio', 'finStmt_reliab', 'finStmt_reliab_prio', 'finStmt_unit', 'amt', 'curr' ]
+        yrlyRev: [ 'finStmt_to_date', 'finStmt_infoScope', 'finStmt_infoScope_prio', 'finStmt_reliab', 'finStmt_reliab_prio', 'finStmt_unit', 'amt', 'curr', 'formatted_amt' ]
     }
 };
 

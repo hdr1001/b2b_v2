@@ -528,6 +528,19 @@ function finsToYrlyRevArr(
                 if(arrYrlyRev.length) yrlyRev = arrYrlyRev[0];
             }
 
+            let formattedAmt = '';
+
+            if(yrlyRev?.value && yrlyRev?.currency) {
+                const opts = {
+                    style: 'currency',
+                    currency: yrlyRev.currency,
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                };
+
+                formattedAmt = new Intl.NumberFormat('en-US', opts).format(yrlyRev.value);
+            }
+
             return {
                 finStmt_to_date: elem.financialStatementToDate,
                 oDateFinStmt_to: finStmtToDate ? new Date(finStmtToDate) : new Date(0), //Used for sorting
@@ -537,6 +550,7 @@ function finsToYrlyRevArr(
                 finStmt_reliab_prio: reliabPrio === -1 ? arrReliability.length : reliabPrio,
                 finStmt_unit: elem.unitCode,
                 amt: yrlyRev?.value,
+                formatted_amt: formattedAmt,
                 curr: yrlyRev?.currency
             };
         })
