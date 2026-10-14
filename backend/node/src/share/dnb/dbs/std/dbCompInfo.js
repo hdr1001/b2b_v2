@@ -560,6 +560,54 @@ function finsToYrlyRevArr(
     return rightSizeArr(retArr, numYrlyRevs === -1 ? -1 : arrFlds.length * numYrlyRevs);
 }
 
+function addrsToArr(
+        arrAddrs = [],
+        arrFlds = consts.flds.addr, 
+        numAddrs = 1,
+        bLabel = false,
+        labelSize = consts.labelSize.medium
+    )
+{
+    if(bLabel) {
+        const lblAddr = consts.labels.addr[labelSize];
+
+        return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblAddr )), numAddrs );
+    }
+
+    const retArr = arrAddrs
+        .map(addr => {
+            const { language, addressCountry, continentalRegion, addressLocality, minorTownName, addressRegion,
+                addressCounty, streetAddress, postalCode, postalCodePosition, postalRoute, streetNumber, streetName,
+                postOfficeBox, standardAddressCodes, isRegisteredAddress, latitude, longitude
+            } = addr;
+
+            return {
+                language,
+                addressCountry,
+                continentalRegion,
+                addressLocality,
+                minorTownName,
+                addressRegion,
+                addressCounty,
+                streetAddress,
+                postalCode,
+                postalCodePosition,
+                postalRoute,
+                streetNumber,
+                streetName,
+                postOfficeBox,
+                standardAddressCodes,
+                isRegisteredAddress,
+                latitude,
+                longitude
+            };
+        });
+
+    console.log('retArr', retArr);
+
+    return null;//rightSizeArr(retArr, numAddrs === -1 ? -1 : arrFlds.length * numAddrs);
+}
+
 export default {
     objLeiRegNum,
     iniRegNumArr,
@@ -572,5 +620,6 @@ export default {
     stockExchsToArr,
     utf8NamesToArr,
     indsCodesToArr,
-    finsToYrlyRevArr
+    finsToYrlyRevArr,
+    addrsToArr
 };
