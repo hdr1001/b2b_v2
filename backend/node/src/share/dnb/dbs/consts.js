@@ -74,6 +74,8 @@ const consts = {
         stockExch: [ 'exch', 'stock exch', 'stock exchange' ],
         name: [ 'name', 'name', 'name' ],
         country: [ 'ctry', 'country', 'country' ],
+        iso:  ['ISO', 'ISO', 'ISO'],
+        continent: [ 'continent', 'continent', 'continent' ],
         ticker: [ 'ticker', 'ticker', 'ticker symbol' ],
         lang: [ 'lang', 'language', 'language' ],
         prim: [ 'prim', 'primary', 'primary' ],
@@ -90,7 +92,24 @@ const consts = {
         amt: [ 'amt', 'amount', 'amount' ],
         curr: [ 'curr', 'currency', 'currency' ],
         unit: [ 'unit', 'unit', 'unit' ],
-        formatted: [ 'formatted', 'formatted', 'formatted' ]
+        formatted: [ 'formatted', 'formatted', 'formatted' ],
+        town: [ 'town', 'town', 'town' ],
+        minor: [ 'mnr', 'minor', 'minor' ],
+        region: [ 'region', 'region', 'region' ],
+        postalCode: [ 'postal code', 'postal code', 'postal code' ],
+        street: [ 'street', 'street', 'street' ],
+        num: [ 'num', 'number', 'number' ],
+        line1: [ 'line 1', 'line 1', 'line 1' ],
+        line2: [ 'line 2', 'line 2', 'line 2' ],
+        county: [ 'county', 'county', 'county' ], 
+        addr: [ 'addr', 'address', 'address' ],
+        lat: [ 'lat', 'latitude', 'latitude' ],
+        long: [ 'long', 'longitude', 'longitude' ],
+        abbr: [ 'abbr', 'abbreviated', 'abbreviated' ],
+        pos: [ 'pos', 'position', 'position' ],
+        is: [ 'is', 'is', 'is' ],
+        reg: [ 'reg', 'registered', 'registered' ],
+        poBox: [ 'poBox', 'poBox', 'post office box' ]
     },
     prios: {
         summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ], //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
@@ -104,7 +123,8 @@ const consts = {
         stockExch: [ 'ticker', 'name', 'country', 'prio' ],
         utf8Name: [ 'name', 'lang_desc', 'lang_code', 'script_desc', 'script_code', 'prio' ],
         indsCode: [ 'code', 'desc', 'class_code', 'class_desc', 'class_prio', 'prio' ],
-        yrlyRev: [ 'finStmt_to_date', 'finStmt_infoScope', 'finStmt_infoScope_prio', 'finStmt_reliab', 'finStmt_reliab_prio', 'finStmt_unit', 'amt', 'curr', 'formatted_amt' ]
+        yrlyRev: [ 'finStmt_to_date', 'finStmt_infoScope', 'finStmt_infoScope_prio', 'finStmt_reliab', 'finStmt_reliab_prio', 'finStmt_unit', 'amt', 'curr', 'formatted_amt' ],
+        addr: [ 'street_num' , 'street_name', 'line1', 'line2', 'town', 'minor_town', 'county', 'region', 'region_abbr', 'region_iso_name', 'region_iso_code', 'country', 'country_iso', 'continent', 'postalCode', 'postalCode_pos', 'poBox', 'lat', 'long', 'lang' ]
     }
 };
 

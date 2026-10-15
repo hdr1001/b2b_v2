@@ -577,29 +577,32 @@ function addrsToArr(
     const retArr = arrAddrs
         .map(addr => {
             const { language, addressCountry, continentalRegion, addressLocality, minorTownName, addressRegion,
-                addressCounty, streetAddress, postalCode, postalCodePosition, postalRoute, streetNumber, streetName,
-                postOfficeBox, standardAddressCodes, isRegisteredAddress, latitude, longitude
+                addressCounty, streetAddress, postalCode, postalCodePosition, streetNumber, streetName, postOfficeBox,
+                isRegisteredAddress, latitude, longitude //postalRoute, standardAddressCodes not implemented
             } = addr;
 
             return {
-                language,
-                addressCountry,
-                continentalRegion,
-                addressLocality,
-                minorTownName,
-                addressRegion,
-                addressCounty,
-                streetAddress,
+                street_num: streetNumber,
+                street_name: streetName,
+                line1: streetAddress?.line1,
+                line2: streetAddress?.line2,
+                town: addressLocality?.name,
+                minor_town: minorTownName,
+                county: addressCounty?.name,
+                region: addressRegion?.name,
+                region_abbr: addressRegion?.abbreviatedName,
+                region_iso_name: addressRegion?.isoSubDivisionName,
+                region_iso_code: addressRegion?.isoSubDivisionCode,
+                country: addressCountry?.name,
+                country_iso: addressCountry?.isoAlpha2Code,
+                continent: continentalRegion?.name,
                 postalCode,
-                postalCodePosition,
-                postalRoute,
-                streetNumber,
-                streetName,
-                postOfficeBox,
-                standardAddressCodes,
-                isRegisteredAddress,
-                latitude,
-                longitude
+                postalCode_pos: postalCodePosition.dnbCode,
+                poBox: postOfficeBox.postOfficeBoxNumber,
+                is_reg_addr: isRegisteredAddress,
+                lat: latitude,
+                long: longitude,
+                lang: language?.description
             };
         });
 
