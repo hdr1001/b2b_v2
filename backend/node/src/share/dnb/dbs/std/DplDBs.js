@@ -258,5 +258,5 @@ export default class DplDBs {
     finsToYrlyRevUsdArr = (arrFlds, arrReliability, numYrlyRevs, bLabel, labelSize) => ci.finsToYrlyRevArr( this.org.financials, arrFlds, arrReliability, numYrlyRevs, 'USD', bLabel, labelSize );
 
     //Return an array, of predefined length, containing one or more addresses of the entity
-    addrsToArr = (arrFlds, numAddrs, bLabel, labelSize) => ci.addrsToArr( [ this.org.primaryAddress, this.org.registeredAddress ], arrFlds, numAddrs, bLabel, labelSize );
+    addrsToArr = (arrFlds, bLabel, labelSize) => ci.addrsToArr( [ this.org.primaryAddress, this.org.registeredAddress ], arrFlds, bLabel, labelSize );
 }

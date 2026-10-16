@@ -29,6 +29,17 @@ const nullUndefToEmptyStr = elem => elem == null ? '' : elem;
 //Test if a variable is an object ➡️ null doesn't qualify!
 const isObject = obj => typeof obj === 'object' && obj !== null;
 
+//Test if object is empty, null or undefined
+const isObjectEmpty = obj => {
+    if(obj == null) return true;
+
+    if(!(obj && Object.isObject(obj))) throw new Error('The parameter passed in to function isObjectEmpty is not an object');
+
+    if(Object.keys(obj).length === 0) return true;
+
+    return false;
+}
+
 //Convert an object instance to an array
 const objToArr = (obj, arrFlds) => arrFlds.reduce((acc, prop) => acc.concat(obj[prop]), [])
 
@@ -59,6 +70,7 @@ export {
     dcdrUtf8,
     nullUndefToEmptyStr,
     isObject,
+    isObjectEmpty,
     objToArr,
     sDateIsoToYYYYMMDD,
     getBoolQryParam,

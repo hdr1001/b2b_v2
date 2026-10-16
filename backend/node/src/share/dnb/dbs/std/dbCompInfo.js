@@ -563,11 +563,12 @@ function finsToYrlyRevArr(
 function addrsToArr(
         arrAddrs = [],
         arrFlds = consts.flds.addr, 
-        numAddrs = 1,
         bLabel = false,
         labelSize = consts.labelSize.medium
     )
 {
+    const numAddrs = arrAddrs.length;
+
     if(bLabel) {
         const lblAddr = consts.labels.addr[labelSize];
 
@@ -581,34 +582,35 @@ function addrsToArr(
                 isRegisteredAddress, latitude, longitude //postalRoute, standardAddressCodes not implemented
             } = addr;
 
-            return {
-                street_num: streetNumber,
-                street_name: streetName,
-                line1: streetAddress?.line1,
-                line2: streetAddress?.line2,
-                town: addressLocality?.name,
-                minor_town: minorTownName,
-                county: addressCounty?.name,
-                region: addressRegion?.name,
-                region_abbr: addressRegion?.abbreviatedName,
-                region_iso_name: addressRegion?.isoSubDivisionName,
-                region_iso_code: addressRegion?.isoSubDivisionCode,
-                country: addressCountry?.name,
-                country_iso: addressCountry?.isoAlpha2Code,
-                continent: continentalRegion?.name,
-                postalCode,
-                postalCode_pos: postalCodePosition.dnbCode,
-                poBox: postOfficeBox.postOfficeBoxNumber,
-                is_reg_addr: isRegisteredAddress,
-                lat: latitude,
-                long: longitude,
-                lang: language?.description
-            };
-        });
+            const objAddr = {};
 
-    console.log('retArr', retArr);
+            if(streetNumber) objAddr.street_num = streetNumber;
+            if(streetName) objAddr.street_name = streetName;
+            if(streetAddress?.line1) objAddr.line1 = streetAddress.line1;
+            if(streetAddress?.line2) objAddr.line2 = streetAddress.line2;
+            if(addressLocality?.name) objAddr.town = addressLocality.name;
+            if(minorTownName) objAddr.minor_town = minorTownName;
+            if(addressCounty?.name) objAddr.county = addressCounty.name;
+            if(addressRegion?.name) objAddr.region = addressRegion.name;
+            if(addressRegion?.abbreviatedName) objAddr.region_abbr = addressRegion.abbreviatedName;
+            if(addressRegion?.isoSubDivisionName) objAddr.region_iso_name = addressRegion.isoSubDivisionName;
+            if(addressRegion?.isoSubDivisionCode) objAddr.region_iso_code = addressRegion.isoSubDivisionCode;
+            if(addressCountry?.name) objAddr.country = addressCountry.name;
+            if(addressCountry?.isoAlpha2Code) objAddr.country_iso = addressCountry.isoAlpha2Code;
+            if(continentalRegion?.name) objAddr.continent = continentalRegion.name;
+            if(postalCode) objAddr.postalCode = postalCode;
+            if(postalCodePosition?.dnbCode) objAddr.postalCode_pos = postalCodePosition.dnbCode;
+            if(postOfficeBox?.postOfficeBoxNumber) objAddr.poBox = postOfficeBox.postOfficeBoxNumber;
+            if(isRegisteredAddress) objAddr.is_reg_addr = isRegisteredAddress;
+            if(latitude) objAddr.lat = latitude;
+            if(longitude) objAddr.long = longitude;
+            if(language?.description) objAddr.lang = language.description;
 
-    return null;//rightSizeArr(retArr, numAddrs === -1 ? -1 : arrFlds.length * numAddrs);
+            return objAddr;
+        })
+        .reduce((acc, fins) => acc.concat(objToArr(fins, arrFlds)), []);
+
+    return rightSizeArr(retArr, numAddrs === -1 ? -1 : arrFlds.length * numAddrs);
 }
 
 export default {
