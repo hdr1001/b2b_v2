@@ -495,6 +495,28 @@ function indsCodesToArr(
     return rightSizeArr(retArr, numIndsCodes === -1 ? -1 : arrFlds.length * numIndsCodes);
 }
 
+//Function finsToYrlyRevArr returns an array, of predefined length, containing 
+//yearly revenue figures of a company
+//
+//The function returns:
+//   -Fin statement (to) date
+//   -Fin statement info scope (individual, consolidated, ...)
+//   -Fin statement info scope priority
+//   -Fin statement reliability (actual, modelled, ...)
+//   -Fin statement reliability priority
+//   -Fin statement uniit (single, 1000s, ...)
+//   -Yearly revenue amount
+//   -Yearly revenue currency
+//   -Yearly revenue currency amount
+//
+//The six function parameters
+//1. arrFins, array of financial objects
+//2. arrFlds, the array of field names to include in the returned array
+//3. arrReliability, the array of reliability priorities
+//4. numYrlyRevs, specify the number of yearly rev figures to return (-1 for all)
+//5. curr, the revenue currency
+//6. bLabel, specify true for the element labels to be returned
+//7. labelSize, specify the length of the label string
 function finsToYrlyRevArr(
         arrFins = [],
         arrFlds = consts.flds.yrlyRev,
@@ -521,13 +543,15 @@ function finsToYrlyRevArr(
 
             //Get the yearly revenue object for the requested currency, if available
             let yrlyRev = null;
-    
+
+            //Get the yearly revenue amount in the specified currency
             if(Array.isArray(elem.yearlyRevenue) && elem.yearlyRevenue.length) {
                 const arrYrlyRev = elem.yearlyRevenue.filter(yrlyRev => yrlyRev.currency === curr);
 
                 if(arrYrlyRev.length) yrlyRev = arrYrlyRev[0];
             }
 
+            //Nice standard functionality to format the revenue amount
             let formattedAmt = '';
 
             if(yrlyRev?.value && yrlyRev?.currency) {
@@ -541,6 +565,7 @@ function finsToYrlyRevArr(
                 formattedAmt = new Intl.NumberFormat('en-US', opts).format(yrlyRev.value);
             }
 
+            //Map the objects passed in to custom return objects
             return {
                 finStmt_to_date: elem.financialStatementToDate,
                 oDateFinStmt_to: finStmtToDate ? new Date(finStmtToDate) : new Date(0), //Used for sorting
@@ -560,6 +585,16 @@ function finsToYrlyRevArr(
     return rightSizeArr(retArr, numYrlyRevs === -1 ? -1 : arrFlds.length * numYrlyRevs);
 }
 
+//Function addrsToArr returns an array, of one or multiple addresses, containing 
+//attributes as they relate to a company's addresses
+//
+//The function returns: address components (see consts.flds.addr)
+//
+//The four function parameters
+//1. arrAddrs, the array of address objects
+//2. arrFlds, the array of field names to include in the returned array
+//3. bLabel, specify true for the element labels to be returned
+//4. labelSize, specify the length of the label string
 function addrsToArr(
         arrAddrs = [],
         arrFlds = consts.flds.addr, 
@@ -567,6 +602,7 @@ function addrsToArr(
         labelSize = consts.labelSize.medium
     )
 {
+    //This function will always return the address fields of all address objects passed in 
     const numAddrs = arrAddrs.length;
 
     if(bLabel) {
@@ -577,6 +613,7 @@ function addrsToArr(
 
     const retArr = arrAddrs
         .map(addr => {
+            //Destruct the address object
             const { language, addressCountry, continentalRegion, addressLocality, minorTownName, addressRegion,
                 addressCounty, streetAddress, postalCode, postalCodePosition, streetNumber, streetName, postOfficeBox,
                 isRegisteredAddress, latitude, longitude //postalRoute, standardAddressCodes not implemented
@@ -610,7 +647,7 @@ function addrsToArr(
         })
         .reduce((acc, fins) => acc.concat(objToArr(fins, arrFlds)), []);
 
-    return rightSizeArr(retArr, numAddrs === -1 ? -1 : arrFlds.length * numAddrs);
+    return rightSizeArr(retArr, arrFlds.length * numAddrs);
 }
 
 export default {
