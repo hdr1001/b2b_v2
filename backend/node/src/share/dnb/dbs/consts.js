@@ -125,6 +125,13 @@ const consts = {
         indsCode: [ 'code', 'desc', 'class_code', 'class_desc', 'class_prio', 'prio' ],
         yrlyRev: [ 'finStmt_to_date', 'finStmt_infoScope', 'finStmt_infoScope_prio', 'finStmt_reliab', 'finStmt_reliab_prio', 'finStmt_unit', 'amt', 'curr', 'formatted_amt' ],
         addr: [ 'street_num' , 'street_name', 'line1', 'line2', 'town', 'minor_town', 'county', 'region', 'region_abbr', 'region_iso_name', 'region_iso_code', 'country', 'country_iso', 'continent', 'postalCode', 'postalCode_pos', 'poBox', 'lat', 'long', 'lang' ]
+    },
+    objs: {
+        addr: {
+            prim: [ 'primaryAddress' ],
+            reg: [ 'registeredAddress' ],
+            mail: [ 'mailingAddress' ]
+        }
     }
 };
 
