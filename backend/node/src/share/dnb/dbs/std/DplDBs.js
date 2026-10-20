@@ -274,7 +274,13 @@ export default class DplDBs {
 
     //Return an array, of predefined length, containing one or more addresses of the entity
     addrsToArr = (arrObjsAddr, arrFlds, bLabel, labelSize) => {
-        arrObjsAddr = arrObjsAddr.map(elem => this.dynDeref(elem) || {});
+        arrObjsAddr = arrObjsAddr.map(elem => {
+            const objAddr = this.dynDeref(elem.attr);
+
+            if(objAddr) objAddr.b2bv2 = { ...elem };
+
+            return objAddr || {}
+        });
 
         return ci.addrsToArr(arrObjsAddr, arrFlds, bLabel, labelSize );
     }

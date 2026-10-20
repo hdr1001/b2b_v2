@@ -606,9 +606,16 @@ function addrsToArr(
     const numAddrs = arrAddrs.length;
 
     if(bLabel) {
-        const lblAddr = consts.labels.addr[labelSize];
+        return arrAddrs
+            .map(addr => addr.b2bv2?.lbl || "")
+            .map(addrLblPrefix => {
+                let lblAddr = consts.labels.addr[labelSize];
 
-        return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblAddr )), numAddrs );
+                if(addrLblPrefix) lblAddr = addrLblPrefix + ' ' + lblAddr;
+                
+                return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblAddr )), 1 );
+            })
+            .flat();
     }
 
     const retArr = arrAddrs

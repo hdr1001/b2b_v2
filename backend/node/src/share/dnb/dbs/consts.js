@@ -80,6 +80,7 @@ const consts = {
         lang: [ 'lang', 'language', 'language' ],
         prim: [ 'prim', 'primary', 'primary' ],
         reg: [ 'reg', 'registered', 'registered' ],
+        mail: [ 'mail', 'mail', 'mail' ],
         code: [ 'code', 'code', 'code' ],
         script: [ 'script', 'script', 'script' ],
         inds: [ 'inds', 'industry', 'industry' ],
@@ -128,9 +129,9 @@ const consts = {
     },
     objs: {
         addr: {
-            prim: [ 'primaryAddress' ],
-            reg: [ 'registeredAddress' ],
-            mail: [ 'mailingAddress' ]
+            prim: { attr: [ 'primaryAddress' ], lbl: 'prim' },
+            reg: { attr: [ 'registeredAddress' ], lbl: 'reg' },
+            mail: { attr: [ 'mailingAddress' ], lbl: 'mail' }
         }
     }
 };
