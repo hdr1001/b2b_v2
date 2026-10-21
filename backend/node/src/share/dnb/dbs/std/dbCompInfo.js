@@ -657,6 +657,17 @@ function addrsToArr(
     return rightSizeArr(retArr, arrFlds.length * numAddrs);
 }
 
+function lglFormsToArr(lglForms) {
+    return [
+        lglForms[0]?.dnbCode,
+        lglForms[0]?.description,
+        lglForms[1]?.dnbCode,
+        lglForms[1]?.description,
+        lglForms[2]?.dnbCode,
+        lglForms[2]?.description
+    ]
+}
+
 export default {
     objLeiRegNum,
     iniRegNumArr,
@@ -670,5 +681,6 @@ export default {
     utf8NamesToArr,
     indsCodesToArr,
     finsToYrlyRevArr,
-    addrsToArr
+    addrsToArr,
+    lglFormsToArr
 };

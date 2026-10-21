@@ -284,4 +284,6 @@ export default class DplDBs {
 
         return ci.addrsToArr(arrObjsAddr, arrFlds, bLabel, labelSize );
     }
+
+    lglFormsToArr = () => ci.lglFormsToArr( [ this.org.businessEntityType, this.org.legalForm, this.org.registeredDetails?.legalForm ] );
 }
