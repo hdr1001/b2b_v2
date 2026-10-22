@@ -196,7 +196,7 @@ export default class DplDBs {
     }
 
     //Dynamically dereference on object attribute under this.org
-    dynDeref(arrProp, currPath) {
+    dynDeref = (arrProp, currPath) => {
         if(!currPath) currPath = this.org;
 
         if(!Array.isArray(arrProp) || !arrProp.length) return null;
@@ -207,7 +207,7 @@ export default class DplDBs {
 
         if(arrProp.length === 1) return currPath;
 
-        return dynDeref(arrProp.slice(1), currPath);
+        return this.dynDeref(arrProp.slice(1), currPath);
     }
 
     //Property respStatusOk will return:
@@ -275,15 +275,26 @@ export default class DplDBs {
     //Return an array, of predefined length, containing one or more addresses of the entity
     addrsToArr = (arrObjsAddr, arrFlds, bLabel, labelSize) => {
         arrObjsAddr = arrObjsAddr.map(elem => {
-            const objAddr = this.dynDeref(elem.attr);
+            const objAddr = this.dynDeref(elem.attr) || {};
 
-            if(objAddr) objAddr.b2bv2 = { ...elem };
+            objAddr.b2bv2 = { ...elem };
 
-            return objAddr || {}
+            return objAddr;
         });
 
         return ci.addrsToArr(arrObjsAddr, arrFlds, bLabel, labelSize );
-    }
+    };
 
-    lglFormsToArr = () => ci.lglFormsToArr( [ this.org.businessEntityType, this.org.legalForm, this.org.registeredDetails?.legalForm ] );
+    //Return an array, of predefined length, containing one or more legal forms of an entity
+    lglFormsToArr = (arrObjsLglForm, arrFlds, bLabel, labelSize) => {
+        arrObjsLglForm = arrObjsLglForm.map( elem => {
+            const objLegalForm = this.dynDeref( elem.attr ) || {};
+
+            objLegalForm.b2bv2 = { ...elem };
+
+            return objLegalForm;
+        });
+
+        return ci.lglFormsToArr( arrObjsLglForm, arrFlds, bLabel, labelSize );
+    };
 }

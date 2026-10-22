@@ -110,7 +110,11 @@ const consts = {
         pos: [ 'pos', 'position', 'position' ],
         is: [ 'is', 'is', 'is' ],
         reg: [ 'reg', 'registered', 'registered' ],
-        poBox: [ 'poBox', 'poBox', 'post office box' ]
+        poBox: [ 'poBox', 'poBox', 'post office box' ],
+        lglForm: [ 'lgl form', 'legal form', 'legal form'],
+        high: [ 'high', 'high', 'high' ],
+        norm: [ 'norm', 'normalized', 'normalized' ],
+        res: [ 'res', 'resolution', 'resolution' ]
     },
     prios: {
         summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ], //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
@@ -125,13 +129,19 @@ const consts = {
         utf8Name: [ 'name', 'lang_desc', 'lang_code', 'script_desc', 'script_code', 'prio' ],
         indsCode: [ 'code', 'desc', 'class_code', 'class_desc', 'class_prio', 'prio' ],
         yrlyRev: [ 'finStmt_to_date', 'finStmt_infoScope', 'finStmt_infoScope_prio', 'finStmt_reliab', 'finStmt_reliab_prio', 'finStmt_unit', 'amt', 'curr', 'formatted_amt' ],
-        addr: [ 'street_num' , 'street_name', 'line1', 'line2', 'town', 'minor_town', 'county', 'region', 'region_abbr', 'region_iso_name', 'region_iso_code', 'country', 'country_iso', 'continent', 'postalCode', 'postalCode_pos', 'poBox', 'lat', 'long', 'lang' ]
+        addr: [ 'street_num' , 'street_name', 'line1', 'line2', 'town', 'minor_town', 'county', 'region', 'region_abbr', 'region_iso_name', 'region_iso_code', 'country', 'country_iso', 'continent', 'postalCode', 'postalCode_pos', 'poBox', 'lat', 'long', 'lang' ],
+        lglForm: [ 'code', 'desc' ]
     },
     objs: {
         addr: {
             prim: { attr: [ 'primaryAddress' ], lbl: 'prim' },
             reg: { attr: [ 'registeredAddress' ], lbl: 'reg' },
             mail: { attr: [ 'mailingAddress' ], lbl: 'mail' }
+        },
+        lglForm: {
+            tbl197: { attr: [ 'businessEntityType' ], lbl: 'high_norm' },
+            tbl750: { attr: [ 'legalForm' ], lbl: 'norm' },
+            tbl4: { attr: [ 'registeredDetails', 'legalForm' ], lbl: 'high_res' }
         }
     }
 };

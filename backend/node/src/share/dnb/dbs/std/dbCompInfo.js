@@ -657,15 +657,37 @@ function addrsToArr(
     return rightSizeArr(retArr, arrFlds.length * numAddrs);
 }
 
-function lglFormsToArr(lglForms) {
-    return [
-        lglForms[0]?.dnbCode,
-        lglForms[0]?.description,
-        lglForms[1]?.dnbCode,
-        lglForms[1]?.description,
-        lglForms[2]?.dnbCode,
-        lglForms[2]?.description
-    ]
+function lglFormsToArr(
+        arrLglForms = [],
+        arrFlds = [ 'code', 'desc' ],
+        bLabel = false,
+        labelSize = consts.labelSize.medium
+    )
+{
+    if(bLabel) {
+        return arrLglForms
+            .map(lglForm => fldToLabel(lglForm.b2bv2?.lbl, labelSize) || "")
+            .map(lglFormLblPrefix => {
+                let lblLglForm = consts.labels.lglForm[labelSize];
+
+                if(lglFormLblPrefix) lblLglForm = lglFormLblPrefix + ' ' + lblLglForm;
+                
+                return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblLglForm )), 1 );
+            })
+            .flat();
+    }
+
+    //This function will always return the legal form fields for all objects passed in 
+    const numLglForms = arrLglForms.length;
+
+    const retArr = arrLglForms
+        .map(lglForm => ({
+            code: lglForm.dnbCode,
+            desc: lglForm.description
+        }))
+        .reduce((acc, lglForm) => acc.concat(objToArr( lglForm, arrFlds )), []);
+
+    return rightSizeArr(retArr, arrFlds.length * numLglForms);
 }
 
 export default {
