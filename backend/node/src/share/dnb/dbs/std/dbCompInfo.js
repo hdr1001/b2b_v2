@@ -657,6 +657,16 @@ function addrsToArr(
     return rightSizeArr(retArr, arrFlds.length * numAddrs);
 }
 
+//Function lglFormsToArr returns an array, of one or multiple legal forms, 
+//containing attributes as they relate to a legal form
+//
+//The function returns: code and/or a description
+//
+//The four function parameters
+//1. arrLglForms, the array of legal form references
+//2. arrFlds, the array of field names to include in the returned array
+//3. bLabel, specify true for the element labels to be returned
+//4. labelSize, specify the length of the label string
 function lglFormsToArr(
         arrLglForms = [],
         arrFlds = [ 'code', 'desc' ],
