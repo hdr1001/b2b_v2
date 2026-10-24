@@ -114,12 +114,14 @@ const consts = {
         lglForm: [ 'lgl form', 'legal form', 'legal form'],
         high: [ 'high', 'high', 'high' ],
         norm: [ 'norm', 'normalized', 'normalized' ],
-        res: [ 'res', 'resolution', 'resolution' ]
+        res: [ 'res', 'resolution', 'resolution' ],
+        value: [ 'value', 'value', 'value' ]
     },
     prios: {
         summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ], //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
         indsCodeClass: [ 43665, 29104, 3599, 399 ], //NACE v2.1, NACE v2, D&B Industry Code, SIC 87
-        reliability: [ 9092, 9094, 9093 ] //Preferred reliability codes; actual, modelled, estimated
+        reliability: [ 9092, 9094, 9093 ], //Preferred reliability codes; actual, modelled, estimated
+        infoScope: [ 9066, 9068, 9067, 36430, 36429 ] //individual, HQ, consolidated, empl here/total
     },
     flds: {
         act: [ 'desc', 'lang_desc', 'lang_code' ],
@@ -128,6 +130,7 @@ const consts = {
         stockExch: [ 'ticker', 'name', 'country', 'prio' ],
         utf8Name: [ 'name', 'lang_desc', 'lang_code', 'script_desc', 'script_code', 'prio' ],
         indsCode: [ 'code', 'desc', 'class_code', 'class_desc', 'class_prio', 'prio' ],
+        numEmpl: [ 'value', 'reliab', 'reliab_prio', 'infoScope', 'infoScope_prio', 'date' ],
         yrlyRev: [ 'finStmt_to_date', 'finStmt_infoScope', 'finStmt_infoScope_prio', 'finStmt_reliab', 'finStmt_reliab_prio', 'finStmt_unit', 'amt', 'curr', 'formatted_amt' ],
         addr: [ 'street_num' , 'street_name', 'line1', 'line2', 'town', 'minor_town', 'county', 'region', 'region_abbr', 'region_iso_name', 'region_iso_code', 'country', 'country_iso', 'continent', 'postalCode', 'postalCode_pos', 'poBox', 'lat', 'long', 'lang' ],
         lglForm: [ 'code', 'desc' ]

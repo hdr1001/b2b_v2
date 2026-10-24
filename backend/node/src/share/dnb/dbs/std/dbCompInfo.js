@@ -495,6 +495,41 @@ function indsCodesToArr(
     return rightSizeArr(retArr, numIndsCodes === -1 ? -1 : arrFlds.length * numIndsCodes);
 }
 
+function numEmplToArr(
+        arrNumEmpl = [],
+        arrFlds = consts.flds.numEmpl,
+        arrReliability = consts.prios.reliability,
+        numEmpls = 1,
+    )
+{
+    const retArr = arrNumEmpl
+        .map(elem => {
+            //Get the date's timestamp from the financial statement to date string
+            const numEmplDate = Date.parse(elem.employeeFiguresDate);
+
+            //Determine the priority of the reliability code based on the order in arrReliability
+            const reliabPrio = arrReliability.findIndex(prio => prio === elem.reliabilityDnBCode);
+
+            //Determine the priority of the info scope code based on the order in consts.prios.infoScope
+            const infoScopePrio = consts.prios.infoScope.findIndex(prio => prio === elem.informationScopeDnBCode);
+
+            //Map the objects passed in to custom return objects
+            return {
+                oDate: numEmplDate ? new Date(numEmplDate) : new Date(0), //Used for sorting
+                date: elem.employeeFiguresDate,
+                reliab: elem.reliabilityDescription,
+                reliab_prio: reliabPrio === -1 ? arrReliability.length : reliabPrio,
+                infoScope: elem.informationScopeDescription,
+                infoScope_prio: infoScopePrio === -1 ? consts.prios.infoScope.length : infoScopePrio,
+                value: elem.value,
+            };
+        })
+        .sort((elem1, elem2) => elem1.reliab_prio - elem2.reliab_prio || elem1.infoScope_prio - elem2.infoScope_prio)
+        .reduce((acc, numEmpl) => acc.concat(objToArr(numEmpl, arrFlds)), []);
+
+    return rightSizeArr(retArr, numEmpls === -1 ? -1 : arrFlds.length * numEmpls);
+}
+
 //Function finsToYrlyRevArr returns an array, of predefined length, containing 
 //yearly revenue figures of a company
 //
@@ -712,6 +747,7 @@ export default {
     stockExchsToArr,
     utf8NamesToArr,
     indsCodesToArr,
+    numEmplToArr,
     finsToYrlyRevArr,
     addrsToArr,
     lglFormsToArr
