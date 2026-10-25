@@ -277,7 +277,7 @@ function actsToArr(
 function summariesToArr(
         arrSummary = [],
         arrFlds = consts.flds.summary,
-        arrSummPrio = consts.prios.summary,
+        summParams = { solely: [], prios: consts.prios.summary },
         numSumms = 1,
         bLabel = false,
         labelSize = consts.labelSize.medium
@@ -289,10 +289,20 @@ function summariesToArr(
         return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblSumm )), numSumms );
     }
 
+    const solelySpecified = summParams && summParams.solely && summParams.solely.length;
+    const priosSpecified = summParams && summParams.prios && summParams.prios.length;
+
     //Simplify the structure of the summary objects and add a priority attribute
     const retArr = arrSummary
+        //Filter elements in the solely array
+        .filter(elem => solelySpecified ? summParams.solely.includes(elem.textType?.dnbCode) : true)
+        //Create the custom element
         .map(elem => {
-            const prio = arrSummPrio.findIndex(prio => prio === elem.textType.dnbCode);
+            let prio = arrSummPrio.length;
+
+            if(priosSpecified) {
+                prio = summParams.prios.findIndex(prio => prio === elem.textType.dnbCode)
+            }
 
             return {
                 desc: elem.textType.description,
