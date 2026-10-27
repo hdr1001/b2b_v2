@@ -289,25 +289,34 @@ function summariesToArr(
         return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblSumm )), numSumms );
     }
 
-    const solelySpecified = summParams && summParams.solely && summParams.solely.length;
-    const priosSpecified = summParams && summParams.prios && summParams.prios.length;
+    //If solely types are specified, filter the array of summaries accordingly 
+    if(summParams && summParams.solely && summParams.solely.length) {
+        arrSummary = arrSummary.filter( elem => summParams.solely.includes(elem.textType?.dnbCode) )
+    }
+
+    //Establish whether type priorities were specified. If not set arrPrios to null.
+    const arrPrios = summParams && summParams.prios && summParams.prios.length ? summParams.prios : null;
 
     //Simplify the structure of the summary objects and add a priority attribute
     const retArr = arrSummary
-        //Filter elements in the solely array
-        .filter(elem => solelySpecified ? summParams.solely.includes(elem.textType?.dnbCode) : true)
         //Create the custom element
         .map(elem => {
-            let prio = arrSummPrio.length;
+            //Default priority is 0
+            let prio = 0;
 
-            if(priosSpecified) {
-                prio = summParams.prios.findIndex(prio => prio === elem.textType.dnbCode)
+            //If priorities were specified, set the priority level 
+            if(arrPrios) {
+                prio = arrPrios.findIndex(prio => prio === elem.textType.dnbCode)
             }
 
+            //Create the custom object. If no priorities were specified all prio
+            //attributes will be 0. If priorities were specified, the values will
+            //range from -1 to arrPrios.length - 1. A prio value of -1 indicates
+            //no priority. Push the value back to arrPrios.length
             return {
-                desc: elem.textType.description,
+                desc: elem.textType?.description,
                 txt: elem.text,
-                prio: prio === -1 ? arrSummPrio.length : prio 
+                prio: prio === -1 ? arrPrios.length : prio 
             }
         })
         //Sort the summary objects based on priority
