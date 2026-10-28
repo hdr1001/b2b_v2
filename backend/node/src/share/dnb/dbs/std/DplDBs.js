@@ -244,13 +244,13 @@ export default class DplDBs {
     actsToArr = (arrFlds, numActs, bLabel, labelSize) => ci.actsToArr( this.org.activities || [], arrFlds, numActs, bLabel, labelSize );
 
     //Return an array containing editorial comments for the entity
-    summariesToArr = (arrFlds, arrSummPrio, numSumms, bLabel, labelSize) => ci.summariesToArr( this.org.summary || [], arrFlds, arrSummPrio, numSumms, bLabel, labelSize );
+    summariesToArr = (arrFlds, summParams, numSumms, bLabel, labelSize) => ci.summariesToArr( this.org.summary || [], arrFlds, summParams, numSumms, bLabel, labelSize );
 
     //Return an array containing custom registration numbers of a predefined length (numRegNums)    
-    regNumsToArr = (arrFlds, numRegNums, bLabel, labelSize) => {
+    regNumsToArr = (arrFlds, regNumParams, numRegNums, bLabel, labelSize) => {
         if(!this.org.regNums) this.org.regNums = ci.iniRegNumArr(this.org.registrationNumbers, this.leiRegNum);
 
-        return ci.regNumsToArr( this.org.regNums, arrFlds, numRegNums, bLabel, labelSize );
+        return ci.regNumsToArr( this.org.regNums, arrFlds, regNumParams, numRegNums, bLabel, labelSize );
     }
 
     //Return an array, of predefined length, containing the stockexchanges on which the entity is listed

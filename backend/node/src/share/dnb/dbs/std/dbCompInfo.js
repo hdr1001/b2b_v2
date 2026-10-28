@@ -106,13 +106,13 @@ function createCustRegNum(elem) {
     //Check if the registration number is a Value Added Tax ID
     ret.isVAT = elem.registrationNumberClass?.dnbCode && regNumClassIsVAT.has(elem.registrationNumberClass.dnbCode);
 
-    //Default priority is 4
-    ret.prio = 4;
+    //Default priority is 3
+    ret.prio = 3;
 
     //Set specific priorities
-    if (elem.isPreferredRegistrationNumber === true) { ret.prio = 1 } //Assign prio 1 if preferred
-    else if (ret.isVAT) { ret.prio = 2 } //Assign prio 2 to VATs (& not preferred)
-    else if (elem.typeDnBCode === 33916) { ret.prio = 3 } //Assign prio 3 to LEIs
+    if (elem.isPreferredRegistrationNumber === true) { ret.prio = 0 } //Assign prio 0 if preferred
+    else if (ret.isVAT) { ret.prio = 1 } //Assign prio 1 to VATs (& not preferred)
+    else if (elem.typeDnBCode === 33916) { ret.prio = 2 } //Assign prio 2 to LEIs
 
     //The actual ID
     ret.regNum = elem.registrationNumber;
@@ -262,18 +262,23 @@ function actsToArr(
     return rightSizeArr(retArr, numActs === -1 ? -1 : arrFlds.length * numActs);
 }
 
-//Function summaryFromArray returns:
+//Function summariesToArr returns:
 //   - a description of the specific editorial summary for the entity
-//   - a string containing editorial comments for the entity
-//   - an assigned priority based on an input parameter
-//The comments can contain HTML tags. Summary is available in data block Company Info L2+.
+//   - a string containing editorial comments for the entity. The comments
+//     can contain HTML tags.
+//   - an assigned priority based on a parameter passed into the function
+//Summaries are available in data block Company Info L2+.
 //
-//The five function parameters
+//The six function parameters
 //1. arrSummary, the array of summary objects
 //2. arrFlds, the array of field names to include in the returned array
-//3. numSumms, specify the number of summaries to return (-1 for all)
-//4. bLabel, specify true for the element labels to be returned
-//5. labelSize, specify the length of the label string
+//3. summParams, option parameters passed into the function
+//      - solely, an array of type codes to include in the return array
+//      - prios, an array of type codes to perform a priority sort of
+//        the elements included in the return array
+//4. numSumms, specify the number of summaries to return (-1 for all)
+//5. bLabel, specify true for the element labels to be returned
+//6. labelSize, specify the length of the label string
 function summariesToArr(
         arrSummary = [],
         arrFlds = consts.flds.summary,
@@ -332,19 +337,22 @@ function summariesToArr(
 //   - a registration number type & type description
 //   - a registration number class & class description
 //   - an indicator highlighting whether the ID is a VAT
-//   - a priority indicator
+//   - a priority indicator (0 for preferred, 1 for VAT, 2 for LEI, 3 for other)
 //   - a location description of the registrar
 //Registration numbers are available in data block Company Info L1+.
 //
-//The five function parameters
+//The six function parameters
 //1. arrRegNums, a custom array of registration number objects
 //2. arrFlds, the array of field names to include in the returned array
-//3. numRegNums, specify the number of registration numbers to return (-1 for all)
-//4. bLabel, specify true for the element labels to be returned
-//5. labelSize, specify the length of the label string
+//3. regNumParams, option parameters passed into the function
+//      - solely, an array of registration number priorities to include in the return array
+//4. numRegNums, specify the number of registration numbers to return (-1 for all)
+//5. bLabel, specify true for the element labels to be returned
+//6. labelSize, specify the length of the label string
 function regNumsToArr(
         arrRegNums = [],
         arrFlds = consts.flds.regNum,
+        regNumParams = { solely: [] },
         numRegNums = 1,
         bLabel = false,
         labelSize = consts.labelSize.medium
@@ -354,6 +362,11 @@ function regNumsToArr(
         const lblRegNum = consts.labels.regNum[labelSize];
 
         return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblRegNum )), numRegNums );
+    }
+
+    //If solely priorities are specified, filter the array of registration numbers accordingly 
+    if(regNumParams && regNumParams.solely && regNumParams.solely.length) {
+        arrRegNums = arrRegNums.filter( elem => regNumParams.solely.includes( elem.prio ) )
     }
 
     //Flatten the array with the requested values

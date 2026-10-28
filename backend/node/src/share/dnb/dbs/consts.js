@@ -125,7 +125,7 @@ const consts = {
     },
     flds: {
         act: [ 'desc', 'lang_desc', 'lang_code' ],
-        summary: [ 'desc', 'txt' ],
+        summary: [ 'desc', 'txt', 'prio' ],
         regNum: [ 'regNum', 'desc', 'type', 'class_desc', 'class', 'isVAT', 'prio', 'regLoc' ],
         stockExch: [ 'ticker', 'name', 'country', 'prio' ],
         utf8Name: [ 'name', 'lang_desc', 'lang_code', 'script_desc', 'script_code', 'prio' ],
