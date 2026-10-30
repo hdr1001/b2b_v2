@@ -264,7 +264,7 @@ export default class DplDBs {
     utf8TradeNamesToArr = (arrFlds, numUtf8Names, bLabel, labelSize) => ci.utf8NamesToArr( this.org.multilingualTradestyleNames || [], consts.labels.tradeStyle, arrFlds, numUtf8Names, bLabel, labelSize );
 
     //Return an array, of predefined length, containing the industry codes (NACE, SIC, etc.) of the entity
-    indsCodesToArr = (arrFlds, arrIndsCodeClassPrio, numIndsCodes, bLabel, labelSize) => ci.indsCodesToArr( this.org.industryCodes || [], arrFlds, arrIndsCodeClassPrio, numIndsCodes, bLabel, labelSize );
+    indsCodesToArr = (arrFlds, indsCodeClassParams, numIndsCodes, bLabel, labelSize) => ci.indsCodesToArr( this.org.industryCodes || [], arrFlds, indsCodeClassParams, numIndsCodes, bLabel, labelSize );
 
     //Return an array, of predefined length, containing number of employee figures
     numEmplToArr = (arrFlds, arrReliability, numEmpls, bLabel, labelSize) => ci.numEmplToArr( this.org.numberOfEmployees || [], arrFlds, arrReliability, numEmpls, bLabel, labelSize );

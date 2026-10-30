@@ -115,7 +115,8 @@ const consts = {
         high: [ 'high', 'high', 'high' ],
         norm: [ 'norm', 'normalized', 'normalized' ],
         res: [ 'res', 'resolution', 'resolution' ],
-        value: [ 'value', 'value', 'value' ]
+        value: [ 'value', 'value', 'value' ],
+        empl: [ 'empl', 'employee', 'employee']
     },
     prios: {
         summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ], //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 

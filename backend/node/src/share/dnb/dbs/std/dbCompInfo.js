@@ -489,14 +489,17 @@ function utf8NamesToArr(
 //The six function parameters
 //1. arrIndsCodes, the array of industry code objects
 //2. arrFlds, the array of field names to include in the returned array
-//3. arrIndsCodeClassPrio, the array of industry class priorities
+//3. indsCodeClassParams, option parameters passed into the function
+//      - solely, an array of class type codes to include in the return array
+//      - prios, an array of class type codes to perform a priority sort of
+//        the elements included in the return array
 //4. numIndsCodes, specify the number of industry codes to return (-1 for all)
 //5. bLabel, specify true for the element labels to be returned
 //6. labelSize, specify the length of the label string
 function indsCodesToArr(
         arrIndsCodes = [],
         arrFlds = consts.flds.indsCode,
-        arrIndsCodeClassPrio = consts.prios.indsCodeClass,
+        indsCodeClassParams = { solely: [], prios: [] },
         numIndsCodes = 1,
         bLabel = false,
         labelSize = consts.labelSize.medium
@@ -508,16 +511,28 @@ function indsCodesToArr(
         return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblIndsCode )), numIndsCodes );
     }
 
+    //If solely class types are specified, filter the array of industry codes accordingly 
+    if(indsCodeClassParams && indsCodeClassParams.solely && indsCodeClassParams.solely.length) {
+        arrIndsCodes = arrIndsCodes.filter( elem => indsCodeClassParams.solely.includes(elem.typeDnBCode) )
+    }
+
+    //Establish whether class type priorities were specified. If not set arrPrios to null.
+    const arrPrios = indsCodeClassParams && indsCodeClassParams.prios && indsCodeClassParams.prios.length ? indsCodeClassParams.prios : null;
+
     const retArr = arrIndsCodes
         .map(elem => {
-            const classPrio = arrIndsCodeClassPrio.findIndex(prio => prio === elem.typeDnBCode);
+            let classPrio = 0;
+            
+            if(arrPrios) {
+                classPrio = arrPrios.findIndex(prio => prio === elem.typeDnBCode)
+            }
 
             return {
                 code: elem.code,
                 desc: elem.description,
                 class_code: elem.typeDnBCode,
                 class_desc: elem.typeDescription,
-                class_prio: classPrio === -1 ? arrIndsCodeClassPrio.length : classPrio,
+                class_prio: classPrio === -1 ? arrPrios.length : classPrio,
                 prio: elem.priority
             }
         })
@@ -530,29 +545,61 @@ function indsCodesToArr(
 function numEmplToArr(
         arrNumEmpl = [],
         arrFlds = consts.flds.numEmpl,
-        arrReliability = consts.prios.reliability,
+        numEmplParams = { reliab: { solely: [], prios: [] }, infoScope: { solely: [], prios: [] }},
         numEmpls = 1,
+        bLabel = false,
+        labelSize = consts.labelSize.medium
     )
 {
+    if(bLabel) {
+        const lblNumEmpl = consts.labels.num[labelSize] + ' ' + consts.labels.empl[labelSize];
+
+        return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblNumEmpl )), numEmpls );
+    }
+
+    //If solely reliability types are specified, filter the array of employee counts accordingly 
+    if(numEmplParams?.reliab?.solely && numEmplParams.reliab.solely.length) {
+        arrNumEmpl = arrNumEmpl.filter( elem => numEmplParams.reliab.solely.includes(elem.reliabilityDnBCode) )
+    }
+
+    //If solely info scopes are specified, filter the array of employee counts accordingly 
+    if(numEmplParams?.infoScope?.solely && numEmplParams.infoScope.solely.length) {
+        arrNumEmpl = arrNumEmpl.filter( elem => numEmplParams.infoScope.solely.includes(elem.informationScopeDnBCode) )
+    }
+
+    //Establish whether reliability priorities were specified. If not set arrPrios to null.
+    const arrReliabPrios = numEmplParams?.reliab?.prios && numEmplParams.reliab.prios.length ? numEmplParams.reliab.prios : null;
+
+    //Establish whether reliability priorities were specified. If not set arrPrios to null.
+    const arrInfoScopePrios = numEmplParams?.infoScope?.prios && numEmplParams.infoScope.prios.length ? numEmplParams.infoScope.prios : null;
+
     const retArr = arrNumEmpl
         .map(elem => {
             //Get the date's timestamp from the financial statement to date string
             const numEmplDate = Date.parse(elem.employeeFiguresDate);
 
-            //Determine the priority of the reliability code based on the order in arrReliability
-            const reliabPrio = arrReliability.findIndex(prio => prio === elem.reliabilityDnBCode);
+            //Set, if specified, reliability priorities
+            let reliabPrio = 0;
 
-            //Determine the priority of the info scope code based on the order in consts.prios.infoScope
-            const infoScopePrio = consts.prios.infoScope.findIndex(prio => prio === elem.informationScopeDnBCode);
+            if(arrReliabPrios) {
+                reliabPrio = arrReliabPrios.findIndex(prio => prio === elem.reliabilityDnBCode)
+            }
+
+            //Set, if specified, information scope priorities
+            let infoScopePrio = 0;
+
+            if(arrInfoScopePrios) {
+                infoScopePrio = arrInfoScopePrios.findIndex(prio => prio === elem.informationScopeDnBCode)
+            }
 
             //Map the objects passed in to custom return objects
             return {
                 oDate: numEmplDate ? new Date(numEmplDate) : new Date(0), //Used for sorting
                 date: elem.employeeFiguresDate,
                 reliab: elem.reliabilityDescription,
-                reliab_prio: reliabPrio === -1 ? arrReliability.length : reliabPrio,
+                reliab_prio: reliabPrio === -1 ? arrReliabPrios?.length || 0 : reliabPrio,
                 infoScope: elem.informationScopeDescription,
-                infoScope_prio: infoScopePrio === -1 ? consts.prios.infoScope.length : infoScopePrio,
+                infoScope_prio: infoScopePrio === -1 ? arrInfoScopePrios?.length || 0 : infoScopePrio,
                 value: elem.value,
             };
         })
