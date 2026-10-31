@@ -542,11 +542,35 @@ function indsCodesToArr(
     return rightSizeArr(retArr, numIndsCodes === -1 ? -1 : arrFlds.length * numIndsCodes);
 }
 
+//Function numEmplToArr returns an array, of predefined length, containing 
+//the number of employee counts of a company
+//
+//The function returns:
+//   - a value (i.e. the ccount)
+//   - a reliability indicator (e.g. actual, modelled, ...)
+//   - a reliability priority
+//   - an information scope (e.g. individual, consolidated, ...)
+//   - an information scope priority
+//   - a date
+//
+//The six function parameters
+//1. arrNumEmpl, the array of number of employee objects
+//2. arrFlds, the array of field names to include in the returned array
+//3. numEmplParams, option parameters passed into the function
+//    - reliab, options as they pertain to reliabity
+//      - solely, an array of reliability codes to include in the return array
+//      - prios, an array of reliability codes to perform a priority sort
+//    - infoScope, options as they pertain to the information scope
+//      - solely, an array of information scope codes to include in the return array
+//      - prios, an array of information scope codes to perform a priority sort
+//4. numNumEmpl, specify the number of industry codes to return (-1 for all)
+//5. bLabel, specify true for the element labels to be returned
+//6. labelSize, specify the length of the label string
 function numEmplToArr(
         arrNumEmpl = [],
         arrFlds = consts.flds.numEmpl,
-        numEmplParams = { reliab: { solely: [], prios: [] }, infoScope: { solely: [], prios: [] }},
-        numEmpls = 1,
+        numEmplParams = { reliab: { solely: [], prios: consts.prios.reliability }, infoScope: { solely: [], prios: consts.prios.infoScope }},
+        numNumEmpl = 1,
         bLabel = false,
         labelSize = consts.labelSize.medium
     )
@@ -554,10 +578,10 @@ function numEmplToArr(
     if(bLabel) {
         const lblNumEmpl = consts.labels.num[labelSize] + ' ' + consts.labels.empl[labelSize];
 
-        return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblNumEmpl )), numEmpls );
+        return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblNumEmpl )), numNumEmpl );
     }
 
-    //If solely reliability types are specified, filter the array of employee counts accordingly 
+    //If solely reliability codes are specified, filter the array of employee counts accordingly 
     if(numEmplParams?.reliab?.solely && numEmplParams.reliab.solely.length) {
         arrNumEmpl = arrNumEmpl.filter( elem => numEmplParams.reliab.solely.includes(elem.reliabilityDnBCode) )
     }
@@ -567,10 +591,10 @@ function numEmplToArr(
         arrNumEmpl = arrNumEmpl.filter( elem => numEmplParams.infoScope.solely.includes(elem.informationScopeDnBCode) )
     }
 
-    //Establish whether reliability priorities were specified. If not set arrPrios to null.
+    //Establish whether reliability priorities were specified. If not, set arrReliabPrios to null.
     const arrReliabPrios = numEmplParams?.reliab?.prios && numEmplParams.reliab.prios.length ? numEmplParams.reliab.prios : null;
 
-    //Establish whether reliability priorities were specified. If not set arrPrios to null.
+    //Establish whether reliability priorities were specified. If not, set arrInfoScopePrios to null.
     const arrInfoScopePrios = numEmplParams?.infoScope?.prios && numEmplParams.infoScope.prios.length ? numEmplParams.infoScope.prios : null;
 
     const retArr = arrNumEmpl
@@ -606,7 +630,7 @@ function numEmplToArr(
         .sort((elem1, elem2) => elem1.reliab_prio - elem2.reliab_prio || elem1.infoScope_prio - elem2.infoScope_prio)
         .reduce((acc, numEmpl) => acc.concat(objToArr(numEmpl, arrFlds)), []);
 
-    return rightSizeArr(retArr, numEmpls === -1 ? -1 : arrFlds.length * numEmpls);
+    return rightSizeArr(retArr, numNumEmpl === -1 ? -1 : arrFlds.length * numNumEmpl);
 }
 
 //Function finsToYrlyRevArr returns an array, of predefined length, containing 
@@ -623,7 +647,7 @@ function numEmplToArr(
 //   -Yearly revenue currency
 //   -Yearly revenue currency amount
 //
-//The six function parameters
+//The seven function parameters
 //1. arrFins, array of financial objects
 //2. arrFlds, the array of field names to include in the returned array
 //3. arrReliability, the array of reliability priorities
@@ -634,7 +658,7 @@ function numEmplToArr(
 function finsToYrlyRevArr(
         arrFins = [],
         arrFlds = consts.flds.yrlyRev,
-        arrReliability = consts.prios.reliability,
+        yrlyRevParams = { reliab: { solely: [], prios: consts.prios.reliability }, infoScope: { solely: [], prios: [ 9067 ] }},
         numYrlyRevs = 1,
         curr = 'USD',
         bLabel = false,
@@ -647,13 +671,40 @@ function finsToYrlyRevArr(
         return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblYrlyRev )), numYrlyRevs );
     }
 
+    //If solely reliability codes are specified, filter the array of yearly rev figures accordingly 
+    if(yrlyRevParams?.reliab?.solely && yrlyRevParams.reliab.solely.length) {
+        arrFins = arrFins.filter( elem => yrlyRevParams.reliab.solely.includes(elem.reliabilityDnBCode) )
+    }
+
+    //If solely info scopes are specified, filter the array of yearly rev figures accordingly 
+    if(yrlyRevParams?.infoScope?.solely && yrlyRevParams.infoScope.solely.length) {
+        arrFins = arrFins.filter( elem => yrlyRevParams.infoScope.solely.includes(elem.informationScopeDnBCode) )
+    }
+
+    //Establish whether reliability priorities were specified. If not, set arrReliabPrios to null.
+    const arrReliabPrios = yrlyRevParams?.reliab?.prios && yrlyRevParams.reliab.prios.length ? yrlyRevParams.reliab.prios : null;
+
+    //Establish whether reliability priorities were specified. If not, set arrInfoScopePrios to null.
+    const arrInfoScopePrios = yrlyRevParams?.infoScope?.prios && yrlyRevParams.infoScope.prios.length ? yrlyRevParams.infoScope.prios : null;
+
     const retArr = arrFins
         .map(elem => {
             //Get the date's timestamp from the financial statement to date string
             const finStmtToDate = Date.parse(elem.financialStatementToDate);
 
-            //Determine the priority of the reliability code based on the order in arrReliability
-            const reliabPrio = arrReliability.findIndex(prio => prio === elem.reliabilityDnBCode);
+            //Set, if specified, reliability priorities
+            let reliabPrio = 0;
+
+            if(arrReliabPrios) {
+                reliabPrio = arrReliabPrios.findIndex(prio => prio === elem.reliabilityDnBCode)
+            }
+
+            //Set, if specified, information scope priorities
+            let infoScopePrio = 0;
+
+            if(arrInfoScopePrios) {
+                infoScopePrio = arrInfoScopePrios.findIndex(prio => prio === elem.informationScopeDnBCode)
+            }
 
             //Get the yearly revenue object for the requested currency, if available
             let yrlyRev = null;
@@ -684,16 +735,16 @@ function finsToYrlyRevArr(
                 finStmt_to_date: elem.financialStatementToDate,
                 oDateFinStmt_to: finStmtToDate ? new Date(finStmtToDate) : new Date(0), //Used for sorting
                 finStmt_infoScope: elem.informationScopeDescription,
-                finStmt_infoScope_prio: elem.informationScopeDnBCode === 9067 ? 1 : 2, //Prefer consolidated
+                finStmt_infoScope_prio: infoScopePrio === -1 ? arrInfoScopePrios?.length || 0 : infoScopePrio,
                 finStmt_reliab: elem.reliabilityDescription,
-                finStmt_reliab_prio: reliabPrio === -1 ? arrReliability.length : reliabPrio,
+                finStmt_reliab_prio: reliabPrio === -1 ? arrReliability?.length || 0 : reliabPrio,
                 finStmt_unit: elem.unitCode,
                 amt: yrlyRev?.value,
                 formatted_amt: formattedAmt,
                 curr: yrlyRev?.currency
             };
         })
-        .sort((elem1, elem2) => elem2.oDateFinStmt_to - elem1.oDateFinStmt_to || elem1.finStmt_infoScope_prio - elem2.finStmt_infoScope_prio || elem1.finStmt_reliab_prio - elem2.finStmt_reliab_prio)
+        .sort((elem1, elem2) => elem2.oDateFinStmt_to - elem1.oDateFinStmt_to || elem1.finStmt_reliab_prio - elem2.finStmt_reliab_prio || elem1.finStmt_infoScope_prio - elem2.finStmt_infoScope_prio)
         .reduce((acc, fins) => acc.concat(objToArr(fins, arrFlds)), []);
 
     return rightSizeArr(retArr, numYrlyRevs === -1 ? -1 : arrFlds.length * numYrlyRevs);
