@@ -756,7 +756,7 @@ function finsToYrlyRevArr(
 //The function returns: address components (see consts.flds.addr)
 //
 //The four function parameters
-//1. arrAddrs, the array of address objects
+//1. arrAddrs, the array of address object references
 //2. arrFlds, the array of field names to include in the returned array
 //3. bLabel, specify true for the element labels to be returned
 //4. labelSize, specify the length of the label string
@@ -767,12 +767,9 @@ function addrsToArr(
         labelSize = consts.labelSize.medium
     )
 {
-    //This function will always return the address fields of all address objects passed in 
-    const numAddrs = arrAddrs.length;
-
     if(bLabel) {
         return arrAddrs
-            .map(addr => addr.b2bv2?.lbl || "")
+            .map(addr => fldToLabel(addr.b2bv2?.lbl, labelSize) || "")
             .map(addrLblPrefix => {
                 let lblAddr = consts.labels.addr[labelSize];
 
@@ -782,6 +779,9 @@ function addrsToArr(
             })
             .flat();
     }
+
+    //This function will always return the address fields of all address objects passed in 
+    const numAddrs = arrAddrs.length;
 
     const retArr = arrAddrs
         .map(addr => {

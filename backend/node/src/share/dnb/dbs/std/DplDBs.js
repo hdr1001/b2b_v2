@@ -277,6 +277,8 @@ export default class DplDBs {
 
     //Return an array, of predefined length, containing one or more addresses of the entity
     addrsToArr = (arrObjsAddr, arrFlds, bLabel, labelSize) => {
+        //Convert the predefined address objects to Data Block references
+        //and save the consts.objs.addr attributes
         arrObjsAddr = arrObjsAddr.map(elem => {
             const objAddr = this.dynDeref(elem.attr) || {};
 
@@ -290,6 +292,8 @@ export default class DplDBs {
 
     //Return an array, of predefined length, containing one or more legal forms of an entity
     lglFormsToArr = (arrObjsLglForm, arrFlds, bLabel, labelSize) => {
+        //Convert the predefined legal form objects to Data Block references
+        //and save the consts.objs.lglForm attributes
         arrObjsLglForm = arrObjsLglForm.map( elem => {
             const objLegalForm = this.dynDeref( elem.attr ) || {};
 
