@@ -304,4 +304,16 @@ export default class DplDBs {
 
         return ci.lglFormsToArr( arrObjsLglForm, arrFlds, bLabel, labelSize );
     };
+
+    corpSizeToArr = (arrFlds, curr, bLabel, labelSize) => ci.corpSizeToArr(
+        [
+            { numberOfEmployees: this.org.numberOfEmployees, financials: this.org.financials },
+            this.org.domesticUltimate || {},
+            this.org.globalUltimate || {}
+        ],
+        arrFlds,
+        curr ? curr : this.map121.dfltCurr, //The default currency might not be available for the global ult
+        bLabel,
+        labelSize
+    );
 }

@@ -738,7 +738,7 @@ function finsToYrlyRevArr(
                 finStmt_infoScope_prio: infoScopePrio === -1 ? arrInfoScopePrios?.length || 0 : infoScopePrio,
                 finStmt_reliab: elem.reliabilityDescription,
                 finStmt_reliab_prio: reliabPrio === -1 ? arrReliability?.length || 0 : reliabPrio,
-                finStmt_unit: elem.unitCode,
+                finStmt_unit: elem.unitCode || 'SingleUnits',
                 amt: yrlyRev?.value,
                 formatted_amt: formattedAmt,
                 curr: yrlyRev?.currency
@@ -865,6 +865,38 @@ function lglFormsToArr(
     return rightSizeArr(retArr, arrFlds.length * numLglForms);
 }
 
+function corpSizeToArr(
+        arrCorpSizes = [],
+        arrFlds,
+        curr = 'USD',
+        bLabel = false,
+        labelSize = consts.labelSize.medium
+    )
+{
+    return arrCorpSizes.map(hcLvl => {
+        const arrNumEmpl = numEmplToArr(
+            hcLvl.numberOfEmployees || [],
+            [ 'value', 'reliab', 'infoScope' ],
+            { reliab: { prios: consts.prios.reliability }, infoScope: { prios: consts.prios.infoScope }},
+            1,
+            bLabel,
+            labelSize
+        );
+
+        const arrYrlyRev = finsToYrlyRevArr(
+            hcLvl.financials || [],
+            [ 'amt', 'curr', 'finStmt_unit', 'finStmt_reliab', 'finStmt_infoScope' ],
+            { reliab: { prios: consts.prios.reliability }, infoScope: { prios: [] } },
+            1,
+            curr,
+            bLabel,
+            labelSize
+        );
+
+        return arrNumEmpl.concat(arrYrlyRev);
+    }).flat();
+}
+
 export default {
     objLeiRegNum,
     iniRegNumArr,
@@ -880,5 +912,6 @@ export default {
     numEmplToArr,
     finsToYrlyRevArr,
     addrsToArr,
-    lglFormsToArr
+    lglFormsToArr,
+    corpSizeToArr
 };
