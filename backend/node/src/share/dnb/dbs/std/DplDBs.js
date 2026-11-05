@@ -305,15 +305,30 @@ export default class DplDBs {
         return ci.lglFormsToArr( arrObjsLglForm, arrFlds, bLabel, labelSize );
     };
 
-    corpSizeToArr = (arrFlds, curr, bLabel, labelSize) => ci.corpSizeToArr(
-        [
-            { numberOfEmployees: this.org.numberOfEmployees, financials: this.org.financials },
-            this.org.domesticUltimate || {},
-            this.org.globalUltimate || {}
-        ],
-        arrFlds,
-        curr ? curr : this.map121.dfltCurr, //The default currency might not be available for the global ult
-        bLabel,
-        labelSize
-    );
+    corpSizeToArr = (arrFlds, curr, bLabel, labelSize) => 
+        {
+            const arrCorpSize = [];
+
+            arrCorpSize.push({
+                numberOfEmployees: this.org.numberOfEmployees,
+                financials: this.org.financials,
+                b2bv2: { lbl: 'duns' }
+            });
+
+            [ { attr: 'domesticUltimate', lbl: 'dom_ult' }, { attr: 'globalUltimate', lbl: 'gbl_ult' } ].forEach( higherLvl => {
+                const objHigherLvl = this.org[ higherLvl.attr ] || {};
+
+                objHigherLvl.b2bv2 = { lbl: higherLvl.lbl };
+
+                arrCorpSize.push(objHigherLvl);
+            });
+
+            return ci.corpSizeToArr(
+                arrCorpSize,
+                arrFlds,
+                curr ? curr : this.map121.dfltCurr, //The default currency might not be available for the global ult
+                bLabel,
+                labelSize
+            );
+        }
 }

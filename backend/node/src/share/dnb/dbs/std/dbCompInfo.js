@@ -867,16 +867,39 @@ function lglFormsToArr(
 
 function corpSizeToArr(
         arrCorpSizes = [],
-        arrFlds,
+        arrFlds = consts.flds.corpSize,
         curr = 'USD',
         bLabel = false,
         labelSize = consts.labelSize.medium
     )
 {
+    let arrFldsNumEmpl = [ 'value', 'reliab', 'infoScope' ];
+    arrFldsNumEmpl = arrFlds.filter(fld => arrFldsNumEmpl.includes(fld));
+
+    let arrFldsYrlyRev = Array.from(arrFlds);
+    const idx = arrFldsYrlyRev.findIndex(fld => fld === 'value');
+    if(idx !== -1) arrFldsYrlyRev[idx] = 'amt';
+
+    if(bLabel) {
+        return arrCorpSizes
+            .map(hcLvl => {
+                const lblPrefix = consts.labels.corpSize[labelSize] + ' ' + fldToLabel(hcLvl.b2bv2?.lbl, labelSize);
+
+                const lblsNumEmpl = arrFldsNumEmpl.map(fld => fldToLabel( fld, labelSize, lblPrefix + ' ' +  consts.labels.num[labelSize] + ' ' +  consts.labels.empl[labelSize]));
+
+                const lblsFinStmt = arrFldsYrlyRev.map(fld => fldToLabel( fld, labelSize, lblPrefix + ' ' +  consts.labels.finStmt[labelSize]));
+
+                return lblsNumEmpl.concat(lblsFinStmt);
+            })
+            .flat();
+    }
+
+    arrFldsYrlyRev = arrFldsYrlyRev.map(fld => (fld === 'amt' || fld === 'curr') ? fld : 'finStmt_' + fld);
+
     return arrCorpSizes.map(hcLvl => {
         const arrNumEmpl = numEmplToArr(
             hcLvl.numberOfEmployees || [],
-            [ 'value', 'reliab', 'infoScope' ],
+            arrFldsNumEmpl,
             { reliab: { prios: consts.prios.reliability }, infoScope: { prios: consts.prios.infoScope }},
             1,
             bLabel,
@@ -885,8 +908,8 @@ function corpSizeToArr(
 
         const arrYrlyRev = finsToYrlyRevArr(
             hcLvl.financials || [],
-            [ 'amt', 'curr', 'finStmt_unit', 'finStmt_reliab', 'finStmt_infoScope' ],
-            { reliab: { prios: consts.prios.reliability }, infoScope: { prios: [] } },
+            arrFldsYrlyRev,
+            { reliab: { prios: consts.prios.reliability }, infoScope: { prios: [ '9067' ] } },
             1,
             curr,
             bLabel,

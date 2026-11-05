@@ -116,7 +116,12 @@ const consts = {
         norm: [ 'norm', 'normalized', 'normalized' ],
         res: [ 'res', 'resolution', 'resolution' ],
         value: [ 'value', 'value', 'value' ],
-        empl: [ 'empl', 'employee', 'employee']
+        empl: [ 'empl', 'employee', 'employee'],
+        duns: ['DUNS', 'DUNS', 'DUNS number'],
+        corpSize: ['corp size', 'corporate size', 'corporate size'],
+        dom: [ 'dom', 'domestic', 'domestic' ],
+        gbl: [ 'gbl', 'global', 'global' ],
+        ult: [ 'ult', 'ultimate', 'ultimate' ],
     },
     prios: {
         summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ], //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
@@ -134,7 +139,8 @@ const consts = {
         numEmpl: [ 'value', 'reliab', 'reliab_prio', 'infoScope', 'infoScope_prio', 'date' ],
         yrlyRev: [ 'finStmt_to_date', 'finStmt_infoScope', 'finStmt_infoScope_prio', 'finStmt_reliab', 'finStmt_reliab_prio', 'finStmt_unit', 'amt', 'curr', 'formatted_amt' ],
         addr: [ 'street_num' , 'street_name', 'line1', 'line2', 'town', 'minor_town', 'county', 'region', 'region_abbr', 'region_iso_name', 'region_iso_code', 'country', 'country_iso', 'continent', 'postalCode', 'postalCode_pos', 'poBox', 'lat', 'long', 'lang' ],
-        lglForm: [ 'code', 'desc' ]
+        lglForm: [ 'code', 'desc' ],
+        corpSize: [ 'value', 'curr', 'unit', 'reliab', 'infoScope' ]
     },
     objs: {
         addr: {
