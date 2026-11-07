@@ -305,24 +305,32 @@ export default class DplDBs {
         return ci.lglFormsToArr( arrObjsLglForm, arrFlds, bLabel, labelSize );
     };
 
+    //Return an array, of predefined length, containing information about an entity's size at
+    //different levels of the corporate family structure (DUNS, domestic & global ultimate)
     corpSizeToArr = (arrFlds, curr, bLabel, labelSize) => 
         {
             const arrCorpSize = [];
 
+            //Create an object for the size attributes at the DUNS level
             arrCorpSize.push({
                 numberOfEmployees: this.org.numberOfEmployees,
                 financials: this.org.financials,
                 b2bv2: { lbl: 'duns' }
             });
 
-            [ { attr: 'domesticUltimate', lbl: 'dom_ult' }, { attr: 'globalUltimate', lbl: 'gbl_ult' } ].forEach( higherLvl => {
-                const objHigherLvl = this.org[ higherLvl.attr ] || {};
+            //Create an objects for the size attributes at the domestic and global ultimate levels
+            [ { attr: 'domesticUltimate', lbl: 'dom_ult' }, { attr: 'globalUltimate', lbl: 'gbl_ult' } ]
+                .forEach( higherLvl => {
+                    const objHigherLvl = this.org[ higherLvl.attr ] || {};
 
-                objHigherLvl.b2bv2 = { lbl: higherLvl.lbl };
+                    objHigherLvl.b2bv2 = { lbl: higherLvl.lbl };
 
-                arrCorpSize.push(objHigherLvl);
-            });
+                    arrCorpSize.push(objHigherLvl);
+                }
+            );
 
+            //Invoke method corpSizeToArr to convert the array of corporate size
+            //objects into an array with the requested data fields
             return ci.corpSizeToArr(
                 arrCorpSize,
                 arrFlds,

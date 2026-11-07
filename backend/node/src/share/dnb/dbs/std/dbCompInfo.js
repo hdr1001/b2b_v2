@@ -865,6 +865,22 @@ function lglFormsToArr(
     return rightSizeArr(retArr, arrFlds.length * numLglForms);
 }
 
+//Function corpSizeToArr returns an array of size related data (number of employees,
+//yearly revenue) at different corporate levels (entity itself, domestic and global
+//ultimates).
+//
+//The function returns:
+//  - value (i.e. the count or amount)
+//  - currency (for yearly revenue only)
+//  - unit: single, 1000s, ... (for yearly revenue only)
+//  - reliability (actual, modelled, ...)
+//  - information scope (individual, consolidated, ...)
+//
+//The four function parameters
+//1. arrCorpSizes, the array of corporate size references
+//2. arrFlds, the array of field names to include in the returned array
+//3. bLabel, specify true for the element labels to be returned
+//4. labelSize, specify the length of the label string
 function corpSizeToArr(
         arrCorpSizes = [],
         arrFlds = consts.flds.corpSize,
@@ -873,9 +889,12 @@ function corpSizeToArr(
         labelSize = consts.labelSize.medium
     )
 {
+    //Filter the array of fields to those relevant for the number of employees
     let arrFldsNumEmpl = [ 'value', 'reliab', 'infoScope' ];
     arrFldsNumEmpl = arrFlds.filter(fld => arrFldsNumEmpl.includes(fld));
 
+    //Process the array of fields passed into the function to those relevant
+    //the yearly revenue. If the field 'value' is included, replace it with 'amt'
     let arrFldsYrlyRev = Array.from(arrFlds);
     const idx = arrFldsYrlyRev.findIndex(fld => fld === 'value');
     if(idx !== -1) arrFldsYrlyRev[idx] = 'amt';
@@ -894,30 +913,41 @@ function corpSizeToArr(
             .flat();
     }
 
+    //Function finsToYrlyRevArr expects the field names amt and curr to be prefixed with 'finStmt_'.
     arrFldsYrlyRev = arrFldsYrlyRev.map(fld => (fld === 'amt' || fld === 'curr') ? fld : 'finStmt_' + fld);
 
-    return arrCorpSizes.map(hcLvl => {
-        const arrNumEmpl = numEmplToArr(
-            hcLvl.numberOfEmployees || [],
-            arrFldsNumEmpl,
-            { reliab: { prios: consts.prios.reliability }, infoScope: { prios: consts.prios.infoScope }},
-            1,
-            bLabel,
-            labelSize
-        );
+    //Invoke numEmplToArr & finsToYrlyRevArr for each corporate level and flatten the resulting,
+    //concatenated array
+    return arrCorpSizes
+        .map(hcLvl => {
+            const arrNumEmpl = numEmplToArr(
+                hcLvl.numberOfEmployees || [],
+                arrFldsNumEmpl,
+                {
+                    reliab: { prios: consts.prios.reliability },
+                    infoScope: { prios: hcLvl.b2bv2?.lbl === 'gbl_ult' ? [ 9067 ] : consts.prios.infoScope }
+                },
+                1,
+                bLabel,
+                labelSize
+            );
 
-        const arrYrlyRev = finsToYrlyRevArr(
-            hcLvl.financials || [],
-            arrFldsYrlyRev,
-            { reliab: { prios: consts.prios.reliability }, infoScope: { prios: [ '9067' ] } },
-            1,
-            curr,
-            bLabel,
-            labelSize
-        );
+            const arrYrlyRev = finsToYrlyRevArr(
+                hcLvl.financials || [],
+                arrFldsYrlyRev,
+                {
+                    reliab: { prios: consts.prios.reliability },
+                    infoScope: { prios: hcLvl.b2bv2?.lbl === 'gbl_ult' ? [ 9067 ] : consts.prios.infoScope }
+                },
+                1,
+                curr,
+                bLabel,
+                labelSize
+            );
 
-        return arrNumEmpl.concat(arrYrlyRev);
-    }).flat();
+            return arrNumEmpl.concat(arrYrlyRev);
+        })
+        .flat();
 }
 
 export default {
