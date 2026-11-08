@@ -785,10 +785,14 @@ function addrsToArr(
 
     const retArr = arrAddrs
         .map(addr => {
+            //If the address is an array, use the first element
+            if(Array.isArray(addr) && addr.length) addr = addr[0];
+
             //Destruct the address object
-            const { language, addressCountry, continentalRegion, addressLocality, minorTownName, addressRegion,
-                addressCounty, streetAddress, postalCode, postalCodePosition, streetNumber, streetName, postOfficeBox,
-                isRegisteredAddress, latitude, longitude //postalRoute, standardAddressCodes not implemented
+            const { language, writingScript, addressCountry, continentalRegion, addressLocality,
+                minorTownName, addressRegion, addressCounty, streetAddress, postalCode, postalCodePosition,
+                streetNumber, streetName, postOfficeBox, isRegisteredAddress, latitude, longitude
+                //postalRoute, standardAddressCodes not implemented
             } = addr;
 
             const objAddr = {};
@@ -814,6 +818,7 @@ function addrsToArr(
             if(latitude) objAddr.lat = latitude;
             if(longitude) objAddr.long = longitude;
             if(language?.description) objAddr.lang = language.description;
+            if(writingScript?.description) objAddr.script = writingScript.description;
 
             return objAddr;
         })

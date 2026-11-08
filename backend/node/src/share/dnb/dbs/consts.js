@@ -122,6 +122,7 @@ const consts = {
         dom: [ 'dom', 'domestic', 'domestic' ],
         gbl: [ 'gbl', 'global', 'global' ],
         ult: [ 'ult', 'ultimate', 'ultimate' ],
+        utf8: [ 'utf8', 'UTF-8', 'UTF-8' ]
     },
     prios: {
         summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ], //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
@@ -146,7 +147,9 @@ const consts = {
         addr: {
             prim: { attr: [ 'primaryAddress' ], lbl: 'prim' },
             reg: { attr: [ 'registeredAddress' ], lbl: 'reg' },
-            mail: { attr: [ 'mailingAddress' ], lbl: 'mail' }
+            mail: { attr: [ 'mailingAddress' ], lbl: 'mail' },
+            utf8Prim: { attr: [ 'multilingualPrimaryAddress' ], lbl: 'utf8_prim' },
+            utf8Reg: { attr: [ 'multilingualRegisteredAddress' ], lbl: 'utf8_reg' }
         },
         lglForm: {
             tbl197: { attr: [ 'businessEntityType' ], lbl: 'high_norm' },
