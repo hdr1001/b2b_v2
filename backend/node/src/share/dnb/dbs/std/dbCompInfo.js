@@ -148,10 +148,13 @@ function iniRegNumArr(orgRegNums, leiRegNum) {
     return ret.sort((elem1, elem2) => elem1.prio - elem2.prio);
 }
 
+//
+/* Functions relevant for data block Company Information L1+ */
+//
+
 //Function tradeStylesToArray returns an array containing tradestyle names of a predefined
 //length (numTradeStyles). tradeStyleNames objects are simple, they contain one component,
-//name, and are sorted by priority. Tradestyles are available in data block Company Info 
-//L1+.
+//name, and are sorted by priority.
 //
 //The four function parameters
 //1. arrTradeStyles, the array of tradestyle name objects
@@ -176,32 +179,9 @@ function tradeStylesToArr(
     return rightSizeArr(arrTSs, numTradeStyles);
 }
 
-//Function emailsToArr returns an array containing email addresses of a predefined
-//length (numEmails). Email objects are simple, they contain one component,
-//address. Emails are available in data block Company Info L2+.
-//
-//The four function parameters
-//1. arrEmails, the array of email objects
-//2. numEmails, specify the number of emails to return (-1 for all)
-//3. bLabel, specify true for the element labels to be returned
-//4. sLabel, specify the label string for the element labels
-function emailsToArr(
-        arrEmails = [],
-        numEmails = 1,
-        bLabel = false,
-        sLabel = consts.labels.email[consts.labelSize.medium]
-    )
-{
-    //Return an array of labels if bLabel is true
-    if(bLabel) { return labelArr( sLabel, numEmails ) }
-
-    return rightSizeArr(arrEmails.map(email => email.address), numEmails);
-}
-
 //Function telsToArr returns an array containing telephone numbers of a predefined
 //length (numTels). Telephone objects are simple, they contain two components,
-//which will be concatenated. Telephone numbers are available in data block Company
-//Info L1+.
+//which will be concatenated.
 //
 //The four function parameters
 //1. arrTels, the array of telephone objects
@@ -227,7 +207,6 @@ function telsToArr(
 //   - a description of the entity's activities
 //   - a language description
 //   - a language code
-//The activities array is available in data block Company Info L1+.
 //
 //The five function parameters
 //1. arrActs, the array of activity objects
@@ -262,76 +241,6 @@ function actsToArr(
     return rightSizeArr(retArr, numActs === -1 ? -1 : arrFlds.length * numActs);
 }
 
-//Function summariesToArr returns:
-//   - a description of the specific editorial summary for the entity
-//   - a string containing editorial comments for the entity. The comments
-//     can contain HTML tags.
-//   - an assigned priority based on a parameter passed into the function
-//Summaries are available in data block Company Info L2+.
-//
-//The six function parameters
-//1. arrSummary, the array of summary objects
-//2. arrFlds, the array of field names to include in the returned array
-//3. summParams, option parameters passed into the function
-//      - solely, an array of type codes to include in the return array
-//      - prios, an array of type codes to perform a priority sort of
-//        the elements included in the return array
-//4. numSumms, specify the number of summaries to return (-1 for all)
-//5. bLabel, specify true for the element labels to be returned
-//6. labelSize, specify the length of the label string
-function summariesToArr(
-        arrSummary = [],
-        arrFlds = consts.flds.summary,
-        summParams = { solely: [], prios: consts.prios.summary },
-        numSumms = 1,
-        bLabel = false,
-        labelSize = consts.labelSize.medium
-    )
-{
-    if(bLabel) {
-        const lblSumm = consts.labels.summ[labelSize];
-
-        return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblSumm )), numSumms );
-    }
-
-    //If solely types are specified, filter the array of summaries accordingly 
-    if(summParams && summParams.solely && summParams.solely.length) {
-        arrSummary = arrSummary.filter( elem => summParams.solely.includes(elem.textType?.dnbCode) )
-    }
-
-    //Establish whether type priorities were specified. If not set arrPrios to null.
-    const arrPrios = summParams && summParams.prios && summParams.prios.length ? summParams.prios : null;
-
-    //Simplify the structure of the summary objects and add a priority attribute
-    const retArr = arrSummary
-        //Create the custom element
-        .map(elem => {
-            //Default priority is 0
-            let prio = 0;
-
-            //If priorities were specified, set the priority level 
-            if(arrPrios) {
-                prio = arrPrios.findIndex(prio => prio === elem.textType.dnbCode)
-            }
-
-            //Create the custom object. If no priorities were specified all prio
-            //attributes will be 0. If priorities were specified, the values will
-            //range from -1 to arrPrios.length - 1. A prio value of -1 indicates
-            //no priority. Push the value back to arrPrios.length
-            return {
-                desc: elem.textType?.description,
-                txt: elem.text,
-                prio: prio === -1 ? arrPrios.length : prio 
-            }
-        })
-        //Sort the summary objects based on priority
-        .sort((elem1, elem2) => elem1.prio - elem2.prio)
-        //Flatten the array with only requested values
-        .reduce((acc, summ) => acc.concat(objToArr(summ, arrFlds)), []);
-
-    return rightSizeArr(retArr, numSumms === -1 ? -1 : arrFlds.length * numSumms);
-}
-
 //Function regNumsToArr returns:
 //   - a registration number (aka national ID)
 //   - a registration number type & type description
@@ -339,7 +248,6 @@ function summariesToArr(
 //   - an indicator highlighting whether the ID is a VAT
 //   - a priority indicator (0 for preferred, 1 for VAT, 2 for LEI, 3 for other)
 //   - a location description of the registrar
-//Registration numbers are available in data block Company Info L1+.
 //
 //The six function parameters
 //1. arrRegNums, a custom array of registration number objects
@@ -424,7 +332,7 @@ function stockExchsToArr(
 }
 
 //Function utf8NamesToArr returns an array, of predefined length, containing 
-//the so-called multi-Lingual names of an entity
+//the so-called multi-lingual names of an entity
 //
 //The function returns:
 //   - a utf8 name 
@@ -473,6 +381,176 @@ function utf8NamesToArr(
         .reduce((acc, summ) => acc.concat(objToArr(summ, arrFlds)), []);
 
     return rightSizeArr(retArr, numUtf8Names === -1 ? -1 : arrFlds.length * numUtf8Names);
+}
+
+//Function addrsToArr returns an array, of one or multiple addresses, containing 
+//attributes as they relate to a company's addresses
+//
+//The four function parameters
+//1. arrAddrs, the array of address object references
+//2. arrFlds, the array of field names to include in the returned array
+//3. bLabel, specify true for the element labels to be returned
+//4. labelSize, specify the length of the label string
+function addrsToArr(
+        arrAddrs = [],
+        arrFlds = consts.flds.addr, 
+        bLabel = false,
+        labelSize = consts.labelSize.medium
+    )
+{
+    if(bLabel) {
+        return arrAddrs
+            .map(addr => fldToLabel(addr.b2bv2?.lbl, labelSize) || "")
+            .map(addrLblPrefix => {
+                let lblAddr = consts.labels.addr[labelSize];
+
+                if(addrLblPrefix) lblAddr = addrLblPrefix + ' ' + lblAddr;
+                
+                return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblAddr )), 1 );
+            })
+            .flat();
+    }
+
+    //This function will always return the address fields of all address objects passed in 
+    const numAddrs = arrAddrs.length;
+
+    const retArr = arrAddrs
+        .map(addr => {
+            //If the address is an array, use the first element
+            if(Array.isArray(addr) && addr.length) addr = addr[0];
+
+            //Destruct the address object
+            const { language, writingScript, addressCountry, continentalRegion, addressLocality,
+                minorTownName, addressRegion, addressCounty, streetAddress, postalCode, postalCodePosition,
+                streetNumber, streetName, postOfficeBox, isRegisteredAddress, latitude, longitude
+                //postalRoute, standardAddressCodes not implemented
+            } = addr;
+
+            const objAddr = {};
+
+            if(streetNumber) objAddr.street_num = streetNumber;
+            if(streetName) objAddr.street_name = streetName;
+            if(streetAddress?.line1) objAddr.line1 = streetAddress.line1;
+            if(streetAddress?.line2) objAddr.line2 = streetAddress.line2;
+            if(addressLocality?.name) objAddr.town = addressLocality.name;
+            if(minorTownName) objAddr.minor_town = minorTownName;
+            if(addressCounty?.name) objAddr.county = addressCounty.name;
+            if(addressRegion?.name) objAddr.region = addressRegion.name;
+            if(addressRegion?.abbreviatedName) objAddr.region_abbr = addressRegion.abbreviatedName;
+            if(addressRegion?.isoSubDivisionName) objAddr.region_iso_name = addressRegion.isoSubDivisionName;
+            if(addressRegion?.isoSubDivisionCode) objAddr.region_iso_code = addressRegion.isoSubDivisionCode;
+            if(addressCountry?.name) objAddr.country = addressCountry.name;
+            if(addressCountry?.isoAlpha2Code) objAddr.country_iso = addressCountry.isoAlpha2Code;
+            if(continentalRegion?.name) objAddr.continent = continentalRegion.name;
+            if(postalCode) objAddr.postalCode = postalCode;
+            if(postalCodePosition?.dnbCode) objAddr.postalCode_pos = postalCodePosition.dnbCode;
+            if(postOfficeBox?.postOfficeBoxNumber) objAddr.poBox = postOfficeBox.postOfficeBoxNumber;
+            if(isRegisteredAddress) objAddr.is_reg_addr = isRegisteredAddress;
+            if(latitude) objAddr.lat = latitude;
+            if(longitude) objAddr.long = longitude;
+            if(language?.description) objAddr.lang = language.description;
+            if(writingScript?.description) objAddr.script = writingScript.description;
+
+            return objAddr;
+        })
+        .reduce((acc, fins) => acc.concat(objToArr(fins, arrFlds)), []);
+
+    return rightSizeArr(retArr, arrFlds.length * numAddrs);
+}
+
+//
+/* Functions relevant for data block Company Information L2+ */
+//
+
+//Function emailsToArr returns an array containing email addresses of a predefined
+//length (numEmails). Email objects are simple, they contain one component,
+//address.
+//
+//The four function parameters
+//1. arrEmails, the array of email objects
+//2. numEmails, specify the number of emails to return (-1 for all)
+//3. bLabel, specify true for the element labels to be returned
+//4. sLabel, specify the label string for the element labels
+function emailsToArr(
+        arrEmails = [],
+        numEmails = 1,
+        bLabel = false,
+        sLabel = consts.labels.email[consts.labelSize.medium]
+    )
+{
+    //Return an array of labels if bLabel is true
+    if(bLabel) { return labelArr( sLabel, numEmails ) }
+
+    return rightSizeArr(arrEmails.map(email => email.address), numEmails);
+}
+
+//Function summariesToArr returns:
+//   - a description of the specific editorial summary for the entity
+//   - a string containing editorial comments for the entity. The comments
+//     can contain HTML tags.
+//   - an assigned priority based on a parameter passed into the function
+//
+//The six function parameters
+//1. arrSummary, the array of summary objects
+//2. arrFlds, the array of field names to include in the returned array
+//3. summParams, option parameters passed into the function
+//      - solely, an array of type codes to include in the return array
+//      - prios, an array of type codes to perform a priority sort of
+//        the elements included in the return array
+//4. numSumms, specify the number of summaries to return (-1 for all)
+//5. bLabel, specify true for the element labels to be returned
+//6. labelSize, specify the length of the label string
+function summariesToArr(
+        arrSummary = [],
+        arrFlds = consts.flds.summary,
+        summParams = { solely: [], prios: consts.prios.summary },
+        numSumms = 1,
+        bLabel = false,
+        labelSize = consts.labelSize.medium
+    )
+{
+    if(bLabel) {
+        const lblSumm = consts.labels.summ[labelSize];
+
+        return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblSumm )), numSumms );
+    }
+
+    //If solely types are specified, filter the array of summaries accordingly 
+    if(summParams && summParams.solely && summParams.solely.length) {
+        arrSummary = arrSummary.filter( elem => summParams.solely.includes(elem.textType?.dnbCode) )
+    }
+
+    //Establish whether type priorities were specified. If not set arrPrios to null.
+    const arrPrios = summParams && summParams.prios && summParams.prios.length ? summParams.prios : null;
+
+    //Simplify the structure of the summary objects and add a priority attribute
+    const retArr = arrSummary
+        //Create the custom element
+        .map(elem => {
+            //Default priority is 0
+            let prio = 0;
+
+            //If priorities were specified, set the priority level 
+            if(arrPrios) {
+                prio = arrPrios.findIndex(prio => prio === elem.textType.dnbCode)
+            }
+
+            //Create the custom object. If no priorities were specified all prio
+            //attributes will be 0. If priorities were specified, the values will
+            //range from -1 to arrPrios.length - 1. A prio value of -1 indicates
+            //no priority. Push the value back to arrPrios.length
+            return {
+                desc: elem.textType?.description,
+                txt: elem.text,
+                prio: prio === -1 ? arrPrios.length : prio 
+            }
+        })
+        //Sort the summary objects based on priority
+        .sort((elem1, elem2) => elem1.prio - elem2.prio)
+        //Flatten the array with only requested values
+        .reduce((acc, summ) => acc.concat(objToArr(summ, arrFlds)), []);
+
+    return rightSizeArr(retArr, numSumms === -1 ? -1 : arrFlds.length * numSumms);
 }
 
 //Function indsCodesToArr returns an array, of predefined length, containing 
@@ -750,83 +828,6 @@ function finsToYrlyRevArr(
     return rightSizeArr(retArr, numYrlyRevs === -1 ? -1 : arrFlds.length * numYrlyRevs);
 }
 
-//Function addrsToArr returns an array, of one or multiple addresses, containing 
-//attributes as they relate to a company's addresses
-//
-//The function returns: address components (see consts.flds.addr)
-//
-//The four function parameters
-//1. arrAddrs, the array of address object references
-//2. arrFlds, the array of field names to include in the returned array
-//3. bLabel, specify true for the element labels to be returned
-//4. labelSize, specify the length of the label string
-function addrsToArr(
-        arrAddrs = [],
-        arrFlds = consts.flds.addr, 
-        bLabel = false,
-        labelSize = consts.labelSize.medium
-    )
-{
-    if(bLabel) {
-        return arrAddrs
-            .map(addr => fldToLabel(addr.b2bv2?.lbl, labelSize) || "")
-            .map(addrLblPrefix => {
-                let lblAddr = consts.labels.addr[labelSize];
-
-                if(addrLblPrefix) lblAddr = addrLblPrefix + ' ' + lblAddr;
-                
-                return multLabelArr( arrFlds.map( fld => fldToLabel( fld, labelSize, lblAddr )), 1 );
-            })
-            .flat();
-    }
-
-    //This function will always return the address fields of all address objects passed in 
-    const numAddrs = arrAddrs.length;
-
-    const retArr = arrAddrs
-        .map(addr => {
-            //If the address is an array, use the first element
-            if(Array.isArray(addr) && addr.length) addr = addr[0];
-
-            //Destruct the address object
-            const { language, writingScript, addressCountry, continentalRegion, addressLocality,
-                minorTownName, addressRegion, addressCounty, streetAddress, postalCode, postalCodePosition,
-                streetNumber, streetName, postOfficeBox, isRegisteredAddress, latitude, longitude
-                //postalRoute, standardAddressCodes not implemented
-            } = addr;
-
-            const objAddr = {};
-
-            if(streetNumber) objAddr.street_num = streetNumber;
-            if(streetName) objAddr.street_name = streetName;
-            if(streetAddress?.line1) objAddr.line1 = streetAddress.line1;
-            if(streetAddress?.line2) objAddr.line2 = streetAddress.line2;
-            if(addressLocality?.name) objAddr.town = addressLocality.name;
-            if(minorTownName) objAddr.minor_town = minorTownName;
-            if(addressCounty?.name) objAddr.county = addressCounty.name;
-            if(addressRegion?.name) objAddr.region = addressRegion.name;
-            if(addressRegion?.abbreviatedName) objAddr.region_abbr = addressRegion.abbreviatedName;
-            if(addressRegion?.isoSubDivisionName) objAddr.region_iso_name = addressRegion.isoSubDivisionName;
-            if(addressRegion?.isoSubDivisionCode) objAddr.region_iso_code = addressRegion.isoSubDivisionCode;
-            if(addressCountry?.name) objAddr.country = addressCountry.name;
-            if(addressCountry?.isoAlpha2Code) objAddr.country_iso = addressCountry.isoAlpha2Code;
-            if(continentalRegion?.name) objAddr.continent = continentalRegion.name;
-            if(postalCode) objAddr.postalCode = postalCode;
-            if(postalCodePosition?.dnbCode) objAddr.postalCode_pos = postalCodePosition.dnbCode;
-            if(postOfficeBox?.postOfficeBoxNumber) objAddr.poBox = postOfficeBox.postOfficeBoxNumber;
-            if(isRegisteredAddress) objAddr.is_reg_addr = isRegisteredAddress;
-            if(latitude) objAddr.lat = latitude;
-            if(longitude) objAddr.long = longitude;
-            if(language?.description) objAddr.lang = language.description;
-            if(writingScript?.description) objAddr.script = writingScript.description;
-
-            return objAddr;
-        })
-        .reduce((acc, fins) => acc.concat(objToArr(fins, arrFlds)), []);
-
-    return rightSizeArr(retArr, arrFlds.length * numAddrs);
-}
-
 //Function lglFormsToArr returns an array, of one or multiple legal forms, 
 //containing attributes as they relate to a legal form
 //
@@ -956,20 +957,22 @@ function corpSizeToArr(
 }
 
 export default {
+    //Functions relevant for data block Company Information L1+
     objLeiRegNum,
     iniRegNumArr,
     tradeStylesToArr,
-    emailsToArr,
     telsToArr,
     actsToArr,
-    summariesToArr,
     regNumsToArr,
     stockExchsToArr,
     utf8NamesToArr,
+    addrsToArr,
+    //Functions relevant for data block Company Information L2+
+    emailsToArr,
+    summariesToArr,
     indsCodesToArr,
     numEmplToArr,
     finsToYrlyRevArr,
-    addrsToArr,
     lglFormsToArr,
     corpSizeToArr
 };

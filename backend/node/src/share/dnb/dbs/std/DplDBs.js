@@ -231,20 +231,9 @@ export default class DplDBs {
         return '';
     }
 
-    //Return an array containing tradestyle names of a predefined length (numTradeStyles)    
-    tradeStylesToArr = (numTradeStyles, bLabel, sLabel) => ci.tradeStylesToArr( this.org.tradeStyleNames || [], numTradeStyles, bLabel, sLabel );
-
-    //Return an array containing email addresses of a predefined length (numEmails)    
-    emailsToArr = (numEmails, bLabel, sLabel) => ci.emailsToArr( this.org.email || [], numEmails, bLabel, sLabel );
-
-    //Return an array containing telephone numbers of a predefined length (numTels)    
-    telsToArr = (numTels, bLabel, sLabel) => ci.telsToArr( this.org.telephone || [], numTels, bLabel, sLabel );
-
-    //Return an array, of a predefined length, containing descriptions of company activities (numActs)
-    actsToArr = (arrFlds, numActs, bLabel, labelSize) => ci.actsToArr( this.org.activities || [], arrFlds, numActs, bLabel, labelSize );
-
-    //Return an array containing editorial comments for the entity
-    summariesToArr = (arrFlds, summParams, numSumms, bLabel, labelSize) => ci.summariesToArr( this.org.summary || [], arrFlds, summParams, numSumms, bLabel, labelSize );
+    //
+    /* Methods relevant for data block Company Information L1+ */
+    //
 
     //Return an array containing custom registration numbers of a predefined length (numRegNums)    
     regNumsToArr = (arrFlds, regNumParams, numRegNums, bLabel, labelSize) => {
@@ -252,6 +241,15 @@ export default class DplDBs {
 
         return ci.regNumsToArr( this.org.regNums, arrFlds, regNumParams, numRegNums, bLabel, labelSize );
     }
+
+    //Return an array containing tradestyle names of a predefined length (numTradeStyles)    
+    tradeStylesToArr = (numTradeStyles, bLabel, sLabel) => ci.tradeStylesToArr( this.org.tradeStyleNames || [], numTradeStyles, bLabel, sLabel );
+
+    //Return an array containing telephone numbers of a predefined length (numTels)    
+    telsToArr = (numTels, bLabel, sLabel) => ci.telsToArr( this.org.telephone || [], numTels, bLabel, sLabel );
+
+    //Return an array, of a predefined length, containing descriptions of company activities (numActs)
+    actsToArr = (arrFlds, numActs, bLabel, labelSize) => ci.actsToArr( this.org.activities || [], arrFlds, numActs, bLabel, labelSize );
 
     //Return an array, of predefined length, containing the stockexchanges on which the entity is listed
     stockExchsToArr = (arrFlds, numStockExchs, bLabel, labelSize) => ci.stockExchsToArr( this.org.stockExchanges || [], arrFlds, numStockExchs, bLabel, labelSize );
@@ -262,18 +260,6 @@ export default class DplDBs {
     utf8RegNamesToArr = (arrFlds, numUtf8Names, bLabel, labelSize) => ci.utf8NamesToArr( this.org.multilingualRegisteredNames || [], consts.labels.reg, arrFlds, numUtf8Names, bLabel, labelSize );
 
     utf8TradeNamesToArr = (arrFlds, numUtf8Names, bLabel, labelSize) => ci.utf8NamesToArr( this.org.multilingualTradestyleNames || [], consts.labels.tradeStyle, arrFlds, numUtf8Names, bLabel, labelSize );
-
-    //Return an array, of predefined length, containing the industry codes (NACE, SIC, etc.) of the entity
-    indsCodesToArr = (arrFlds, indsCodeClassParams, numIndsCodes, bLabel, labelSize) => ci.indsCodesToArr( this.org.industryCodes || [], arrFlds, indsCodeClassParams, numIndsCodes, bLabel, labelSize );
-
-    //Return an array, of predefined length, containing number of employee figures
-    numEmplToArr = (arrFlds, numEmplParams, numEmpls, bLabel, labelSize) => ci.numEmplToArr( this.org.numberOfEmployees || [], arrFlds, numEmplParams, numEmpls, bLabel, labelSize );
-
-    //Return an array, of predefined length, containing the yearly revenue figures (denominated in the entity's default currency)
-    finsToYrlyRevArr = (arrFlds, yrlyRevParams, numYrlyRevs, bLabel, labelSize) => ci.finsToYrlyRevArr( this.org.financials || [], arrFlds, yrlyRevParams, numYrlyRevs, this.map121.dfltCurr, bLabel, labelSize );
-
-    //Return an array, of predefined length, containing the yearly revenue figures denominated in US dollars (USD)
-    finsToYrlyRevUsdArr = (arrFlds, yrlyRevParams, numYrlyRevs, bLabel, labelSize) => ci.finsToYrlyRevArr( this.org.financials || [], arrFlds, yrlyRevParams, numYrlyRevs, 'USD', bLabel, labelSize );
 
     //Return an array, of predefined length, containing one or more addresses of the entity
     addrsToArr = (arrObjsAddr, arrFlds, bLabel, labelSize) => {
@@ -289,6 +275,28 @@ export default class DplDBs {
 
         return ci.addrsToArr(arrObjsAddr, arrFlds, bLabel, labelSize );
     };
+
+    //
+    /* Methods relevant for data block Company Information L2+ */
+    //
+
+    //Return an array containing email addresses of a predefined length (numEmails)    
+    emailsToArr = (numEmails, bLabel, sLabel) => ci.emailsToArr( this.org.email || [], numEmails, bLabel, sLabel );
+
+    //Return an array containing editorial comments for the entity
+    summariesToArr = (arrFlds, summParams, numSumms, bLabel, labelSize) => ci.summariesToArr( this.org.summary || [], arrFlds, summParams, numSumms, bLabel, labelSize );
+
+    //Return an array, of predefined length, containing the industry codes (NACE, SIC, etc.) of the entity
+    indsCodesToArr = (arrFlds, indsCodeClassParams, numIndsCodes, bLabel, labelSize) => ci.indsCodesToArr( this.org.industryCodes || [], arrFlds, indsCodeClassParams, numIndsCodes, bLabel, labelSize );
+
+    //Return an array, of predefined length, containing number of employee figures
+    numEmplToArr = (arrFlds, numEmplParams, numEmpls, bLabel, labelSize) => ci.numEmplToArr( this.org.numberOfEmployees || [], arrFlds, numEmplParams, numEmpls, bLabel, labelSize );
+
+    //Return an array, of predefined length, containing the yearly revenue figures (denominated in the entity's default currency)
+    finsToYrlyRevArr = (arrFlds, yrlyRevParams, numYrlyRevs, bLabel, labelSize) => ci.finsToYrlyRevArr( this.org.financials || [], arrFlds, yrlyRevParams, numYrlyRevs, this.map121.dfltCurr, bLabel, labelSize );
+
+    //Return an array, of predefined length, containing the yearly revenue figures denominated in US dollars (USD)
+    finsToYrlyRevUsdArr = (arrFlds, yrlyRevParams, numYrlyRevs, bLabel, labelSize) => ci.finsToYrlyRevArr( this.org.financials || [], arrFlds, yrlyRevParams, numYrlyRevs, 'USD', bLabel, labelSize );
 
     //Return an array, of predefined length, containing one or more legal forms of an entity
     lglFormsToArr = (arrObjsLglForm, arrFlds, bLabel, labelSize) => {
