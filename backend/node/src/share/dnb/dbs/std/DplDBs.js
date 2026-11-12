@@ -315,36 +315,46 @@ export default class DplDBs {
 
     //Return an array, of predefined length, containing information about an entity's size at
     //different levels of the corporate family structure (DUNS, domestic & global ultimate)
-    corpSizeToArr = (arrFlds, curr, bLabel, labelSize) => 
-        {
-            const arrCorpSize = [];
+    corpSizeToArr = (arrFlds, curr, bLabel, labelSize) => {
+        const arrCorpSize = [];
 
-            //Create an object for the size attributes at the DUNS level
-            arrCorpSize.push({
-                numberOfEmployees: this.org.numberOfEmployees,
-                financials: this.org.financials,
-                b2bv2: { lbl: 'duns' }
-            });
+        //Create an object for the size attributes at the DUNS level
+        arrCorpSize.push({
+            numberOfEmployees: this.org.numberOfEmployees,
+            financials: this.org.financials,
+            b2bv2: { lbl: 'duns' }
+        });
 
-            //Create an objects for the size attributes at the domestic and global ultimate levels
-            [ { attr: 'domesticUltimate', lbl: 'dom_ult' }, { attr: 'globalUltimate', lbl: 'gbl_ult' } ]
-                .forEach( higherLvl => {
-                    const objHigherLvl = this.org[ higherLvl.attr ] || {};
+        //Create an objects for the size attributes at the domestic and global ultimate levels
+        [ { attr: 'domesticUltimate', lbl: 'dom_ult' }, { attr: 'globalUltimate', lbl: 'gbl_ult' } ]
+            .forEach( higherLvl => {
+                const objHigherLvl = this.org[ higherLvl.attr ] || {};
 
-                    objHigherLvl.b2bv2 = { lbl: higherLvl.lbl };
+                objHigherLvl.b2bv2 = { lbl: higherLvl.lbl };
 
-                    arrCorpSize.push(objHigherLvl);
-                }
-            );
+                arrCorpSize.push(objHigherLvl);
+            }
+        );
 
-            //Invoke method corpSizeToArr to convert the array of corporate size
-            //objects into an array with the requested data fields
-            return ci.corpSizeToArr(
-                arrCorpSize,
-                arrFlds,
-                curr ? curr : this.map121.dfltCurr, //The default currency might not be available for the global ult
-                bLabel,
-                labelSize
-            );
-        }
+        //Invoke method corpSizeToArr to convert the array of corporate size
+        //objects into an array with the requested data fields
+        return ci.corpSizeToArr(
+            arrCorpSize,
+            arrFlds,
+            curr ? curr : this.map121.dfltCurr, //The default currency might not be available for the global ult
+            bLabel,
+            labelSize
+        );
+    }
+
+    //
+    /* Methods relevant for data block Principals & Contacts */
+    //
+
+    //Return an array, of predefined length, containing information about an entity's principals
+    principalsToArr = (arrFlds, numPrins, bLabel, labelSize) => {
+        if(!this.org.prins) this.org.prins = ci.iniPrinArr(this.org.mostSeniorPrincipal, this.org.currentPrincipals);
+
+        return this.org.prins;
+    }
 }

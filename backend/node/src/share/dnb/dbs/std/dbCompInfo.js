@@ -148,6 +148,19 @@ function iniRegNumArr(orgRegNums, leiRegNum) {
     return ret.sort((elem1, elem2) => elem1.prio - elem2.prio);
 }
 
+//Initialize the custom principals array
+function iniPrinArr(mostSenior, arrCurrPrin) {
+    if(!mostSenior) return [];
+
+    let arrPrin = [ { ...mostSenior } ];
+
+    arrPrin[0].mostSenior = true;
+
+    if(!arrCurrPrin) return arrPrin;
+
+    return arrPrin.concat(arrCurrPrin.map(prin => ( { ...prin } )));
+}
+
 //
 /* Functions relevant for data block Company Information L1+ */
 //
@@ -960,6 +973,7 @@ export default {
     //Functions relevant for data block Company Information L1+
     objLeiRegNum,
     iniRegNumArr,
+    iniPrinArr,
     tradeStylesToArr,
     telsToArr,
     actsToArr,
