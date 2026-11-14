@@ -122,7 +122,19 @@ const consts = {
         dom: [ 'dom', 'domestic', 'domestic' ],
         gbl: [ 'gbl', 'global', 'global' ],
         ult: [ 'ult', 'ultimate', 'ultimate' ],
-        utf8: [ 'utf8', 'UTF-8', 'UTF-8' ]
+        utf8: [ 'utf8', 'UTF-8', 'UTF-8' ],
+        birthdate: [ 'bdate', 'birthdate', 'birthdate' ],
+        first: [ 'first', 'first', 'first' ],
+        middle: [ 'middle', 'middle', 'middle' ],
+        last: [ 'last', 'last', 'last' ],
+        pre: [ 'pre', 'prefix', 'prefix' ],
+        suff: [ 'suff', 'suffix', 'suffix' ],
+        assn: [ 'assn', 'association', 'association' ],
+        sign: [ 'sign', 'signing', 'signing' ],
+        start: [ 'start', 'start', 'start' ],
+        auth: [ 'auth', 'authority', 'authority' ],
+        most: [ 'most', 'most', 'most' ],
+        senior: [ 'senior', 'senior', 'senior' ]
     },
     prios: {
         summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ], //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
@@ -131,6 +143,7 @@ const consts = {
         infoScope: [ 9066, 9068, 9067, 36430, 36429 ] //individual, HQ, consolidated, empl here/total
     },
     flds: {
+        //Company information data-elements
         act: [ 'desc', 'lang_desc', 'lang_code' ],
         summary: [ 'desc', 'txt', 'prio' ],
         regNum: [ 'regNum', 'desc', 'type', 'class_desc', 'class', 'isVAT', 'prio', 'regLoc' ],
@@ -138,10 +151,16 @@ const consts = {
         utf8Name: [ 'name', 'lang_desc', 'lang_code', 'script_desc', 'script_code', 'prio' ],
         indsCode: [ 'code', 'desc', 'class_code', 'class_desc', 'class_prio', 'prio' ],
         numEmpl: [ 'value', 'reliab', 'reliab_prio', 'infoScope', 'infoScope_prio', 'date' ],
-        yrlyRev: [ 'finStmt_to_date', 'finStmt_infoScope', 'finStmt_infoScope_prio', 'finStmt_reliab', 'finStmt_reliab_prio', 'finStmt_unit', 'amt', 'curr', 'formatted_amt' ],
-        addr: [ 'street_num' , 'street_name', 'line1', 'line2', 'town', 'minor_town', 'county', 'region', 'region_abbr', 'region_iso_name', 'region_iso_code', 'country', 'country_iso', 'continent', 'postalCode', 'postalCode_pos', 'poBox', 'lat', 'long', 'lang' ],
+        yrlyRev: [ 'finStmt_to_date', 'finStmt_infoScope', 'finStmt_infoScope_prio', 'finStmt_reliab',
+                        'finStmt_reliab_prio', 'finStmt_unit', 'amt', 'curr', 'formatted_amt' ],
+        addr: [ 'street_num' , 'street_name', 'line1', 'line2', 'town', 'minor_town', 'county', 'region',
+                    'region_abbr', 'region_iso_name', 'region_iso_code', 'country', 'country_iso',
+                    'continent', 'postalCode', 'postalCode_pos', 'poBox', 'lat', 'long', 'lang' ],
         lglForm: [ 'code', 'desc' ],
-        corpSize: [ 'value', 'curr', 'unit', 'reliab', 'infoScope' ]
+        corpSize: [ 'value', 'curr', 'unit', 'reliab', 'infoScope' ],
+        //Principals & Contacts data-elements
+        prins: [ 'type', 'most_senior', 'name', 'birthdate', 'first_name', 'middle_name', 'last_name',
+                    'pre_name', 'suff_name', 'assn_start_date', 'sign_auth' ]
     },
     objs: {
         addr: {

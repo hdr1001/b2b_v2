@@ -23,6 +23,7 @@
 import { ElemLabel } from '../../../elemLabel.js';
 import { objToArr } from '../../../utils.js';
 import { regNumClassIsVAT } from '../../refData.js';
+import dnbUtils from '../../utils.js';
 import consts from '../consts.js';
 
 //Field to label
@@ -60,26 +61,6 @@ const multLabelArr = (arrLabels, numRepeat) => {
 
     //Flatten before returning
     return retArr.flat();
-}
-
-//Right size an array to a specific length
-const rightSizeArr = (arr, targetLen) => {
-    if(!Array.isArray(arr)) throw new Error('Parameter arr must be an array');
-
-    if(!Number.isInteger(targetLen) || targetLen < -1) {
-        throw new Error('Parameter targetLen must be a non-negative integer, 0 or -1')
-    }
-
-    //Return the array if it contains the exact number of elements requested
-    //or if targetLen is -1 (i.e. return all available elements)
-    if(targetLen === -1 || arr.length === targetLen) return arr;
-
-    //Slice the array if it contains more than or the exact number of tradestyles requested
-    if(arr.length > targetLen) return arr.slice(0, targetLen);
-
-    //At this point, arr.length < targetLen must be true
-    //Pad the returned array with empty array elements
-    return arr.concat(new Array(targetLen - arr.length).fill(null));
 }
 
 //Return a LEI registration number object
@@ -189,7 +170,7 @@ function tradeStylesToArr(
         .toSorted((ts1, ts2) => ts1.priority - ts2.priority)
         .map(ts => ts.name)
 
-    return rightSizeArr(arrTSs, numTradeStyles);
+    return dnbUtils.rightSizeArr(arrTSs, numTradeStyles);
 }
 
 //Function telsToArr returns an array containing telephone numbers of a predefined
@@ -213,7 +194,7 @@ function telsToArr(
     //Return an array of labels if bLabel is true
     if(bLabel) { return labelArr( sLabel, numTels ) }
 
-    return rightSizeArr(arrTels.map(concatTel), numTels);
+    return dnbUtils.rightSizeArr(arrTels.map(concatTel), numTels);
 }
 
 //Function actsToArr returns:
@@ -251,7 +232,7 @@ function actsToArr(
         })
         .reduce((acc, act) => acc.concat(objToArr(act, arrFlds)), []);
 
-    return rightSizeArr(retArr, numActs === -1 ? -1 : arrFlds.length * numActs);
+    return dnbUtils.rightSizeArr(retArr, numActs === -1 ? -1 : arrFlds.length * numActs);
 }
 
 //Function regNumsToArr returns:
@@ -293,7 +274,7 @@ function regNumsToArr(
     //Flatten the array with the requested values
     const retArr = arrRegNums.reduce((acc, regNum) => acc.concat(objToArr(regNum, arrFlds)), []);
 
-    return rightSizeArr(retArr, numRegNums === -1 ? -1 : arrFlds.length * numRegNums);
+    return dnbUtils.rightSizeArr(retArr, numRegNums === -1 ? -1 : arrFlds.length * numRegNums);
 }
 
 //Function stockExchsToArr returns an array, of predefined length, containing the
@@ -341,7 +322,7 @@ function stockExchsToArr(
         //Flatten the array with only requested values
         .reduce((acc, exch) => acc.concat(objToArr(exch, arrFlds)), []);
 
-    return rightSizeArr(retArr, numStockExchs === -1 ? -1 : arrFlds.length * numStockExchs);
+    return dnbUtils.rightSizeArr(retArr, numStockExchs === -1 ? -1 : arrFlds.length * numStockExchs);
 }
 
 //Function utf8NamesToArr returns an array, of predefined length, containing 
@@ -393,7 +374,7 @@ function utf8NamesToArr(
         //Flatten the array with only requested values
         .reduce((acc, summ) => acc.concat(objToArr(summ, arrFlds)), []);
 
-    return rightSizeArr(retArr, numUtf8Names === -1 ? -1 : arrFlds.length * numUtf8Names);
+    return dnbUtils.rightSizeArr(retArr, numUtf8Names === -1 ? -1 : arrFlds.length * numUtf8Names);
 }
 
 //Function addrsToArr returns an array, of one or multiple addresses, containing 
@@ -468,7 +449,7 @@ function addrsToArr(
         })
         .reduce((acc, fins) => acc.concat(objToArr(fins, arrFlds)), []);
 
-    return rightSizeArr(retArr, arrFlds.length * numAddrs);
+    return dnbUtils.rightSizeArr(retArr, arrFlds.length * numAddrs);
 }
 
 //
@@ -494,7 +475,7 @@ function emailsToArr(
     //Return an array of labels if bLabel is true
     if(bLabel) { return labelArr( sLabel, numEmails ) }
 
-    return rightSizeArr(arrEmails.map(email => email.address), numEmails);
+    return dnbUtils.rightSizeArr(arrEmails.map(email => email.address), numEmails);
 }
 
 //Function summariesToArr returns:
@@ -563,7 +544,7 @@ function summariesToArr(
         //Flatten the array with only requested values
         .reduce((acc, summ) => acc.concat(objToArr(summ, arrFlds)), []);
 
-    return rightSizeArr(retArr, numSumms === -1 ? -1 : arrFlds.length * numSumms);
+    return dnbUtils.rightSizeArr(retArr, numSumms === -1 ? -1 : arrFlds.length * numSumms);
 }
 
 //Function indsCodesToArr returns an array, of predefined length, containing 
@@ -630,7 +611,7 @@ function indsCodesToArr(
         .sort((elem1, elem2) => elem1.class_prio - elem2.class_prio || elem1.prio - elem2.prio)
         .reduce((acc, inds) => acc.concat(objToArr(inds, arrFlds)), []);
 
-    return rightSizeArr(retArr, numIndsCodes === -1 ? -1 : arrFlds.length * numIndsCodes);
+    return dnbUtils.rightSizeArr(retArr, numIndsCodes === -1 ? -1 : arrFlds.length * numIndsCodes);
 }
 
 //Function numEmplToArr returns an array, of predefined length, containing 
@@ -721,7 +702,7 @@ function numEmplToArr(
         .sort((elem1, elem2) => elem1.reliab_prio - elem2.reliab_prio || elem1.infoScope_prio - elem2.infoScope_prio)
         .reduce((acc, numEmpl) => acc.concat(objToArr(numEmpl, arrFlds)), []);
 
-    return rightSizeArr(retArr, numNumEmpl === -1 ? -1 : arrFlds.length * numNumEmpl);
+    return dnbUtils.rightSizeArr(retArr, numNumEmpl === -1 ? -1 : arrFlds.length * numNumEmpl);
 }
 
 //Function finsToYrlyRevArr returns an array, of predefined length, containing 
@@ -838,7 +819,7 @@ function finsToYrlyRevArr(
         .sort((elem1, elem2) => elem2.oDateFinStmt_to - elem1.oDateFinStmt_to || elem1.finStmt_reliab_prio - elem2.finStmt_reliab_prio || elem1.finStmt_infoScope_prio - elem2.finStmt_infoScope_prio)
         .reduce((acc, fins) => acc.concat(objToArr(fins, arrFlds)), []);
 
-    return rightSizeArr(retArr, numYrlyRevs === -1 ? -1 : arrFlds.length * numYrlyRevs);
+    return dnbUtils.rightSizeArr(retArr, numYrlyRevs === -1 ? -1 : arrFlds.length * numYrlyRevs);
 }
 
 //Function lglFormsToArr returns an array, of one or multiple legal forms, 
@@ -881,7 +862,7 @@ function lglFormsToArr(
         }))
         .reduce((acc, lglForm) => acc.concat(objToArr( lglForm, arrFlds )), []);
 
-    return rightSizeArr(retArr, arrFlds.length * numLglForms);
+    return dnbUtils.rightSizeArr(retArr, arrFlds.length * numLglForms);
 }
 
 //Function corpSizeToArr returns an array of size related data (number of employees,

@@ -23,6 +23,7 @@
 import { sDateIsoToYYYYMMDD } from '../../../utils.js';
 import consts from '../consts.js';
 import ci from './dbCompInfo.js';
+import pc from './dbPrinsContacts.js';
 
 //Compile Data Block request & response information into a Map object
 //All API responses contain a inquiryDetail.blockIDs & blockStatus array
@@ -355,6 +356,6 @@ export default class DplDBs {
     principalsToArr = (arrFlds, numPrins, bLabel, labelSize) => {
         if(!this.org.prins) this.org.prins = ci.iniPrinArr(this.org.mostSeniorPrincipal, this.org.currentPrincipals);
 
-        return this.org.prins;
+        return pc.prinsToArr(this.org.prins, arrFlds, numPrins, bLabel, labelSize);
     }
 }
