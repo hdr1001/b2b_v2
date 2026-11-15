@@ -134,7 +134,14 @@ const consts = {
         start: [ 'start', 'start', 'start' ],
         auth: [ 'auth', 'authority', 'authority' ],
         most: [ 'most', 'most', 'most' ],
-        senior: [ 'senior', 'senior', 'senior' ]
+        senior: [ 'senior', 'senior', 'senior' ],
+        natl: [ 'natl', 'nationality', 'nationality' ],
+        gender: [ 'gender', 'gender', 'gender' ],
+        resp: [ 'resp', 'responsibility', 'responsibility' ],
+        area: [ 'area', 'area', 'area' ],
+        bkr: [ 'bkr', 'bankruptcy', 'bankruptcy' ],
+        hist: [ 'hist', 'history', 'history' ],
+        dsq: [ 'dsq', 'disqualified', 'disqualified' ]
     },
     prios: {
         summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ], //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
@@ -159,8 +166,9 @@ const consts = {
         lglForm: [ 'code', 'desc' ],
         corpSize: [ 'value', 'curr', 'unit', 'reliab', 'infoScope' ],
         //Principals & Contacts data-elements
-        prins: [ 'type', 'most_senior', 'name', 'birthdate', 'first_name', 'middle_name', 'last_name',
-                    'pre_name', 'suff_name', 'assn_start_date', 'sign_auth' ]
+        prins: [ 'type', 'name', 'birthdate', 'first_name', 'middle_name', 'last_name', 'pre_name', 
+                    'suff_name', 'assn_start_date', 'sign_auth', 'natl', 'gender', 'resp_area',
+                    'bkr_hist', 'dsq', 'most_senior' ]
     },
     objs: {
         addr: {

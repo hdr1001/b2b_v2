@@ -354,7 +354,7 @@ export default class DplDBs {
 
     //Return an array, of predefined length, containing information about an entity's principals
     principalsToArr = (arrFlds, numPrins, bLabel, labelSize) => {
-        if(!this.org.prins) this.org.prins = ci.iniPrinArr(this.org.mostSeniorPrincipal, this.org.currentPrincipals);
+        if(!this.org.prins) this.org.prins = pc.iniPrinArr(this.org.mostSeniorPrincipal, this.org.currentPrincipals);
 
         return pc.prinsToArr(this.org.prins, arrFlds, numPrins, bLabel, labelSize);
     }
