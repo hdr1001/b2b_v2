@@ -166,9 +166,15 @@ const consts = {
         lglForm: [ 'code', 'desc' ],
         corpSize: [ 'value', 'curr', 'unit', 'reliab', 'infoScope' ],
         //Principals & Contacts data-elements
-        prins: [ 'type', 'name', 'birthdate', 'first_name', 'middle_name', 'last_name', 'pre_name', 
-                    'suff_name', 'assn_start_date', 'sign_auth', 'natl', 'gender', 'resp_area',
-                    'bkr_hist', 'dsq', 'most_senior' ]
+        prins: [
+            //level 1 and 2 
+            'name', 'first_name', 'middle_name', 'last_name', 'pre_name', 'suff_name',
+                'utf8_name', 'utf8_first_name', 'utf8_last_name',
+                'assn_start_date', 'gender', 'most_senior', 'subjectType',
+
+            //level 3
+            'birthdate', 'natl', 'sign_auth', 'resp_area', 'bkr_hist', 'dsq' 
+        ]
     },
     objs: {
         addr: {

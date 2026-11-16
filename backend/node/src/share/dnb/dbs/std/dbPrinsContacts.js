@@ -21,6 +21,7 @@
 // *********************************************************************
 
 import { objToArr } from '../../../utils.js';
+import { isObject, isObjectEmpty } from '../../../../share/utils.js';
 import dnbUtils from '../../utils.js';
 
 //Create a custom principal object from the D&B principal object
@@ -29,18 +30,33 @@ function createCustPrin(objPrin) {
 
     const oRet = {};
 
-    oRet.type = objPrin.subjectType;
+    //Level 1 and 2 fields
+    //Names
     oRet.name = objPrin.fullName;
-    oRet.birthdate = objPrin.birthDate;
     oRet.first_name = objPrin.givenName;
     oRet.middle_name = objPrin.middleName;
     oRet.last_name = objPrin.familyName;
     oRet.pre_name = objPrin.namePrefix;
     oRet.suff_name = objPrin.nameSuffix;
+
+    //Other names
+    const utf8Names = objPrin.otherLanguageNames;
+
+    if(Array.isArray(utf8Names) && utf8Names.length > 0) {
+        oRet.utf8_name = utf8Names[0].fullName;
+        oRet.utf8_first_name = utf8Names[0].givenName;
+        oRet.utf8_last_name = utf8Names[0].familyName;
+    }
+
+    //Miscellaneous
     oRet.assn_start_date = objPrin.associationStartDate;
-    oRet.sign_auth = objPrin.isSigningAuthority;
-    oRet.natl = objPrin.nationality?.isoAlpha2Code;
     oRet.gender = objPrin.gender?.description;
+    oRet.type = objPrin.subjectType;
+
+    //Level 3 fields
+    oRet.birthdate = objPrin.birthDate;
+    oRet.natl = objPrin.nationality?.isoAlpha2Code;
+    oRet.sign_auth = objPrin.isSigningAuthority;
     oRet.bkr_hist = objPrin.hasBankruptcyHistory;
     oRet.dsq = objPrin.isDisqualifiedDirector;
 
