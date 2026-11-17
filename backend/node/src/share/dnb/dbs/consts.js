@@ -141,7 +141,9 @@ const consts = {
         area: [ 'area', 'area', 'area' ],
         bkr: [ 'bkr', 'bankruptcy', 'bankruptcy' ],
         hist: [ 'hist', 'history', 'history' ],
-        dsq: [ 'dsq', 'disqualified', 'disqualified' ]
+        dsq: [ 'dsq', 'disqualified', 'disqualified' ],
+        titles: [ 'titles', 'titles', 'titles' ],
+        mgmt: [ 'mgmt', 'management', 'management' ]
     },
     prios: {
         summary: [ 32456, 32463, 32469, 32461, 33960, 32468, 32464 ], //Short profile, fin perf, strategy summary, ops summary, history, sales & marketing, geo reach 
@@ -169,8 +171,8 @@ const consts = {
         prins: [
             //level 1 and 2 
             'name', 'first_name', 'middle_name', 'last_name', 'pre_name', 'suff_name',
-                'utf8_name', 'utf8_first_name', 'utf8_last_name',
-                'assn_start_date', 'gender', 'most_senior', 'subjectType',
+                'utf8_name', 'utf8_first_name', 'utf8_last_name', 'utf8_name_lang', 'utf8_name_script',
+                'assn_start_date', 'gender', ' titles' , 'mgmt_resp', 'most_senior', 'type', 'duns',
 
             //level 3
             'birthdate', 'natl', 'sign_auth', 'resp_area', 'bkr_hist', 'dsq' 

@@ -796,7 +796,7 @@ function finsToYrlyRevArr(
                 finStmt_infoScope: elem.informationScopeDescription,
                 finStmt_infoScope_prio: infoScopePrio === -1 ? arrInfoScopePrios?.length || 0 : infoScopePrio,
                 finStmt_reliab: elem.reliabilityDescription,
-                finStmt_reliab_prio: reliabPrio === -1 ? arrReliability?.length || 0 : reliabPrio,
+                finStmt_reliab_prio: reliabPrio === -1 ? arrReliabPrios?.length || 0 : reliabPrio,
                 finStmt_unit: elem.unitCode || 'SingleUnits',
                 amt: yrlyRev?.value,
                 formatted_amt: formattedAmt,

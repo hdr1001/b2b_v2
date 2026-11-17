@@ -46,14 +46,42 @@ function createCustPrin(objPrin) {
         oRet.utf8_name = utf8Names[0].fullName;
         oRet.utf8_first_name = utf8Names[0].givenName;
         oRet.utf8_last_name = utf8Names[0].familyName;
+
+        if(utf8Names[0].language?.description) oRet.utf8_name_lang = utf8Names[0].language.description;
+        if(utf8Names[0].writingScript?.description) oRet.utf8_name_script = utf8Names[0].writingScript.description;
+    }
+
+    //Make educated guess about subjectType and get the DUNS
+    if(Array.isArray(objPrin.idNumbers) && objPrin.idNumbers.length) {
+        oRet.type = 'Businesses';
+
+        const arrDUNS = objPrin.idNumbers.filter(id => id.idType?.dnbCode === 3575);
+
+        if(arrDUNS.length > 0) oRet.duns = arrDUNS[0].idNumber;
+    }
+
+    //Summarize the principal titles
+    const jobTitles = objPrin.jobTitles;
+
+    if(Array.isArray(jobTitles) && jobTitles.length > 0) {
+        oRet.titles = jobTitles.map(jobTitle => jobTitle.title).join(', ')
+    }
+
+    //Summarize the management responsibilities of a principal
+    const mgmtResp = objPrin.managementResponsibilities;
+
+    if(Array.isArray(mgmtResp) && mgmtResp.length > 0) {
+        oRet.mgmt_resp = mgmtResp.map(resp => resp.description).join(', ')
     }
 
     //Miscellaneous
     oRet.assn_start_date = objPrin.associationStartDate;
     oRet.gender = objPrin.gender?.description;
-    oRet.type = objPrin.subjectType;
 
     //Level 3 fields
+    //First override the subject type guessed above
+    if(objPrin.subjectType) oRet.type = objPrin.subjectType;
+
     oRet.birthdate = objPrin.birthDate;
     oRet.natl = objPrin.nationality?.isoAlpha2Code;
     oRet.sign_auth = objPrin.isSigningAuthority;
