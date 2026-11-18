@@ -88,6 +88,13 @@ function createCustPrin(objPrin) {
     oRet.bkr_hist = objPrin.hasBankruptcyHistory;
     oRet.dsq = objPrin.isDisqualifiedDirector;
 
+    //List the principal's telephone numbers
+    const tels = objPrin.telephones;
+
+    if(Array.isArray(tels) && tels.length > 0) {
+        oRet.tel = tels.map(resp => resp.telephoneNumber).join(', ')
+    }
+
     //Responsible areas is implemented a bit wonky
     if(Array.isArray(objPrin.responsibleAreasEntry)) {
         if(objPrin.responsibleAreasEntry.length > 0) {
